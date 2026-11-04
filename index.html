@@ -437,13 +437,16 @@ body:not(.dark) .admtag{display:none}
 'use strict';
 /* ★★★★★ 설치할 때 이 두 줄만 바꾸세요 (설치 안내서 3단계) ★★★★★ */
 const CONFIG = {
-  SUPABASE_URL: 'https://acpeizbniyvbohkgaazz.supabase.co/rest/v1/',   // 예: 'https://abcdefghijkl.supabase.co'
+  SUPABASE_URL: 'https://acpeizbniyvbohkgaazz.supabase.co',   // 예: 'https://abcdefghijkl.supabase.co'
   SUPABASE_KEY: 'sb_publishable_GnxzDEJCIZZBX-CSxHjtjQ_W7F7276e',   // Project Settings → API Keys 의 Publishable key (또는 anon public 키)
 };
 const CREATOR = 'geownx';
 /* ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★ */
-const CONFIGURED = /^https?:\/\/[^/]+/.test(CONFIG.SUPABASE_URL) && CONFIG.SUPABASE_KEY.length > 20;
-const FN_URL = CONFIG.SUPABASE_URL.replace(/\/+$/, '') + '/functions/v1/api';
+// 주소 뒤에 /rest/v1/ 같은 게 붙어 있어도 앞부분(https://xxxx.supabase.co)만 사용
+const SB_ORIGIN = (() => { try { return new URL(String(CONFIG.SUPABASE_URL).trim()).origin; } catch (e) { return ''; } })();
+CONFIG.SUPABASE_KEY = String(CONFIG.SUPABASE_KEY || '').trim();
+const CONFIGURED = /^https?:\/\/[^/]+$/.test(SB_ORIGIN) && CONFIG.SUPABASE_KEY.length > 20;
+const FN_URL = SB_ORIGIN + '/functions/v1/api';
 /* =============== 기본 도구 =============== */
 const $ = (s, el = document) => el.querySelector(s);
 const $$ = (s, el = document) => [...el.querySelectorAll(s)];
