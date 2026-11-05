@@ -5,6 +5,19 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#f6f4ef">
 <meta name="description" content="교과서·필기 사진이나 강의 PDF를 올리면 파트별로 분석해 문제지와 정답·해설 PDF를 만들어줘요.">
+<!-- 카톡·인스타·문자로 공유할 때 보이는 미리보기 (og.png 를 index.html 과 같은 곳에 올려 두세요) -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="문제지메이커">
+<meta property="og:title" content="문제지메이커 · 공부한 자료를 올리면 시험지가 나와요">
+<meta property="og:description" content="교과서·필기 사진이나 PDF를 올리면 파트별로 분석해 문제지와 정답·해설 PDF를 만들어 드려요.">
+<meta property="og:url" content="https://geownx.github.io/quiz/">
+<meta property="og:image" content="https://geownx.github.io/quiz/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="문제지메이커 — 공부한 자료를 올리면 시험지가 나와요">
+<meta property="og:locale" content="ko_KR">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://geownx.github.io/quiz/og.png">
 <meta name="apple-mobile-web-app-title" content="문제지메이커">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+CiAgPHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiByeD0iMTYiIGZpbGw9IiNFMjY4M0MiLz4KICA8ZyB0cmFuc2Zvcm09InJvdGF0ZSgtOCAzMCAzNCkiPgogICAgPHJlY3QgeD0iMTUiIHk9IjEzIiB3aWR0aD0iMjgiIGhlaWdodD0iMzYiIHJ4PSI0IiBmaWxsPSIjZmZmIiBvcGFjaXR5PSIuNDUiLz4KICA8L2c+CiAgPHBhdGggZD0iTTIxIDEyaDE3bDggOHYyOWEzIDMgMCAwIDEtMyAzSDIxYTMgMyAwIDAgMS0zLTNWMTVhMyAzIDAgMCAxIDMtM3oiIGZpbGw9IiNmZmYiLz4KICA8cGF0aCBkPSJNMzggMTJ2NmEyIDIgMCAwIDAgMiAyaDZ6IiBmaWxsPSIjRjNCOUExIi8+CiAgPHJlY3QgeD0iMjMiIHk9IjI0IiB3aWR0aD0iMTUiIGhlaWdodD0iMyIgcng9IjEuNSIgZmlsbD0iIzFGMkE0NCIvPgogIDxyZWN0IHg9IjIzIiB5PSIzMSIgd2lkdGg9IjE4IiBoZWlnaHQ9IjIuNiIgcng9IjEuMyIgZmlsbD0iIzFGMkE0NCIgb3BhY2l0eT0iLjI4Ii8+CiAgPHJlY3QgeD0iMjMiIHk9IjM3IiB3aWR0aD0iMTIiIGhlaWdodD0iMi42IiByeD0iMS4zIiBmaWxsPSIjMUYyQTQ0IiBvcGFjaXR5PSIuMjgiLz4KICA8Y2lyY2xlIGN4PSI0NC41IiBjeT0iNDUuNSIgcj0iMTAuNSIgZmlsbD0iIzFGMkE0NCIgc3Ryb2tlPSIjRTI2ODNDIiBzdHJva2Utd2lkdGg9IjMiLz4KICA8cGF0aCBkPSJNMzkuNiA0NS42bDMuMyAzLjMgNi40LTYuNiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjMuMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+Cjwvc3ZnPg==">
@@ -703,7 +716,7 @@ const defSettings = () => Object.assign({
   total: 20, types: ['mc','ox','short'], typeMode: 'auto', typeCounts: {},
   difficulty: 'mixed', style: 'school', choiceN: 5, explain: 'detail', layout: '2', order: 'part',
   title: '', showName: true, extra: ''
-}, LS.get('qm_lastSettings', {}), { title: '', extra: '' });
+}, LS.get('qm_lastSettings', {}), { title: '', extra: '', layout: '2' }); // 새 문제지는 항상 2단으로 시작
 let S = freshState();
 function freshState() {
   return { step: 1, maxStep: 1, files: [], memo: '', analysis: null, parts: [], settings: defSettings(), qByPart: {}, genErrors: {}, sheetId: null, materialIds: [], foreign: false, showAns: false, pages: null };
