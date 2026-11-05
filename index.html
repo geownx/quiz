@@ -80,6 +80,7 @@ a.btn{color:var(--ink);text-decoration:none}
 .chip b{display:block;font-size:14.5px}
 .chip span{display:block;font-size:12px;color:var(--mute);margin-top:2px}
 .chip.on{border-color:var(--ink);background:var(--sel)}
+.chip.off{opacity:.45;cursor:not-allowed}
 .chip.on::after{content:"✓";position:absolute;top:8px;right:10px;font-weight:800;color:var(--ink)}
 .seg{display:flex;background:var(--soft2);border-radius:11px;padding:3px;gap:3px;flex-wrap:wrap}
 .seg button{-webkit-appearance:none;appearance:none;flex:1;border:0;background:transparent;border-radius:9px;padding:9px 6px;font-size:14px;font-weight:600;color:var(--ink2);cursor:pointer;min-width:64px}
@@ -683,6 +684,11 @@ const TYPES = [
 ];
 const TYPE = Object.fromEntries(TYPES.map(t => [t.id, t]));
 const CHOICE_TYPES = ['mc','neg','multi','combo','order','case'];
+/* 간단 모드: 좋은 모델의 하루 한도가 끝나면, 실수가 적은 유형만 만들 수 있어요 */
+const LITE_TYPES = ['ox', 'mc', 'short', 'blank'];
+const liteMode = () => !!(PUBCFG && PUBCFG.flash_until && new Date(PUBCFG.flash_until).getTime() > Date.now());
+const liteUntilText = () => { try { const d = new Date(PUBCFG.flash_until); return d.toLocaleString('ko-KR', { month: 'numeric', day: 'numeric', hour: 'numeric', minute: '2-digit' }); } catch (e) { return ''; } };
+const liteText = () => `<b>지금은 간단 모드예요.</b> 오늘 서버 사용량이 많아서 <b>O/X · 객관식 · 단답형 · 빈칸 채우기</b>만 만들 수 있어요. 다른 유형은 <b>${liteUntilText()}</b>부터 다시 만들 수 있어요.`;
 const STYLES = {
   school: '학교 내신 시험 (교과서 개념 중심, 정확한 개념 이해 확인)',
   suneung: '수능·모의고사 스타일 (자료 해석, 개념 적용, 사고력 중심)',
@@ -782,7 +788,7 @@ async function loadPricing() {
   const c = await loadPublicConfig(); if (!c) return;
   const ft = $('#freeTxt'); if (ft) ft.textContent = `가입하면 ${c.trial ? `체험 ${c.trial}문항을 드려요.` : '이용할 수 있어요.'} 문항을 다 쓰면 관리자에게 문의해 주세요.`;
   const ftr = $('#frTrial'); if (ftr) ftr.textContent = c.trial ? `체험 ${c.trial}문항` : '체험 문항 없음';
-  const fa = $('#footAsk'); if (fa) fa.innerHTML = c.contact ? ` · 궁금한 점은 ${isUrl(c.contact) ? `<a href="${esc(c.contact)}" target="_blank" rel="noopener">${/kakao/i.test(c.contact) ? '카카오톡 채널' : '문의하기'}</a>로 문의해 주세요` : `${esc(c.contact)}로 문의해 주세요`}` : '';
+  const fa = $('#footAsk'); if (fa) fa.innerHTML = c.contact ? ` · ${isUrl(c.contact) ? `<a href="${esc(c.contact)}" target="_blank" rel="noopener">문의하기</a>` : `문의: ${esc(c.contact)}`}` : '';
 }
 /* 홈 오른쪽 패널: 로그인 상태에 따라 다르게 */
 function renderPanel(mode) {
@@ -863,8 +869,10 @@ function renderFiles() {
   const ok = S.files.filter(f => f.status === 'ok').length;
   const busy = S.files.some(f => f.status === 'loading');
   if (!$('#goWrap')) return;
-  $('#goWrap').innerHTML = `<button class="btn acc go" id="btnAnalyze" ${!ok || busy ? 'disabled' : ''}>${busy ? '불러오는 중…' : ok ? `자료 ${ok}개 분석하기 →` : '자료를 올리면 분석을 시작할 수 있어요'}</button>`;
-  $('#btnAnalyze').onclick = analyze;
+  $('#goWrap').innerHTML = `<button class="btn acc go" id="btnAnalyze" ${!ok || busy ? 'disabled' : ''}>${busy ? '불러오는 중…' : ok ? `자료 ${ok}개 분석하기 →` : '자료를 올리면 분석을 시작할 수 있어요'}</button>
+    ${ok && !busy ? '<button class="btn go" id="btnAuto" style="margin-top:8px">분석부터 문제까지 한 번에 ⚡</button><p class="note" style="margin-top:6px;text-align:center">한 번에 만들기는 문항 수·유형만 고르면 끝까지 알아서 만들어요. 나가도 괜찮아요.</p>' : ''}`;
+  $('#btnAnalyze').onclick = () => analyze();
+  const ba = $('#btnAuto'); if (ba) ba.onclick = openAutoModal;
 }
 async function addFiles(list) {
   for (const f of list) {
@@ -1053,7 +1061,7 @@ function openAccount() {
   const m = modal(`<h3>내 계정</h3>
     <div class="acct"><div><span>이름</span><b>${esc(ME.name)}</b></div><div><span>아이디</span><b>${esc(ME.username)}</b></div><div><span>상태</span><b>${esc(st)}${ME.role === 'admin' ? ' · 관리자' : ''}</b></div><div><span>남은 문항</span><b>${ME.role === 'admin' ? '무제한' : (+ME.balance || 0).toLocaleString() + '개'}</b></div></div>
     ${ME.status === 'approved' ? '<button class="btn acc" id="aShop" style="width:100%;margin-top:10px">남은 문항 · 사용 내역</button>' : ''}
-    ${contactLink() ? `<div style="margin-top:8px">${contactLink(null, '궁금한 점 문의하기 (카카오톡 채널)')}</div>` : ''}
+    ${contactLink() ? `<div style="margin-top:8px">${contactLink(null, '문의하기')}</div>` : ''}
     <details style="margin-top:14px"><summary style="cursor:pointer;font-weight:700">비밀번호 바꾸기</summary>
       <label class="lb">현재 비밀번호</label><input type="password" id="pOld" autocomplete="current-password">
       <label class="lb">새 비밀번호 (8자 이상)</label><input type="password" id="pNew" autocomplete="new-password">
@@ -1107,7 +1115,7 @@ async function serverGen(kind, prompt, schema, temperature, opt = {}) {
   // 응답 형식(schema)은 서버가 정해요. count = 이번에 만들 문항 수 (차감 기준)
   if (S.files.some(f => f.status === 'ok' && !f.matId)) await uploadMaterials(opt.signal);
   else await ensureSheet();
-  const body = JSON.stringify({ action: 'gen', sheetId: S.sheetId, materialIds: S.materialIds, kind, prompt, temperature, count: opt.count || 0 });
+  const body = JSON.stringify({ action: 'gen', sheetId: S.sheetId, materialIds: S.materialIds, kind, prompt, temperature, count: opt.count || 0, qtype: opt.qtype || '' });
   for (let attempt = 1; attempt <= 5; attempt++) {
     let res, t0 = Date.now();
     try {
@@ -1226,12 +1234,7 @@ const PARTS_SCHEMA = {
   },
   required: ['subject', 'overview', 'parts']
 };
-async function analyze() {
-  if (!ME || ME.status !== 'approved') { toast('로그인 후 이용할 수 있어요'); return; }
-  const ctl = showLoading('자료를 읽고 파트를 나누는 중이에요', '', true, { progress: true, note: '자료 분량에 따라 걸리는 시간이 달라요. 보통 10초~1분, 사진·PDF가 많거나 붐비는 시간에는 더 걸릴 수 있어요.' });
-  { const L = loadEl; L._iv = setInterval(() => { const el = Date.now() - L._t0; setProgress(0.92 * (1 - Math.exp(-el / 22000)), `경과 ${mmss(el)}`); }, 500); }
-  try {
-    const prompt = `첨부한 학습 자료를 분석해서, 시험 문제 출제를 위한 '파트(단원)'로 나눠줘.
+const ANALYZE_PROMPT = memo => `첨부한 학습 자료를 분석해서, 시험 문제 출제를 위한 '파트(단원)'로 나눠줘.
 - subject: 과목/주제명 (예: "고등 생명과학Ⅰ - 세포 분열")
 - overview: 자료 전체 요약 2~3문장
 - parts: 자료의 실제 구조(단원, 소제목, 페이지 흐름)를 따라 2~8개 파트로 나눔. 각 파트:
@@ -1241,18 +1244,54 @@ async function analyze() {
   · weight: 분량과 중요도를 반영한 1~10 정수 (문항 수 배분에 사용)
   · source: 자료 속 위치 (예: "자료 1 p.2-4", "사진 3")
 - warnings: 글씨가 흐리거나 잘려서 읽기 어려운 부분 등 주의사항 (없으면 빈 배열)
-사용자 메모: ${S.memo.trim() || '(없음)'}`;
+사용자 메모: ${memo.trim() || '(없음)'}`;
+/* 자료 분석: 자료만 올리고 나면 서버가 백그라운드로 분석 (auto = 문제까지 한 번에) */
+async function analyze(auto) {
+  if (!ME || ME.status !== 'approved') { toast('로그인 후 이용할 수 있어요'); return; }
+  const ctl = showLoading('자료를 서버에 올리는 중이에요', '', true, { progress: true, note: '자료를 다 올리면 그다음부터는 나가도 괜찮아요.' });
+  { const L = loadEl; L._iv = setInterval(() => { const el = Date.now() - L._t0; setProgress(0.9 * (1 - Math.exp(-el / 8000)), `경과 ${mmss(el)}`); }, 400); }
+  try {
     await uploadMaterials(ctl.signal);
-    const r = await serverGen('analyze', prompt, PARTS_SCHEMA, 0.3, { signal: ctl.signal, detail: '자료 분석 중' });
-    if (!r.parts || !r.parts.length) throw new Error('자료에서 파트를 찾지 못했어요. 더 선명한 사진이나 다른 자료로 해보세요.');
-    S.analysis = { subject: r.subject || '', overview: r.overview || '', warnings: r.warnings || [] };
-    S.parts = r.parts.map(p => ({ id: uid(), title: p.title || '파트', summary: p.summary || '', concepts: (p.concepts || []).join(', '), weight: Math.max(1, Math.min(10, +p.weight || 5)), source: p.source || '', count: 0 }));
-    S.qByPart = {}; S.genErrors = {}; S.pages = null;
-    S.settings.title = '';
-    distribute(S.settings.total);
-    saveSheet();
-    hideLoading(); go(2);
+    if (!auto) { S.qByPart = {}; S.genErrors = {}; S.pages = null; S.analysis = null; S.parts = []; S.settings.title = ''; }
+    clearTimeout(saveTimer); await saveSheet(true);
+    const settings = auto ? auto : { total: S.settings.total };
+    if (auto) { Object.assign(S.settings, auto); LS.set('qm_lastSettings', Object.assign({}, S.settings, { title: '', extra: '' })); }
+    const job = await api('jobStart', { kind: auto ? 'auto' : 'analyze', sheetId: S.sheetId, materialIds: S.materialIds, prompt: ANALYZE_PROMPT(S.memo), settings }, { signal: ctl.signal });
+    hideLoading();
+    watchJob(job.id, { kind: auto ? 'auto' : 'analyze', total: job.total });
+    if (auto) refreshBalance(500);
   } catch (e) { hideLoading(); handleErr(e); }
+}
+/* 분석부터 문제까지 한 번에: 문항 수·유형만 고르기 */
+function openAutoModal() {
+  const lite = liteMode(), st = Object.assign({}, S.settings);
+  let types = st.types.filter(t => TYPE[t] && (!lite || LITE_TYPES.includes(t)));
+  if (!types.length) types = ['mc', 'ox'];
+  let total = st.total || 20;
+  const m = modal(`<h3>분석부터 문제까지 한 번에</h3>
+    <p class="sub">자료를 분석해서 파트를 나누고, 중요도대로 문항을 나눠 바로 만들어요. 다 되면 <b>내 문제지</b>에 저장돼요.</p>
+    ${lite ? `<div class="warn">${liteText()}</div>` : ''}
+    <label class="lb">총 문항 수</label>${numBox('auTotal', total, 1, 100)}
+    <div class="sec-t">문제 유형 <small>여러 개 선택</small></div>
+    <div class="chips" id="auChips">${TYPES.map(t => { const off = lite && !LITE_TYPES.includes(t.id); return `<button type="button" class="chip ${types.includes(t.id) ? 'on' : ''} ${off ? 'off' : ''}" data-t="${t.id}" ${off ? 'disabled' : ''}><b>${esc(t.label)}</b><span>${esc(off ? '지금은 만들 수 없어요' : t.desc)}</span></button>`; }).join('')}</div>
+    <div class="sec-t">난이도</div>
+    <div class="seg" id="auDiff">${[['easy', '쉬움'], ['normal', '보통'], ['hard', '어려움'], ['mixed', '골고루']].map(([v, l]) => `<button type="button" data-v="${v}" class="${st.difficulty === v ? 'on' : ''}">${l}</button>`).join('')}</div>
+    <p class="note" style="margin-top:10px">출제 스타일·해설·보기 개수는 지난번 설정(${esc(STYLES[st.style] ? STYLES[st.style].split(' (')[0] : '학교 내신')} · 해설 ${st.explain === 'brief' ? '간단히' : '자세히'} · 보기 ${st.choiceN}개)을 써요.</p>
+    <div class="err" id="auErr" style="min-height:18px;margin-top:8px"></div>
+    <div class="row" style="margin-top:6px"><button class="btn" data-close style="flex:1">취소</button><button class="btn acc" id="auGo" style="flex:2"></button></div>`);
+  const upd = () => { total = +$('#auTotal', m).value || total; $('#auGo', m).textContent = `시작하기 (${total}문항${isAdmin() ? '' : ' 차감'})`; };
+  bindNum(m, 'auTotal', upd); upd();
+  $$('#auChips .chip', m).forEach(b => b.onclick = () => { if (b.disabled) return; const t = b.dataset.t; types = types.includes(t) ? types.filter(x => x !== t) : types.concat(t); b.classList.toggle('on', types.includes(t)); });
+  let diff = st.difficulty;
+  $$('#auDiff button', m).forEach(b => b.onclick = () => { diff = b.dataset.v; $$('#auDiff button', m).forEach(x => x.classList.toggle('on', x === b)); });
+  $('#auGo', m).onclick = () => {
+    upd();
+    if (!types.length) return $('#auErr', m).textContent = '문제 유형을 하나 이상 골라주세요.';
+    const bal = +((ME && ME.balance) || 0);
+    if (!isAdmin() && bal < total) return $('#auErr', m).innerHTML = `남은 문항이 ${bal}개라서 ${total}문항을 만들 수 없어요. ` + askAdminText();
+    m.remove();
+    analyze({ total, types, typeMode: 'auto', difficulty: diff, style: st.style, choiceN: st.choiceN, explain: st.explain, extra: '', title: '' });
+  };
 }
 function handleErr(e) {
   if (e && e.name === 'AbortError') { toast('취소했어요'); return; }
@@ -1370,12 +1409,16 @@ function typeAlloc() {
 }
 function viewSettings() {
   const st = S.settings;
+  if (!S._cfgAt || Date.now() - S._cfgAt > 60000) { S._cfgAt = Date.now(); loadPublicConfig(true).then(() => { if (S.step === 3 && liteMode() && st.types.some(t => !LITE_TYPES.includes(t))) render(); }); }
+  const lite = liteMode();
+  if (lite) { st.types = st.types.filter(t => LITE_TYPES.includes(t)); if (!st.types.length) st.types = ['mc', 'ox']; }
   if (!st.title) st.title = (S.analysis && S.analysis.subject ? S.analysis.subject + ' ' : '') + '확인 문제';
   $('#view').innerHTML = `
     <h2>어떤 문제를 만들까요?</h2>
     <p class="sub">총 <b>${totalCount()}문항</b> · ${S.parts.length}개 파트. 원하는 문제 유형을 모두 골라주세요.</p>
     <div class="sec-t">문제 유형 <small>여러 개 선택</small></div>
-    <div class="chips" id="chips">${TYPES.map(t => `<button type="button" class="chip ${st.types.includes(t.id) ? 'on' : ''}" data-t="${t.id}"><b>${esc(t.label)}</b><span>${esc(t.desc)}</span></button>`).join('')}</div>
+    ${lite ? `<div class="warn" style="margin-bottom:10px">${liteText()}</div>` : ''}
+    <div class="chips" id="chips">${TYPES.map(t => { const off = lite && !LITE_TYPES.includes(t.id); return `<button type="button" class="chip ${st.types.includes(t.id) ? 'on' : ''} ${off ? 'off' : ''}" data-t="${t.id}" ${off ? 'disabled' : ''}><b>${esc(t.label)}</b><span>${esc(off ? '지금은 만들 수 없어요' : t.desc)}</span></button>`; }).join('')}</div>
     <div class="sec-t">유형별 문항 수</div>
     ${seg('typeMode', [['auto', '골고루 자동'], ['manual', '직접 정하기']])}
     <div id="typeCnt"></div>
@@ -1399,6 +1442,7 @@ function viewSettings() {
     <textarea id="extraIn" rows="2" placeholder="예: 그래프 해석 문제를 꼭 넣어줘 / 용어 암기 위주로 / 3단원 실험 내용은 빼줘">${esc(st.extra)}</textarea>
   `;
   $$('#chips .chip').forEach(c => c.onclick = () => {
+    if (c.disabled) return;
     const t = c.dataset.t, i = st.types.indexOf(t);
     if (i >= 0) { if (st.types.length === 1) return toast('유형을 하나 이상 골라주세요'); st.types.splice(i, 1); } else st.types.push(t);
     st.types.sort((a, b) => TYPES.findIndex(x => x.id === a) - TYPES.findIndex(x => x.id === b));
@@ -1601,83 +1645,93 @@ function toHangulList(q) {
   }
 }
 /* 문제 만들기: 서버가 백그라운드로 끝까지 만들어요 (앱을 닫거나 화면을 꺼도 계속됨) */
-const CHUNK = 6;
 async function generateAll(resume) {
   if (!S.sheetId) return toast('문제지 정보가 없어요. 처음부터 다시 해주세요.');
-  const plan = buildPlan();
   if (!resume) { S.qByPart = {}; S.genErrors = {}; }
+  else S.parts.forEach(p => { if ((S.qByPart[p.id] || []).length < p.count) delete S.genErrors[p.id]; });
   S.pages = null;
-  const tasks = [];
-  for (const part of S.parts) {
-    if (!(part.count > 0)) continue;
-    const have = (S.qByPart[part.id] || []).length;
-    if (have >= part.count) { delete S.genErrors[part.id]; continue; }
-    // 이미 있는 만큼은 빼고, 모자란 문항만 만들어요
-    const seq = []; Object.entries(plan[part.id] || {}).forEach(([t, n]) => { for (let i = 0; i < n; i++) seq.push(t); });
-    const need = {}; seq.slice(have).forEach(t => need[t] = (need[t] || 0) + 1);
-    for (const ch of splitChunks(need, CHUNK)) tasks.push({ part: part.id, count: Object.values(ch).reduce((x, y) => x + y, 0), prompt: genPrompt(part, ch, null) });
-    delete S.genErrors[part.id];
-  }
-  if (!tasks.length) { go(4); return; }
-  const totalN = tasks.reduce((x, t) => x + t.count, 0);
+  const need = S.parts.reduce((a, p) => a + Math.max(0, (p.count || 0) - (resume ? (S.qByPart[p.id] || []).length : 0)), 0);
+  if (!need) { go(4); return; }
   clearTimeout(saveTimer);
   try {
     await saveSheet(true);
-    const job = await api('jobStart', { sheetId: S.sheetId, materialIds: S.materialIds, tasks, temperature: 0.8,
-                                        avoid: allQuestions().map(q => q.question.slice(0, 70)) });
-    watchJob(job.id, { total: totalN });
+    const job = await api('jobStart', { kind: 'questions', sheetId: S.sheetId, materialIds: S.materialIds, resume: !!resume });
+    watchJob(job.id, { kind: 'questions', total: job.total });
+    refreshBalance(400);
   } catch (e) { handleErr(e); }
 }
 const JOB_LS = 'qm_job';
 let jobWatch = null;
-/* 진행 상황 보기 — 화면을 나가도 서버는 계속 만들어요 */
+const JOB_TXT = {
+  analyze: { title: '자료를 읽고 파트를 나누는 중이에요', leave: '나가기 (계속 분석해요)', stop: '분석 멈추기',
+    note: '자료 분량에 따라 걸리는 시간이 달라요. 보통 10초~1분이에요.<div class="leaveok"><b>이제 나가도 괜찮아요.</b> 다른 앱으로 가거나 화면을 꺼도 서버에서 계속 분석해요. 다 되면 <b>내 문제지</b>에서 이어서 할 수 있어요.</div>' },
+  questions: { title: '문제를 만드는 중이에요', leave: '나가기 (계속 만들어져요)', stop: '만들기 멈추기',
+    note: '문제 개수에 따라 만드는 시간이 달라질 수 있어요.<div class="leaveok"><b>이제 나가도 괜찮아요.</b> 다른 앱으로 가거나 화면을 꺼도 서버에서 계속 만들어요. 다 되면 <b>내 문제지</b>에 저장돼요.</div>' },
+};
+/* 진행 상황 보기 — 화면을 나가도 서버는 계속해요 */
 function watchJob(jobId, o = {}) {
   stopJobWatch();
-  const sheetId = S.sheetId;
-  try { localStorage.setItem(JOB_LS, JSON.stringify({ id: jobId, sheetId })); } catch (e) {}
-  const total = o.total || 0;
-  const ctl = showLoading('문제를 만드는 중이에요', '', true, { progress: true, tip: false,
-    note: `${total ? `<b>${total}문항</b>을 만들어요 · 예상 ${estText(total)}<br>` : ''}문제 개수에 따라 만드는 시간이 달라질 수 있어요.
-      <div class="leaveok"><b>이제 나가도 괜찮아요.</b> 다른 앱으로 가거나 화면을 꺼도 서버에서 계속 만들어요. 다 되면 <b>내 문제지</b>에 저장돼요.</div>`,
-    cancelLabel: '만들기 멈추기', extra: '<button class="btn sm pri" id="ldLeave" style="margin-top:10px">나가기 (계속 만들어져요)</button>' });
-  const W = jobWatch = { id: jobId, sheetId, t0: Date.now(), chunkAt: Date.now(), lastIdx: -1, last: null, timer: null, alive: true, fails: 0 };
+  const kind = o.kind || 'questions', sheetId = S.sheetId || o.sheetId;
+  try { localStorage.setItem(JOB_LS, JSON.stringify({ id: jobId, sheetId, kind })); } catch (e) {}
+  const total = o.total || 0, T0 = kind === 'analyze' ? JOB_TXT.analyze : JOB_TXT.questions;
+  showLoading(kind === 'questions' ? JOB_TXT.questions.title : JOB_TXT.analyze.title, '', true, { progress: true, tip: false,
+    note: `${total ? `<b>${total}문항</b>을 만들어요 · 예상 ${estText(total)}${kind === 'auto' ? ' (분석 포함 +1분 안팎)' : ''}<br>` : ''}${T0.note.replace(/^자료 분량[^<]*/, kind === 'analyze' ? '$&' : '')}`,
+    cancelLabel: T0.stop, extra: `<button class="btn sm pri" id="ldLeave" style="margin-top:10px">${T0.leave}</button>` });
+  const W = jobWatch = { id: jobId, kind, sheetId, t0: Date.now(), phaseAt: Date.now(), chunkAt: Date.now(), lastIdx: -1, phase: null, last: null,
+                         timer: null, alive: true, fails: 0, parts: (S.parts || []).slice() };
   const tick = () => {
-    const j = W.last; if (!j || !loadEl) return;
-    const tot = j.total || total || 1, base = j.done_count || 0;
-    const el = (Date.now() - W.chunkAt) / 1000, n = j.current_count || 0;
-    const guess = j.status === 'running' && n ? n * Math.min(0.9, el / (8 + 3.5 * n)) : 0;
-    setProgress((base + guess) / tot, `${j.produced} / ${tot}문항 · 경과 ${mmss(Date.now() - W.t0)}`);
-    const part = j.current_part && S.parts.find(p => p.id === j.current_part);
-    if (part) setLoadingDetail(`PART ${S.parts.indexOf(part) + 1} · ${part.title}`);
+    const j = W.last; if (!loadEl) return;
+    const el = Date.now() - W.t0;
+    if (!j || j.phase === 'analyze') {
+      const r = 1 - Math.exp(-(Date.now() - W.phaseAt) / 25000);
+      setProgress(kind === 'auto' ? 0.15 * r : 0.92 * r, `자료 분석 중 · 경과 ${mmss(el)}`);
+      return;
+    }
+    const tot = j.total || total || 1, base = j.done_count || 0, n = j.current_count || 0;
+    const sec = (Date.now() - W.chunkAt) / 1000, guess = j.status === 'running' && n ? n * Math.min(0.9, sec / (8 + 4 * n)) : 0;
+    const r = Math.min(1, (base + guess) / tot);
+    setProgress(kind === 'auto' ? 0.15 + 0.85 * r : r, `${j.produced} / ${tot}문항 · 경과 ${mmss(el)}`);
+    const part = j.current_part && W.parts.find(p => p.id === j.current_part);
+    setLoadingDetail((part ? `PART ${W.parts.indexOf(part) + 1} · ${part.title}` : '') + (j.notice === 'lite' ? `${part ? ' · ' : ''}간단 모드로 만드는 중` : ''));
   };
   const poll = async () => {
     if (!W.alive) return;
     clearTimeout(W.timer);
+    const ac = new AbortController(), to = setTimeout(() => ac.abort(), 15000);
     try {
-      const j = await api('jobGet', { jobId });
+      const j = await api('jobGet', { jobId }, { signal: ac.signal });
       if (!W.alive) return;
       W.fails = 0;
+      if (j.phase !== W.phase) {
+        if (W.phase === 'analyze' && j.phase === 'questions') {
+          const t = $('.loading .t'); if (t) t.textContent = JOB_TXT.questions.title;
+          api('mySheet', { sheetId: W.sheetId }).then(r => { W.parts = sanitizeSheet(r.data || {}).parts; }).catch(() => {});
+        }
+        W.phase = j.phase; W.phaseAt = Date.now();
+      }
       if (j.next_idx !== W.lastIdx) { W.lastIdx = j.next_idx; W.chunkAt = Date.now(); }
       W.last = j; tick();
       if (j.status !== 'running') { finishJob(j); return; }
     } catch (e) {
       if (!W.alive) return;
       if (['QM_AUTH', 'QM_NOTFOUND'].includes(e.code)) { stopJobWatch(); hideLoading(); return handleErr(e); }
-      if (++W.fails >= 2) setLoadingDetail('연결을 다시 확인하는 중… (서버에서는 계속 만들고 있어요)');
-    }
+      if (++W.fails >= 2) setLoadingDetail('연결을 다시 확인하는 중… (서버에서는 계속하고 있어요)');
+    } finally { clearTimeout(to); }
     W.timer = setTimeout(poll, document.hidden ? 8000 : 2500);
   };
   W.onVis = () => { if (!document.hidden && W.alive) poll(); };
   document.addEventListener('visibilitychange', W.onVis);
+  window.addEventListener('pageshow', W.onVis);
   if (loadEl) loadEl._iv = setInterval(tick, 500);
   setProgress(0, '준비 중…');
   const c = $('#ldC', loadEl); if (c) c.onclick = async () => {
-    if (!confirm('문제 만들기를 멈출까요? 이미 만든 문제는 남고, 만든 만큼만 문항이 차감돼요.')) return;
+    const msg = kind === 'analyze' ? '자료 분석을 멈출까요?' : '문제 만들기를 멈출까요?\n지금까지 만든 문제는 지워지고, 문항은 모두 돌려드려요.';
+    if (!confirm(msg)) return;
     try { const j = await api('jobCancel', { jobId }); finishJob(j); } catch (e) { toast(e.message); }
   };
   const lv = $('#ldLeave', loadEl); if (lv) lv.onclick = () => {
     stopJobWatch(); hideLoading(); S = freshState(); render(); window.scrollTo(0, 0);
-    alertBox('서버에서 계속 만들고 있어요', '앱을 닫거나 화면을 꺼도 괜찮아요. 다 되면 위쪽 <b>내 문제지</b>에서 열어 볼 수 있어요.');
+    alertBox(kind === 'analyze' ? '서버에서 계속 분석하고 있어요' : '서버에서 계속 만들고 있어요', '앱을 닫거나 화면을 꺼도 괜찮아요. 다 되면 위쪽 <b>내 문제지</b>에서 열어 볼 수 있어요.');
   };
   poll();
 }
@@ -1685,38 +1739,48 @@ function stopJobWatch() {
   if (!jobWatch) return;
   jobWatch.alive = false; clearTimeout(jobWatch.timer);
   document.removeEventListener('visibilitychange', jobWatch.onVis);
+  window.removeEventListener('pageshow', jobWatch.onVis);
   jobWatch = null;
 }
 async function finishJob(j) {
   const W = jobWatch; stopJobWatch();
   try { localStorage.removeItem(JOB_LS); } catch (e) {}
-  const prev = S, sheetId = (W && W.sheetId) || j.sheet_id;
+  const prev = S, sheetId = (W && W.sheetId) || j.sheet_id, kind = j.kind || (W && W.kind) || 'questions';
   let r;
   try { r = await api('mySheet', { sheetId }); } catch (e) { hideLoading(); return handleErr(e); }
-  hideLoading();
+  hideLoading(); refreshBalance(200);
   const d = sanitizeSheet(r.data || {});
+  const hasQ = Object.values(d.qByPart).some(l => l.length);
+  // 분석 단계에서 끝난 경우 (멈춤·실패)
+  if (!d.parts.length) {
+    if (prev.sheetId !== sheetId) { S = freshState(); render(); }
+    if (j.status === 'cancelled') return toast(kind === 'analyze' ? '분석을 멈췄어요' : '멈췄어요. 문항은 모두 돌려드렸어요');
+    return handleErr(new Error(j.fatal || '자료를 분석하지 못했어요. 다시 시도해 주세요.'));
+  }
+  applySheet(r.data || {}, sheetId, false);
+  if (kind === 'analyze') {
+    if (j.status === 'done') { go(2); toast(`${d.parts.length}개 파트로 나눴어요`); }
+    else if (j.status === 'failed') handleErr(new Error(j.fatal || '자료를 분석하지 못했어요.'));
+    return;
+  }
   const errs = {};
   Object.entries(j.errors || {}).forEach(([pid, msg]) => { const p = d.parts.find(x => x.id === pid); if (p && (d.qByPart[pid] || []).length < p.count) errs[pid] = String(msg); });
-  if (j.status === 'cancelled' && !Object.values(d.qByPart).some(l => l.length)) { applySheet(r.data || {}, sheetId, false); S.genErrors = {}; S.step = 3; render(); toast('만들기를 멈췄어요. 문항은 차감되지 않았어요'); refreshBalance(); return; }
-  applySheet(r.data || {}, sheetId, false);
   S.genErrors = errs;
-  if (allQuestions().length) { saveSheet(true); viewQuestions(); }
-  else { S.step = 3; render(); }
-  refreshBalance(300);
-  if (j.status === 'failed' && j.fatal) alertBox('문제 만들기가 멈췄어요', esc(j.fatal) + (/문항/.test(j.fatal) ? '<br>' + askAdminText() : ''), '내 문항 보기', openShop);
-  else if (j.status === 'cancelled') toast('만들기를 멈췄어요. 만든 문제는 남겨 뒀어요');
-  else if (!allQuestions().length && Object.keys(errs).length) handleErr(new Error(Object.values(errs)[0]));
-  else if (document.hidden === false) toast('문제지가 완성됐어요');
+  if (j.status === 'cancelled') { S.step = hasQ ? 4 : 3; render(); toast('만들기를 멈췄어요. 문항은 모두 돌려드렸어요'); return; }
+  if (hasQ) { saveSheet(true); go(4); } else { S.step = 3; render(); }
+  if (j.status === 'failed' && j.fatal) alertBox('만들기가 멈췄어요', esc(j.fatal) + (/문항/.test(j.fatal) ? '<br>' + askAdminText() : ''), '내 문항 보기', openShop);
+  else if (!hasQ && Object.keys(errs).length) handleErr(new Error(Object.values(errs)[0]));
+  else if (j.refunded > 0) toast(`문제지가 완성됐어요 · 못 만든 ${j.refunded}문항은 돌려드렸어요`, 4000);
+  else toast('문제지가 완성됐어요');
 }
-/* 다시 들어왔을 때: 만들던 작업이 있으면 이어서 보여줘요 */
+/* 다시 들어왔을 때: 하던 작업이 있으면 이어서 보여줘요 */
 async function resumeJobIfAny() {
   let saved = null; try { saved = JSON.parse(localStorage.getItem(JOB_LS) || 'null'); } catch (e) {}
   if (!saved || !saved.id || !ME || ME.status !== 'approved') return;
   try {
     const j = await api('jobGet', { jobId: saved.id });
-    if (j.status === 'running') { await openSheet(saved.sheetId, true); watchJob(j.id, { total: j.total }); }
-    else { try { localStorage.removeItem(JOB_LS); } catch (e) {}
-      if (j.status === 'done' || j.produced > 0) { await openSheet(saved.sheetId, true); toast(j.status === 'done' ? '만들어 둔 문제지가 완성됐어요' : '만들어 둔 문제지를 열었어요'); } }
+    if (j.status === 'running') { await openSheet(saved.sheetId, true); watchJob(j.id, { kind: j.kind, total: j.total, sheetId: saved.sheetId }); }
+    else { S.sheetId = saved.sheetId; jobWatch = null; await finishJob(j); }
   } catch (e) { try { localStorage.removeItem(JOB_LS); } catch (x) {} }
 }
 function allQuestions() {
@@ -1827,7 +1891,7 @@ async function regenQ(id) {
   if (loadEl) loadEl._iv = setInterval(tick, 500); tick();
   try {
     const avoid = allQuestions().map(q => q.question.slice(0, 70));
-    const r = await serverGen('regen', genPrompt(f.p, { [f.q.type]: 1 }, avoid, `[중요] 기존 문제 "${f.q.question.slice(0, 120)}"를 대체할, 내용이 다른 새 문제 1개만 만들어라.`), Q_SCHEMA, 0.95, { onText: t => { if (/"answer"\s*:/.test(t)) got = 1; }, signal: ctl.signal, detail: '새 문제', count: 1 });
+    const r = await serverGen('regen', genPrompt(f.p, { [f.q.type]: 1 }, avoid, `[중요] 기존 문제 "${f.q.question.slice(0, 120)}"를 대체할, 내용이 다른 새 문제 1개만 만들어라.`), Q_SCHEMA, 0.95, { onText: t => { if (/"answer"\s*:/.test(t)) got = 1; }, signal: ctl.signal, detail: '새 문제', count: 1, qtype: f.q.type });
     const q = (r.questions || []).map(x => cleanQ(x, f.p.id)).find(x => x.question);
     if (!q) throw new Error('새 문제를 만들지 못했어요. 다시 시도해주세요.');
     f.l[f.i] = q; S.pages = null; saveSheet();
@@ -2108,7 +2172,7 @@ function applySheet(d, id, foreign) {
   S = freshState();
   Object.assign(S, { analysis: d.analysis, parts: d.parts, settings: d.settings, qByPart: d.qByPart,
                      memo: d.memo || '', sheetId: id, materialIds: d.materialIds || [], foreign: !!foreign, maxStep: 5 });
-  go(4);
+  go(Object.values(d.qByPart).some(l => l.length) ? 4 : d.parts.length ? 2 : 1);
 }
 async function openSheet(id, quiet) {
   showLoading('문제지를 불러오는 중이에요', '', false);
@@ -2116,7 +2180,7 @@ async function openSheet(id, quiet) {
     const r = await api('mySheet', { sheetId: id }); hideLoading(); applySheet(r.data || {}, id, false);
     if (quiet) return;
     const j = await api('jobForSheet', { sheetId: id }).catch(() => null);
-    if (j && j.status === 'running') return watchJob(j.id, { total: j.total });
+    if (j && j.status === 'running') return watchJob(j.id, { kind: j.kind, total: j.total, sheetId: id });
     toast('불러왔어요');
   } catch (e) { hideLoading(); handleErr(e); }
 }
@@ -2125,7 +2189,7 @@ async function openHistory() {
     <button class="btn" data-close style="width:100%;margin-top:10px">닫기</button>`);
   try {
     const list = await api('mySheets');
-    $('#hl', m).innerHTML = list.length ? list.map(x => `<div class="hist" data-id="${x.id}"><div class="m"><b>${esc(x.title || x.subject || '문제지')}</b><span>${new Date(x.updated_at).toLocaleString('ko-KR', { dateStyle: 'medium', timeStyle: 'short' })} · ${x.job && x.job.status === 'running' ? `<b class="mk">만드는 중 ${x.job.produced}/${x.job.total}</b>` : x.question_count + '문항'}</span></div><button class="xbtn" title="목록에서 지우기">✕</button></div>`).join('') : '<p class="note">아직 만든 문제지가 없어요.</p>';
+    $('#hl', m).innerHTML = list.length ? list.map(x => `<div class="hist" data-id="${x.id}"><div class="m"><b>${esc(x.title || x.subject || '문제지')}</b><span>${new Date(x.updated_at).toLocaleString('ko-KR', { dateStyle: 'medium', timeStyle: 'short' })} · ${x.job && x.job.status === 'running' ? `<b class="mk">${x.job.phase === 'analyze' ? '분석 중' : `만드는 중 ${x.job.produced}/${x.job.total}`}</b>` : x.question_count ? x.question_count + '문항' : '<b class="mk">파트 나누기 완료</b>'}</span></div><button class="xbtn" title="목록에서 지우기">✕</button></div>`).join('') : '<p class="note">아직 만든 문제지가 없어요.</p>';
     $$('.hist', m).forEach(row => {
       const id = row.dataset.id;
       $('.m', row).onclick = () => { m.remove(); openSheet(id); };
@@ -2143,8 +2207,8 @@ function openHow() {
       <li>문제 유형·난이도·스타일을 고르고 <b>문제 만들기</b>를 눌러요.</li>
       <li>문제를 확인·수정한 뒤 <b>PDF 저장</b>을 눌러요.</li>
     </ol>
-    <p class="note"><b>잘 되게 하는 팁</b><br>· <b>문제를 만드는 동안에는 나가도 괜찮아요.</b> 다른 앱으로 가거나 화면을 꺼도 서버에서 계속 만들고, 다 되면 내 문제지에 저장돼요.<br>· 자료를 읽고 파트를 나누는 동안(보통 1분 안쪽)만 화면에 머물러 주세요.<br>· 사진은 글씨가 잘 보이게 밝은 곳에서 정면으로 찍어주세요.<br>· PDF가 크면 '쪽 범위'로 필요한 쪽만 골라주세요.<br>· 폰에서는 브라우저 메뉴의 '홈 화면에 추가'로 앱처럼 쓸 수 있어요.</p>
-    ${contactLink() ? `<div style="margin-top:12px">${contactLink(null, '궁금한 점은 카카오톡 채널로 문의하기')}</div>` : ''}
+    <p class="note"><b>잘 되게 하는 팁</b><br>· <b>자료를 다 올린 뒤에는 나가도 괜찮아요.</b> 분석과 문제 만들기는 다른 앱으로 가거나 화면을 꺼도 서버에서 계속되고, 다 되면 내 문제지에 저장돼요.<br>· <b>분석부터 문제까지 한 번에</b>를 누르면 문항 수·유형만 고르고 끝까지 알아서 만들어요.<br>· 사진은 글씨가 잘 보이게 밝은 곳에서 정면으로 찍어주세요.<br>· PDF가 크면 '쪽 범위'로 필요한 쪽만 골라주세요.<br>· 폰에서는 브라우저 메뉴의 '홈 화면에 추가'로 앱처럼 쓸 수 있어요.</p>
+    ${contactLink() ? `<div style="margin-top:12px">${contactLink(null, '문의하기')}</div>` : ''}
     <button class="btn pri" data-close style="width:100%;margin-top:14px">확인</button>`);
 }
 
@@ -2271,8 +2335,8 @@ async function adminSheetDetail(id) {
 
 /* =============== 내 문항 (회원) =============== */
 let PUBCFG = null;
-async function loadPublicConfig() {
-  if (PUBCFG || !CONFIGURED) return PUBCFG;
+async function loadPublicConfig(force) {
+  if ((PUBCFG && !force) || !CONFIGURED) return PUBCFG;
   try { PUBCFG = await api('publicConfig'); } catch (e) { PUBCFG = null; }
   return PUBCFG;
 }
@@ -2297,7 +2361,7 @@ async function viewShop() {
     <div class="balcard"><div><span>남은 문항</span><b>${d.is_admin ? '무제한' : (+d.balance).toLocaleString()}</b>${d.is_admin ? '' : '<small>개</small>'}</div>
       <div class="bc-r">20문항 문제지<br><b>${d.is_admin ? '∞' : Math.floor(d.balance / 20)}장</b> 만들 수 있어요</div></div>
     <div class="askbox"><b>문항이 더 필요하신가요?</b><p>문항을 다 쓰면 관리자에게 문의해 주세요.</p>
-      ${d.contact ? (isUrl(d.contact) ? `<div style="margin-top:12px">${contactLink(d.contact)}</div><p class="note" style="margin-top:8px">문항 말고도 궁금한 점은 무엇이든 문의해 주세요.</p>` : `<div class="ask-c"><span>문의</span><b>${esc(d.contact)}</b><button class="btn sm" id="cpC">복사</button></div>`) : ''}
+      ${d.contact ? (isUrl(d.contact) ? `<div style="margin-top:12px">${contactLink(d.contact)}</div>` : `<div class="ask-c"><span>문의</span><b>${esc(d.contact)}</b><button class="btn sm" id="cpC">복사</button></div>`) : ''}
       ${d.notice && d.notice.trim() !== '문항을 다 쓰면 관리자에게 문의해 주세요.' ? `<p class="note" style="margin-top:8px">${esc(d.notice)}</p>` : ''}</div>
     <div class="sec-t">문항 사용 내역 <small>최근 40건</small></div>
     <div class="ledger">${(d.ledger || []).map(l => `<div class="lrow"><span class="lk ${l.kind}">${kindL[l.kind] || l.kind}</span><span class="lm">${esc(l.memo || '')}<small>${fmtDT(l.created_at)}</small></span>
@@ -2310,7 +2374,7 @@ const isUrl = c => /^https?:\/\/[^\s"'<>]+$/.test(String(c || '').trim());
 function contactLink(c, label) {
   c = String(c || (PUBCFG && PUBCFG.contact) || '').trim(); if (!c) return '';
   if (!isUrl(c)) return `<b>${esc(c)}</b>`;
-  return `<a class="asklink" href="${esc(c)}" target="_blank" rel="noopener">${esc(label || (/kakao/i.test(c) ? '카카오톡 채널로 문의하기' : '문의하기'))}</a>`;
+  return `<a class="asklink" href="${esc(c)}" target="_blank" rel="noopener">${esc(label || '문의하기')}</a>`;
 }
 function askAdminText() { const l = contactLink(); return `문항이 더 필요하면 관리자에게 문의해 주세요.${l ? `<div style="margin-top:10px">${l}</div>` : ''}`; }
 
