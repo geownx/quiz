@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#f6f4ef">
 <meta name="description" content="교과서·필기 사진이나 강의 PDF를 올리면 파트별로 분석해 문제지와 정답·해설 PDF를 만들어줘요.">
-<meta name="author" content="geownx">
 <meta name="apple-mobile-web-app-title" content="문제지메이커">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+CiAgPHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiByeD0iMTYiIGZpbGw9IiNFMjY4M0MiLz4KICA8ZyB0cmFuc2Zvcm09InJvdGF0ZSgtOCAzMCAzNCkiPgogICAgPHJlY3QgeD0iMTUiIHk9IjEzIiB3aWR0aD0iMjgiIGhlaWdodD0iMzYiIHJ4PSI0IiBmaWxsPSIjZmZmIiBvcGFjaXR5PSIuNDUiLz4KICA8L2c+CiAgPHBhdGggZD0iTTIxIDEyaDE3bDggOHYyOWEzIDMgMCAwIDEtMyAzSDIxYTMgMyAwIDAgMS0zLTNWMTVhMyAzIDAgMCAxIDMtM3oiIGZpbGw9IiNmZmYiLz4KICA8cGF0aCBkPSJNMzggMTJ2NmEyIDIgMCAwIDAgMiAyaDZ6IiBmaWxsPSIjRjNCOUExIi8+CiAgPHJlY3QgeD0iMjMiIHk9IjI0IiB3aWR0aD0iMTUiIGhlaWdodD0iMyIgcng9IjEuNSIgZmlsbD0iIzFGMkE0NCIvPgogIDxyZWN0IHg9IjIzIiB5PSIzMSIgd2lkdGg9IjE4IiBoZWlnaHQ9IjIuNiIgcng9IjEuMyIgZmlsbD0iIzFGMkE0NCIgb3BhY2l0eT0iLjI4Ii8+CiAgPHJlY3QgeD0iMjMiIHk9IjM3IiB3aWR0aD0iMTIiIGhlaWdodD0iMi42IiByeD0iMS4zIiBmaWxsPSIjMUYyQTQ0IiBvcGFjaXR5PSIuMjgiLz4KICA8Y2lyY2xlIGN4PSI0NC41IiBjeT0iNDUuNSIgcj0iMTAuNSIgZmlsbD0iIzFGMkE0NCIgc3Ryb2tlPSIjRTI2ODNDIiBzdHJva2Utd2lkdGg9IjMiLz4KICA8cGF0aCBkPSJNMzkuNiA0NS42bDMuMyAzLjMgNi40LTYuNiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjMuMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+Cjwvc3ZnPg==">
@@ -19,7 +18,8 @@
 <script defer src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
 <style>
 :root{
-  --ink:#1f2a44; --ink2:#46506a; --mute:#7a8296; --line:#e3e1db; --bg:var(--soft); --card:#fff;
+  --ink:#1f2a44; --ink2:#46506a; --mute:#7a8296; --line:#e3e1db; --bg:#f6f4ef; --card:#fff; --soft:#f1efea; --soft2:#ebe8e1; --sel:#eef0f5; --okbg:#eef6f1; --line2:#cfcac0;
+  --solid:#1f2a44; --solid-fg:#fff; --glass:rgba(246,244,239,.9); --veil:rgba(246,244,239,.96);
   --acc:#e2683c; --acc2:#fbe9e1; --ok:#2f8f5b; --bad:#c8402f;
   --r:14px; --font:"Pretendard Variable",Pretendard,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR","Noto Sans CJK KR","Malgun Gothic",sans-serif;
 }
@@ -57,7 +57,7 @@ a.btn{color:var(--ink);text-decoration:none}
 .btn.sm{padding:6px 10px;font-size:13px;border-radius:9px}
 .btn.ghost{border-color:transparent;background:transparent}
 .btn:disabled{opacity:.45;cursor:not-allowed}
-.navbar{position:fixed;left:0;right:0;bottom:0;z-index:15;background:var(--glass);backdrop-filter:blur(8px);border-top:1px solid var(--line);padding:10px 16px calc(10px + env(safe-area-inset-bottom))}
+.navbar{position:fixed;left:0;right:0;bottom:0;z-index:15;background:var(--bg);box-shadow:0 -6px 16px rgba(20,24,36,.06);border-top:1px solid var(--line);padding:10px 16px calc(10px + env(safe-area-inset-bottom))}
 .navbar .in{max-width:760px;margin:0 auto;display:flex;gap:8px}
 .navbar .btn{flex:1}
 .navbar .btn.back{flex:0 0 auto}
@@ -82,8 +82,9 @@ a.btn{color:var(--ink);text-decoration:none}
 .chip.on{border-color:var(--ink);background:var(--sel)}
 .chip.on::after{content:"✓";position:absolute;top:8px;right:10px;font-weight:800;color:var(--ink)}
 .seg{display:flex;background:var(--soft2);border-radius:11px;padding:3px;gap:3px;flex-wrap:wrap}
-.seg button{flex:1;border:0;background:transparent;border-radius:9px;padding:9px 6px;font-size:14px;font-weight:600;color:var(--ink2);cursor:pointer;min-width:64px}
-.seg button.on{background:var(--card);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.seg button{-webkit-appearance:none;appearance:none;flex:1;border:0;background:transparent;border-radius:9px;padding:9px 6px;font-size:14px;font-weight:600;color:var(--ink2);cursor:pointer;min-width:64px}
+.seg button.on{background:var(--solid);color:var(--solid-fg);box-shadow:0 1px 3px rgba(0,0,0,.18);-webkit-text-fill-color:var(--solid-fg)}
+.seg button:not(.on){-webkit-text-fill-color:var(--ink2)}
 .num{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:10px;background:var(--card);overflow:hidden}
 .num button{border:0;background:var(--soft);width:34px;height:36px;font-size:18px;cursor:pointer;color:var(--ink)}
 .num input{border:0;width:52px;text-align:center;padding:6px 2px;border-radius:0;-moz-appearance:textfield}
@@ -111,7 +112,8 @@ a.btn{color:var(--ink);text-decoration:none}
 .toggle{display:flex;align-items:center;gap:10px;cursor:pointer;font-size:14.5px;user-select:none}
 .toggle input{width:20px;height:20px;accent-color:var(--ink)}
 /* question cards */
-.qpart{font-weight:800;font-size:15px;margin:22px 0 8px;display:flex;align-items:center;gap:8px}
+.qpart{font-weight:800;font-size:15px;margin:22px 0 8px;display:flex;align-items:center;gap:4px 8px;flex-wrap:wrap;min-width:0;overflow-wrap:anywhere}
+.qpart small{white-space:nowrap}
 .qpart .tag{background:var(--acc);color:#fff;font-size:11.5px;border-radius:6px;padding:3px 7px}
 .qcard{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px 14px 10px;margin-bottom:10px}
 .qcard .qmeta{display:flex;gap:6px;align-items:center;margin-bottom:8px;flex-wrap:wrap}
@@ -127,17 +129,22 @@ a.btn{color:var(--ink);text-decoration:none}
 @media(min-width:640px){.modal{align-items:center}.modal .box{border-radius:18px}}
 .modal h3{margin:0 0 4px;font-size:19px}
 .modal ol{padding-left:20px;line-height:1.75;font-size:14px;margin:8px 0}
-.loading{position:fixed;inset:0;z-index:60;background:var(--veil);display:flex;align-items:center;justify-content:center;padding:24px}
+.loading{position:fixed;inset:0;z-index:60;background:var(--bg);box-shadow:0 0 0 100vmax var(--bg);overscroll-behavior:contain;overflow:auto;display:flex;align-items:center;justify-content:center;padding:24px}
+html.busy,html.busy body{overflow:hidden}
 .loading .lb2{max-width:380px;width:100%;text-align:center}
 .spin{width:44px;height:44px;border-radius:50%;border:4px solid var(--line);border-top-color:var(--acc);animation:sp 0.9s linear infinite;margin:0 auto 18px}
 @keyframes sp{to{transform:rotate(360deg)}}
 .loading .t{font-weight:700;font-size:17px}
-.loading .d{color:var(--ink2);font-size:14px;margin-top:8px;min-height:20px;line-height:1.5}
-.prog{height:8px;background:var(--line);border-radius:8px;overflow:hidden;margin-top:16px}
-.prog i{display:block;height:100%;background:var(--acc);width:0;transition:width .3s}
+.loading .d{color:var(--ink2);font-size:14px;margin-top:10px;min-height:20px;line-height:1.5}
+.prog{height:10px;background:var(--line);border-radius:8px;overflow:hidden;margin-top:18px}
+.prog i{display:block;height:100%;background:var(--acc);width:0;transition:width .5s ease-out}
+.loading .pinfo{display:flex;justify-content:space-between;gap:10px;margin-top:8px;font-size:13px;color:var(--ink2);font-variant-numeric:tabular-nums}
+.loading .pinfo b{color:var(--acc);font-size:15px}
+.loading .pnote{margin-top:14px;font-size:13px;color:var(--ink2);line-height:1.55;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px;text-align:left}
 .toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:var(--solid);color:var(--solid-fg);padding:10px 16px;border-radius:12px;font-size:14px;z-index:70;max-width:90vw;box-shadow:0 6px 20px rgba(0,0,0,.2)}
 .hist{display:flex;gap:10px;align-items:center;border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:8px}
 .hist .m{flex:1;min-width:0;cursor:pointer}
+.hist .m b.mk{display:inline;color:var(--acc);font-size:inherit}
 .hist .m b{display:block;font-size:14.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .hist .m span{font-size:12.5px;color:var(--mute)}
 .pv-list{display:grid;gap:14px;justify-items:center;margin-top:16px}
@@ -310,6 +317,9 @@ body.on-home footer.site{padding-bottom:calc(30px + env(safe-area-inset-bottom))
 @media(max-width:520px){.stepper button{font-size:0}.stepper button .bar{margin-bottom:0}.stepper button.on{font-size:11.5px}.stepper button.on .bar{margin-bottom:6px}}
 h2{font-size:26px;letter-spacing:-.8px}
 .loading .tip{margin-top:18px;font-size:12.5px;color:var(--mute);line-height:1.5}
+.loading .leaveok{margin-top:10px;padding:10px 12px;border-radius:10px;background:var(--okbg,#e9f6ef);color:var(--ink);font-size:13.5px;line-height:1.55}
+.loading .leaveok b{color:var(--ok)}
+.loading #ldLeave{width:100%}
 
 /* ===== 회원 / 관리자 ===== */
 #upPanel{scroll-margin-top:80px}
@@ -402,18 +412,180 @@ body.dark .qcard .qx table.tb td{border-color:var(--line2)}
 body.dark .modal{background:rgba(0,0,0,.6)}
 body.dark .toast{box-shadow:0 6px 24px rgba(0,0,0,.5)}
 body.dark ::selection{background:#ff7c4766}
+body.dark .seg{background:var(--soft);border:1px solid var(--line)}
+body.dark .seg button.on{background:var(--acc);color:#1a0f08;-webkit-text-fill-color:#1a0f08;box-shadow:none}
+body.dark .totalbox{background:var(--card);color:var(--ink);border:1px solid var(--line2)}
+body.dark .totalbox .num{border-color:var(--line2)}
 .admtag{font-size:10.5px;font-weight:800;letter-spacing:.8px;color:#0d121c;background:var(--acc);border-radius:6px;padding:3px 7px;margin-left:2px}
 body:not(.dark) .admtag{display:none}
 .exps{display:grid;gap:6px}
 .exp{display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:12px;padding:9px 12px;background:var(--card)}
 .exp .ek{font-size:12px;font-weight:800;color:var(--acc);background:var(--acc2);border-radius:6px;padding:3px 7px;white-space:nowrap}
 .exp .em{flex:1;min-width:0}.exp .em b{display:block;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.exp .em span{font-size:12px;color:var(--mute)}
+
+/* ===== 충전 ===== */
+.nl.bal{border:1px solid var(--line);background:var(--card);font-size:13.5px}
+.nl.bal b{color:var(--acc);font-weight:800}
+.nl.bal.low b{color:var(--bad)}
+.balcard{display:flex;align-items:center;gap:14px;background:var(--solid);color:var(--solid-fg);border-radius:18px;padding:18px 20px;margin:4px 0 6px}
+.balcard span{display:block;font-size:13px;opacity:.75;font-weight:600}
+.balcard b{font-size:34px;letter-spacing:-1px}
+.balcard small{font-size:15px;margin-left:3px;opacity:.8}
+.balcard .bc-r{margin-left:auto;text-align:right;font-size:13px;opacity:.85;line-height:1.5}
+.balcard .bc-r b{font-size:17px;letter-spacing:0}
+.pkgs{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.pkg{position:relative;text-align:left;background:var(--card);border:1.5px solid var(--line);border-radius:16px;padding:16px 14px;cursor:pointer;color:var(--ink)}
+.pkg b{display:block;font-size:17px;letter-spacing:-.3px}
+.pkg em{display:block;font-style:normal;font-size:20px;font-weight:800;margin-top:6px;color:var(--ink)}
+.pkg span{display:block;font-size:12.5px;color:var(--mute);margin-top:4px}
+.pkg.on{border-color:var(--acc);box-shadow:0 0 0 3px var(--acc2)}
+.pkg .tag{position:absolute;top:-9px;right:10px;background:var(--acc);color:#fff;font-style:normal;font-size:11px;font-weight:800;border-radius:6px;padding:2px 7px}
+.pkgs.home .pkg{cursor:default}
+.testb{background:var(--acc2);color:var(--acc);border-radius:5px;padding:1px 5px;font-size:11px;font-weight:800}
+.asklink{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;box-sizing:border-box;padding:12px 14px;border-radius:12px;background:#FEE500;color:#191919!important;font-weight:800;font-size:15px;text-decoration:none;text-align:center}
+.asklink::before{content:"";width:18px;height:18px;flex:0 0 auto;background:no-repeat center/contain url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23191919' d='M12 3C6.5 3 2 6.6 2 11c0 2.8 1.9 5.3 4.7 6.7l-.9 3.5c-.1.3.3.6.6.4l4.1-2.7c.5.1 1 .1 1.5.1 5.5 0 10-3.6 10-8S17.5 3 12 3z'/%3E%3C/svg%3E")}
+#footAsk a{color:var(--acc);font-weight:700}
+.askbox{background:var(--soft);border:1px solid var(--line);border-radius:16px;padding:16px;margin:10px 0 6px}
+.askbox>b{display:block;font-size:16px}.askbox>p{margin:4px 0 0;color:var(--ink2);font-size:14px}
+.ask-c{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-top:10px;min-width:0}
+.ask-c span{font-size:12px;color:var(--mute);font-weight:700}.ask-c b{flex:1;min-width:0;overflow-wrap:anywhere;font-size:15px}
+.bankbox{display:flex;align-items:center;gap:10px;background:var(--soft);border-radius:12px;padding:12px 14px;margin-top:4px}
+.bankbox div{flex:1}.bankbox span{display:block;font-size:12px;color:var(--mute);font-weight:600}.bankbox b{display:block;font-size:16px;margin:2px 0}.bankbox small{color:var(--ink2);font-size:12.5px}
+.orow,.lrow{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:6px}
+.orow .om{flex:1;min-width:0}.orow .om b{display:block;font-size:14.5px}.orow .om span{font-size:12px;color:var(--mute)}
+.ost{font-size:12px;font-weight:800;border-radius:6px;padding:3px 8px;white-space:nowrap;background:var(--sel)}
+.ost.pending{background:var(--acc2);color:var(--acc)}.ost.paid{background:var(--okbg);color:var(--ok)}.ost.failed,.ost.cancelled{background:var(--soft);color:var(--mute)}
+.ledger .lrow{padding:8px 12px}
+.lk{font-size:11.5px;font-weight:800;border-radius:6px;padding:2px 7px;background:var(--sel);white-space:nowrap}
+.lk.use{background:var(--soft);color:var(--ink2)}.lk.charge,.lk.trial{background:var(--okbg);color:var(--ok)}.lk.admin{background:var(--acc2);color:var(--acc)}
+.lm{flex:1;min-width:0;font-size:13.5px}.lm small{display:block;font-size:11.5px;color:var(--mute)}
+.lrow b.plus{color:var(--ok)}.lrow b.minus{color:var(--bad)}
+.la2{font-size:12px;color:var(--mute);min-width:44px;text-align:right}
+.costbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:var(--soft);border-radius:12px;padding:10px 14px;margin-bottom:16px;font-size:14px}
+.costbar b{color:var(--acc)}
+.costbar.short{background:var(--acc2)}
+.costbar .btn{margin-left:auto}
+.sumcards{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.sumcards div{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
+.sumcards span{display:block;font-size:12px;color:var(--mute);font-weight:600}.sumcards b{font-size:18px}.sumcards small{display:block;font-size:12px;color:var(--mute)}
+.sumcards .hot{border-color:var(--acc)}.sumcards .hot b{color:var(--acc)}
+.ocard{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:10px}
+.ocard.pending{border-color:var(--acc)}
+.oh{display:flex;align-items:center;gap:8px}.oh b{flex:1;font-size:15px}.oh b span{font-weight:500;color:var(--mute);font-size:12.5px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.pkrow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px 10px;margin-bottom:6px}
+.pkrow .pn{flex:1;min-width:120px}
+.pkrow label{display:flex;align-items:center;gap:5px;font-size:12.5px;color:var(--ink2);font-weight:600}
+.pkrow label input{width:96px;padding:7px 8px}
+.pkrow .pu{font-size:12px;color:var(--mute);min-width:84px}
+@media(max-width:620px){.grid3,.sumcards{grid-template-columns:1fr}.balcard b{font-size:28px}}
+.logo span,.nl{white-space:nowrap}
+@media(max-width:430px){header.site .in{gap:6px;padding:0 12px}.logo{gap:7px;font-size:16px}.logo svg{width:30px;height:30px}header.site nav{gap:2px}.nl{padding:7px 8px;font-size:13.5px}.nl.bal{padding:6px 8px}}
+
+/* ===== 화면 넘침 방지 (사파리) ===== */
+html,body{max-width:100%}
+body{overflow-x:clip}
+@supports not (overflow:clip){body{overflow-x:hidden}}
+.hero .in>*,.steps4>*,.recent>*,.tiles>*,.two>*,.pkgs>*,.grid3>*,.um>*,.acct>*{min-width:0}
+.hero .in{grid-template-columns:minmax(0,1.05fr) minmax(0,1fr)}
+.recent{grid-template-columns:repeat(3,minmax(0,1fr))}
+.rc{min-width:0;width:100%}
+.logo{min-width:0}.logo span{overflow:hidden;text-overflow:ellipsis}
+header.site nav{flex:0 0 auto}
+.qcard .qx table.tb{display:block;max-width:100%;overflow-x:auto}
+.qcard,.ucard,.ocard,.srow,.card{min-width:0;overflow-wrap:anywhere}
+.seg.tabs{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}
+.seg.tabs::-webkit-scrollbar{display:none}
+.seg.tabs button{flex:1 0 auto;min-width:76px}
+@media(max-width:900px){.hero .in{grid-template-columns:minmax(0,1fr)}.recent{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:430px){.admtag{font-size:9px;padding:2px 5px;letter-spacing:.4px}.logo span{font-size:15px}}
+@media(max-width:360px){.logo b{display:none}}
+.logo .admtag{overflow:visible;flex:0 0 auto}
+.logo .wm{min-width:0}
+.logo .wm{display:block;white-space:nowrap;word-break:keep-all;overflow:hidden;text-overflow:ellipsis;flex:0 1 auto;min-width:0}
+.logo .wm b{white-space:nowrap}
+header.site nav{flex:0 0 auto}
+@media(max-width:600px){body.dark header.site .logo .wm{display:none}}
+@media(max-width:340px){header.site .logo .wm{display:none}}
+
+/* ===== 시작 안내 ===== */
+.free{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:20px;align-items:center;background:var(--solid);color:var(--solid-fg);border-radius:22px;padding:26px 28px}
+.free .k{font-size:12px;font-weight:800;color:var(--acc);letter-spacing:.4px}
+.free h4{margin:6px 0 8px;font-size:22px;letter-spacing:-.5px;color:inherit}
+.free p{margin:0;opacity:.8;font-size:14.5px;line-height:1.6;word-break:keep-all}
+.fr-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}
+.fr-chips span{font-size:12.5px;font-weight:700;border:1px solid currentColor;border-radius:999px;padding:4px 10px;opacity:.85}
+.fr-side{display:flex;flex-direction:column;align-items:flex-end;gap:10px}
+.fr-side .btn{background:var(--acc);border-color:var(--acc);color:#fff;white-space:nowrap}
+.free .by{margin:0!important;font-size:13px!important;opacity:.75}
+.free .by b{color:inherit}
+body.dark .free{background:var(--card);border:1px solid var(--line);color:var(--ink)}
+body.dark .free p{color:var(--ink2);opacity:1}
+body.dark .fr-side .btn{background:var(--acc);border-color:var(--acc);color:#fff}
+@media(max-width:900px){.free{grid-template-columns:minmax(0,1fr);padding:22px}.fr-side{align-items:stretch}.fr-side .btn{width:100%}.free .by{text-align:center}}
+
+/* ===== 스위치 ===== */
+.switch-row{display:flex;align-items:center;gap:14px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;cursor:pointer}
+.switch-row span{flex:1}.switch-row b{display:block;font-size:15px}.switch-row small{display:block;font-size:12.5px;color:var(--mute);margin-top:3px;line-height:1.5}
+.switch{appearance:none;-webkit-appearance:none;width:50px;height:30px;border-radius:30px;background:var(--line2);position:relative;cursor:pointer;flex:0 0 auto;transition:background .2s}
+.switch::after{content:"";position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.3);transition:transform .2s}
+.switch:checked{background:var(--ok)}.switch:checked::after{transform:translateX(20px)}
+
+/* ===== 통계 ===== */
+:root{--s1:#2a78d6;--s2:#eb6834;--grid:#e8e6e1;--tick:#7a8296}
+body.dark{--s1:#3987e5;--s2:#d95926;--grid:#253043;--tick:#7c879d}
+.statbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:6px}
+.statbar .seg{flex:0 0 auto}.statbar .seg button{min-width:60px}
+.sgrp{font-size:12.5px;font-weight:800;color:var(--mute);margin:18px 0 8px;letter-spacing:.3px}
+.tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.tile{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
+.tile span{display:block;font-size:12px;color:var(--mute);font-weight:600}
+.tile b{display:block;font-size:20px;letter-spacing:-.4px;margin-top:2px;font-variant-numeric:tabular-nums}
+.tile small{display:block;font-size:11.5px;color:var(--ink2);margin-top:3px;line-height:1.45}
+.tile.hot{border-color:var(--acc)}.tile.hot b{color:var(--acc)}
+.card.profit{margin-top:14px}
+.pf-h{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px}.pf-h b{flex:1;font-size:15px}
+.pf-h label{font-size:12.5px;color:var(--ink2);display:flex;align-items:center;gap:5px}.pf-h input{width:70px;padding:5px 8px}
+.pf-row{display:flex;justify-content:space-between;gap:10px;padding:6px 0;border-bottom:1px solid var(--line);font-size:14px}
+.pf-row span{color:var(--ink2)}.pf-row b{font-variant-numeric:tabular-nums}
+.pf-row.tot{border-bottom:0;font-size:16px}.pf-row.tot b{color:var(--ok)}.pf-row.tot b.neg{color:var(--bad)}
+.card.profit .note{margin-top:8px}
+.card.chart,.two .card{margin-top:12px;margin-bottom:0}
+.ch-h{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;margin-bottom:8px}.ch-h b{font-size:15px}.ch-h small{color:var(--mute);font-size:12.5px}
+.legend{margin-left:auto;display:flex;align-items:center;gap:6px;font-size:12px;color:var(--ink2)}
+.key{display:inline-block;width:10px;height:10px;border-radius:3px;margin-left:6px}
+.key.s1,.lk2.s1,.segbar .s1,.hb .ht i{background:var(--s1)}.key.s2,.lk2.s2,.segbar .s2{background:var(--s2)}
+.ch-wrap{position:relative}
+.ch-wrap{min-height:170px}.ch-wrap svg{display:block;overflow:visible}
+.card.chart{position:relative}
+.ch-wrap .grid{stroke:var(--grid);stroke-width:1}
+.ch-wrap .tick{fill:var(--tick);font-size:11px;font-family:var(--font)}
+.ch-wrap .bar.s1{fill:var(--s1)}.ch-wrap .bar.s2{fill:var(--s2)}
+.ch-wrap .hit{fill:transparent;cursor:pointer;outline:none}
+.ch-wrap .hit.on,.ch-wrap .hit:focus{fill:var(--ink);fill-opacity:.06}
+.ch-tip{position:absolute;top:-6px;transform:translateY(-100%);background:var(--card);border:1px solid var(--line);border-radius:10px;padding:8px 10px;box-shadow:0 8px 24px rgba(0,0,0,.18);font-size:12.5px;pointer-events:none;white-space:nowrap;z-index:2}
+.ch-tip .th{font-size:11.5px;color:var(--mute);margin-bottom:3px}
+.ch-tip .tr{display:flex;align-items:center;gap:6px}.ch-tip .tr b{font-variant-numeric:tabular-nums}.ch-tip .tr span{color:var(--ink2)}
+.lk2{display:inline-block;width:12px;height:2px;border-radius:2px}
+details.tv{margin-top:8px}details.tv summary{cursor:pointer;font-size:12.5px;color:var(--ink2);font-weight:600}
+.tbl-wrap{overflow-x:auto;margin-top:6px}
+.stbl{width:100%;border-collapse:collapse;font-size:13px;font-variant-numeric:tabular-nums}
+.stbl th{text-align:left;font-size:12px;color:var(--mute);font-weight:700;padding:6px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
+.stbl td{padding:7px 8px;border-bottom:1px solid var(--line);white-space:nowrap}.stbl td span{color:var(--mute);font-size:12px}
+.two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.hbars{display:grid;gap:8px}
+.hb{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr) auto;align-items:center;gap:8px;font-size:13px}
+.hb .hl{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--ink2)}
+.hb .ht{height:10px;background:var(--soft);border-radius:4px;overflow:hidden}.hb .ht i{display:block;height:100%;border-radius:0 4px 4px 0}
+.hb b{font-variant-numeric:tabular-nums;white-space:nowrap}.hb small{grid-column:2/4;font-size:11.5px;color:var(--mute);margin-top:-6px}
+.segbar{display:flex;gap:2px;height:14px;margin:4px 0 12px}.segbar i{display:block;height:100%;border-radius:4px}
+@media(max-width:820px){.tiles{grid-template-columns:repeat(2,minmax(0,1fr))}.two{grid-template-columns:minmax(0,1fr)}}
 </style>
 </head>
 <body>
 <header class="site">
   <div class="in">
-    <a class="logo" id="brand" href="#" aria-label="문제지 메이커 홈"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"> <rect width="64" height="64" rx="16" fill="#E2683C"/> <g transform="rotate(-8 30 34)"> <rect x="15" y="13" width="28" height="36" rx="4" fill="#fff" opacity=".45"/> </g> <path d="M21 12h17l8 8v29a3 3 0 0 1-3 3H21a3 3 0 0 1-3-3V15a3 3 0 0 1 3-3z" fill="#fff"/> <path d="M38 12v6a2 2 0 0 0 2 2h6z" fill="#F3B9A1"/> <rect x="23" y="24" width="15" height="3" rx="1.5" fill="#1F2A44"/> <rect x="23" y="31" width="18" height="2.6" rx="1.3" fill="#1F2A44" opacity=".28"/> <rect x="23" y="37" width="12" height="2.6" rx="1.3" fill="#1F2A44" opacity=".28"/> <circle cx="44.5" cy="45.5" r="10.5" fill="#1F2A44" stroke="#E2683C" stroke-width="3"/> <path d="M39.6 45.6l3.3 3.3 6.4-6.6" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/> </svg><span>문제지<b>메이커</b></span></a>
+    <a class="logo" id="brand" href="#" aria-label="문제지 메이커 홈"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"> <rect width="64" height="64" rx="16" fill="#E2683C"/> <g transform="rotate(-8 30 34)"> <rect x="15" y="13" width="28" height="36" rx="4" fill="#fff" opacity=".45"/> </g> <path d="M21 12h17l8 8v29a3 3 0 0 1-3 3H21a3 3 0 0 1-3-3V15a3 3 0 0 1 3-3z" fill="#fff"/> <path d="M38 12v6a2 2 0 0 0 2 2h6z" fill="#F3B9A1"/> <rect x="23" y="24" width="15" height="3" rx="1.5" fill="#1F2A44"/> <rect x="23" y="31" width="18" height="2.6" rx="1.3" fill="#1F2A44" opacity=".28"/> <rect x="23" y="37" width="12" height="2.6" rx="1.3" fill="#1F2A44" opacity=".28"/> <circle cx="44.5" cy="45.5" r="10.5" fill="#1F2A44" stroke="#E2683C" stroke-width="3"/> <path d="M39.6 45.6l3.3 3.3 6.4-6.6" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/> </svg><span class="wm">문제지<b>메이커</b></span></a>
     <nav id="navR"></nav>
   </div>
 </header>
@@ -425,8 +597,8 @@ body:not(.dark) .admtag{display:none}
 <footer class="site" id="foot">
   <div class="in">
     <div class="logo sm"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"> <rect width="64" height="64" rx="16" fill="#E2683C"/> <g transform="rotate(-8 30 34)"> <rect x="15" y="13" width="28" height="36" rx="4" fill="#fff" opacity=".45"/> </g> <path d="M21 12h17l8 8v29a3 3 0 0 1-3 3H21a3 3 0 0 1-3-3V15a3 3 0 0 1 3-3z" fill="#fff"/> <path d="M38 12v6a2 2 0 0 0 2 2h6z" fill="#F3B9A1"/> <rect x="23" y="24" width="15" height="3" rx="1.5" fill="#1F2A44"/> <rect x="23" y="31" width="18" height="2.6" rx="1.3" fill="#1F2A44" opacity=".28"/> <rect x="23" y="37" width="12" height="2.6" rx="1.3" fill="#1F2A44" opacity=".28"/> <circle cx="44.5" cy="45.5" r="10.5" fill="#1F2A44" stroke="#E2683C" stroke-width="3"/> <path d="M39.6 45.6l3.3 3.3 6.4-6.6" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/> </svg><span>문제지<b>메이커</b></span></div>
-    <p>회원제 서비스예요. 가입 신청 후 승인을 받으면 이용할 수 있어요.</p>
-    <div class="credit">제작자 <b>geownx</b><span>© 2026 문제지메이커</span></div>
+    <p id="footTxt">사진이나 PDF를 올리면 문제지와 정답·해설을 만들어 드려요.<span id="footAsk"></span></p>
+    <div class="credit"><span>© 2026 문제지메이커</span></div>
   </div>
 </footer>
 <div class="navbar" id="navbar"><div class="in" id="navin"></div></div>
@@ -440,7 +612,6 @@ const CONFIG = {
   SUPABASE_URL: 'https://acpeizbniyvbohkgaazz.supabase.co',   // 예: 'https://abcdefghijkl.supabase.co'
   SUPABASE_KEY: 'sb_publishable_GnxzDEJCIZZBX-CSxHjtjQ_W7F7276e',   // Project Settings → API Keys 의 Publishable key (또는 anon public 키)
 };
-const CREATOR = 'geownx';
 /* ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★ */
 // 주소 뒤에 /rest/v1/ 같은 게 붙어 있어도 앞부분(https://xxxx.supabase.co)만 사용
 const SB_ORIGIN = (() => { try { return new URL(String(CONFIG.SUPABASE_URL).trim()).origin; } catch (e) { return ''; } })();
@@ -501,7 +672,7 @@ const TYPES = [
   {id:'multi', label:'복수 정답', desc:'옳은 것 모두 고르기', ai:'정답이 2개 이상인 객관식. 문제 끝에 "(정답 2개)"처럼 정답 개수를 밝힐 것. choices {N}개. answer는 번호들(예: "1, 4").'},
   {id:'combo', label:'합답형 <보기>', desc:'ㄱ·ㄴ·ㄷ 중 옳은 것', ai:'statements에 ㄱ,ㄴ,ㄷ(필요시 ㄹ)로 표시될 진술 3~4개(기호 없이 내용만). question은 "<보기>에서 옳은 것만을 있는 대로 고른 것은?" 형태. choices는 "ㄱ", "ㄴ", "ㄱ, ㄴ", "ㄴ, ㄷ", "ㄱ, ㄴ, ㄷ" 같은 조합 {N}개. answer는 번호 숫자만.'},
   {id:'ox', label:'O / X', desc:'맞으면 O, 틀리면 X', ai:'question은 참/거짓을 판단할 진술문 1개(문장 끝에 O/X 표시하지 말 것). answer는 "O" 또는 "X". X이면 explanation에 바른 내용.'},
-  {id:'short', label:'단답형', desc:'용어·숫자로 짧게', ai:'한 단어~짧은 구로 답하는 문제. answer는 정답(허용 답이 여럿이면 " / "로 병기).'},
+  {id:'short', label:'단답형', desc:'용어·숫자로 짧게', ai:'한 단어~짧은 구로 답하는 문제. answer는 정답(허용 답이 여럿이면 " / "로 병기). 여러 항목(설명·조건·물음)을 나열해야 하면 question 안에 1., 2., (1) 같은 번호 목록을 쓰지 말고, 각 항목을 statements에 넣는다(화면에 ㄱ, ㄴ, ㄷ으로 표시됨). 항목마다 답을 쓰게 하면 answer는 "ㄱ: 답, ㄴ: 답, ㄷ: 답" 형식. explanation에서도 항목을 1번·(1)·① 대신 ㄱ, ㄴ, ㄷ으로 부른다.'},
   {id:'blank', label:'빈칸 채우기', desc:'핵심어 빈칸 완성', ai:'question 안의 빈칸을 "( ㉠ )", "( ㉡ )" 형태로 1~3개 표시. answer는 "㉠ 용어, ㉡ 용어" 형식.'},
   {id:'match', label:'연결하기', desc:'짝 맞추기', ai:'statements에 왼쪽 항목 3~5개, rightItems에 오른쪽 항목을 같은 개수로 순서를 섞어서(기호 없이). 화면에는 왼쪽 1),2),3)… 오른쪽 ⓐ,ⓑ,ⓒ… 로 표시됨. answer는 "1-ⓑ, 2-ⓐ, 3-ⓒ" 형식.'},
   {id:'order', label:'순서 배열', desc:'과정·순서 맞추기', ai:'statements에 (가),(나),(다),(라)로 표시될 단계/사건 3~5개를 섞인 순서로(기호 없이). choices에 "(가)-(다)-(나)-(라)" 같은 배열 {N}개. answer는 번호 숫자만.'},
@@ -539,12 +710,13 @@ function go(n) {
   render(); window.scrollTo(0, 0);
 }
 function render() {
-  const home = S.step === 1, admin = S.step === 'admin';
+  const home = S.step === 1, admin = S.step === 'admin' || S.step === 'shop';
   document.body.classList.toggle('on-home', home);
   $('#home').style.display = home ? '' : 'none';
   $('#work').style.display = home ? 'none' : '';
   $('#stepper').style.display = admin ? 'none' : '';
   renderNav();
+  if (S.step === 'shop') { nav(''); return viewShop(); }
   if (admin) { nav(''); return viewAdmin(); }
   $('#stepper').innerHTML = STEPS.map((t, i) => {
     const k = i + 1, cls = k === S.step ? 'on' : (k < S.step ? 'done' : '');
@@ -568,7 +740,7 @@ function viewUpload() {
   $('#home').innerHTML = `
   <section class="hero"><div class="in">
     <div>
-      <span class="eyebrow"><i>✦</i>무료 · 사진과 PDF로 시험지 자동 생성</span>
+      <span class="eyebrow"><i>✦</i>사진과 PDF로 시험지 자동 생성</span>
       <h1>공부한 자료를 올리면<br><em>시험지</em>가 나와요</h1>
       <p class="lead">교과서·필기 사진이나 강의 PDF를 올리면 단원별로 나눠 분석하고, 원하는 유형과 문항 수로 문제지와 정답·해설 PDF를 만들어 드려요.</p>
       <div class="stats"><div><b>13가지</b><span>문제 유형</span></div><div><b>파트별</b><span>문항 배분</span></div><div><b>PDF</b><span>정답·해설 포함</span></div></div>
@@ -580,7 +752,7 @@ function viewUpload() {
 
   <section class="sec" id="how"><div class="sec-head"><span class="k">HOW IT WORKS</span><h3>4단계면 문제지가 완성돼요</h3></div>
     <div class="steps4">
-      <div class="step4"><span class="no">STEP 1</span><div class="si">${IC.up}</div><b>가입하고 자료 올리기</b><p>회원가입 후 관리자 승인을 받으면, 교과서·필기 사진이나 강의 PDF를 올릴 수 있어요.</p></div>
+      <div class="step4"><span class="no">STEP 1</span><div class="si">${IC.up}</div><b>가입하고 자료 올리기</b><p id="step1Txt">가입하면 교과서·필기 사진이나 강의 PDF를 올릴 수 있어요.</p></div>
       <div class="step4"><span class="no">STEP 2</span><div class="si">${IC.split}</div><b>파트 나누기</b><p>자료를 단원별로 자동으로 나눠요. 제목을 고치고 파트마다 문항 수를 정해요.</p></div>
       <div class="step4"><span class="no">STEP 3</span><div class="si">${IC.sliders}</div><b>문제 설정</b><p>13가지 유형과 난이도, 내신·수능 같은 출제 스타일을 골라요.</p></div>
       <div class="step4"><span class="no">STEP 4</span><div class="si">${IC.doc}</div><b>확인하고 PDF로</b><p>문제를 한 개씩 고치거나 다시 만들고, 해설까지 담긴 PDF로 저장해요.</p></div>
@@ -589,13 +761,28 @@ function viewUpload() {
   <section class="sec"><div class="sec-head"><span class="k">QUESTION TYPES</span><h3>원하는 유형을 섞어서 만들 수 있어요</h3></div>
     <div class="typecloud">${TYPES.map(t => `<span>${esc(t.label)}</span>`).join('')}</div></section>
 
+
   <section class="sec"><div class="free">
-    <div><h4>회원제로 운영돼요</h4><p>가입 신청 후 관리자 승인이 나면 바로 문제지를 만들 수 있어요. 따로 준비할 건 없어요.</p><p class="by">만든 사람 · <b>${CREATOR}</b></p></div>
-    ${ME ? '' : `<button class="btn" id="btnFreeKey">가입 신청하기</button>`}
+    <div class="fr-main">
+      <span class="k">GET STARTED</span>
+      <h4>가입하고 바로 시작해요</h4>
+      <p id="freeTxt">가입하면 체험 문항을 드려요. 문항을 다 쓰면 관리자에게 문의해 주세요.</p>
+      <div class="fr-chips"><span id="frTrial">체험 문항 제공</span><span>1문항 = 문제 1개</span><span>자료 분석 무료</span></div>
+    </div>
+    <div class="fr-side">
+      ${ME ? `<button class="btn" id="btnFreeKey">${ME.status === 'approved' ? '내 문항 보기' : '내 계정 보기'}</button>` : `<button class="btn" id="btnFreeKey">가입하기</button>`}
+    </div>
   </div></section>`;
-  const fk = $('#btnFreeKey'); if (fk) fk.onclick = () => { renderPanel('signup'); $('#upPanel').scrollIntoView({ behavior: 'smooth', block: 'center' }); };
+  const fk = $('#btnFreeKey'); if (fk) fk.onclick = () => { if (ME) return ME.status === 'approved' ? openShop() : openAccount(); renderPanel('signup'); $('#upPanel').scrollIntoView({ behavior: 'smooth', block: 'center' }); };
   renderPanel();
   loadRecent();
+  loadPricing();
+}
+async function loadPricing() {
+  const c = await loadPublicConfig(); if (!c) return;
+  const ft = $('#freeTxt'); if (ft) ft.textContent = `가입하면 ${c.trial ? `체험 ${c.trial}문항을 드려요.` : '이용할 수 있어요.'} 문항을 다 쓰면 관리자에게 문의해 주세요.`;
+  const ftr = $('#frTrial'); if (ftr) ftr.textContent = c.trial ? `체험 ${c.trial}문항` : '체험 문항 없음';
+  const fa = $('#footAsk'); if (fa) fa.innerHTML = c.contact ? ` · 궁금한 점은 ${isUrl(c.contact) ? `<a href="${esc(c.contact)}" target="_blank" rel="noopener">${/kakao/i.test(c.contact) ? '카카오톡 채널' : '문의하기'}</a>로 문의해 주세요` : `${esc(c.contact)}로 문의해 주세요`}` : '';
 }
 /* 홈 오른쪽 패널: 로그인 상태에 따라 다르게 */
 function renderPanel(mode) {
@@ -607,11 +794,11 @@ function renderPanel(mode) {
   if (!AUTH_READY) { P.innerHTML = `<div style="text-align:center;padding:40px 0"><div class="spin" style="margin-bottom:12px"></div><span class="note" style="background:none">계정 확인 중…</span></div>`; return; }
   if (!ME) return renderAuth(P, mode || 'login');
   if (ME.status !== 'approved') {
-    const msg = { pending: ['승인 대기 중이에요', '관리자가 가입을 승인하면 바로 문제를 만들 수 있어요. 승인된 뒤 아래 버튼을 눌러 주세요.'], rejected: ['가입이 승인되지 않았어요', '자세한 내용은 관리자에게 문의해 주세요.'] }[ME.status] || ['이용할 수 없는 계정이에요', ''];
+    const msg = { pending: ['가입 확인 중이에요', `확인이 끝나면 ${PUBCFG && PUBCFG.trial ? `체험 ${PUBCFG.trial}문항을 받고 ` : ''}바로 문제를 만들 수 있어요. 잠시 뒤 아래 버튼을 눌러 주세요.`], rejected: ['이용할 수 없는 계정이에요', '지금은 이 계정으로 문제를 만들 수 없어요.'] }[ME.status] || ['이용할 수 없는 계정이에요', ''];
     P.innerHTML = `<div class="waitbox"><div class="wi">${ME.status === 'pending' ? '⏳' : '🔒'}</div><b>${msg[0]}</b><p>${msg[1]}</p>
       <div class="who">${esc(ME.name)} <span>@${esc(ME.username)}</span></div>
-      <div class="row" style="justify-content:center;margin-top:14px">${ME.status === 'pending' ? '<button class="btn pri" id="btnRecheck">승인 확인하기</button>' : ''}<button class="btn" id="btnLogout2">로그아웃</button></div></div>`;
-    const rc = $('#btnRecheck'); if (rc) rc.onclick = async () => { rc.disabled = true; await refreshMe(); render(); toast(ME && ME.status === 'approved' ? '승인됐어요! 이제 문제를 만들 수 있어요' : '아직 승인 전이에요'); };
+      <div class="row" style="justify-content:center;margin-top:14px">${ME.status === 'pending' ? '<button class="btn pri" id="btnRecheck">다시 확인하기</button>' : ''}<button class="btn" id="btnLogout2">로그아웃</button></div></div>`;
+    const rc = $('#btnRecheck'); if (rc) rc.onclick = async () => { rc.disabled = true; await refreshMe(); render(); toast(ME && ME.status === 'approved' ? '이제 문제를 만들 수 있어요!' : '아직 확인 중이에요'); };
     $('#btnLogout2').onclick = logout;
     return;
   }
@@ -769,7 +956,7 @@ function apiHeaders() {
 }
 const NET_MSG = () => IN_FRAME ? '미리보기 화면에서는 서버 연결이 막혀 있어요. 사이트 주소를 Safari·Chrome에서 열어 주세요.' : '서버에 연결할 수 없어요. 인터넷 연결을 확인해 주세요.';
 function apiErr(code, msg, status) {
-  const fatal = ['QM_AUTH', 'QM_NOT_APPROVED', 'QM_BLOCKED', 'QM_LIMIT', 'QM_CONFIG', 'QM_FORBIDDEN', 'QM_FILE'].includes(code);
+  const fatal = ['QM_AUTH', 'QM_NOT_APPROVED', 'QM_BLOCKED', 'QM_LIMIT', 'QM_CONFIG', 'QM_FORBIDDEN', 'QM_FILE', 'QM_NO_BALANCE'].includes(code);
   const e = fatal ? new FatalError(msg) : new Error(msg);
   e.code = code; e.status = status;
   if (code === 'QM_AUTH' || code === 'QM_BLOCKED') setSession('', null);
@@ -813,10 +1000,10 @@ function renderAuth(P, mode) {
       <label class="lb" for="aPw">비밀번호</label>
       <input type="password" id="aPw" autocomplete="${su ? 'new-password' : 'current-password'}" placeholder="${su ? '8자 이상' : '비밀번호'}" required>
       ${su ? `<label class="lb" for="aPw2">비밀번호 확인</label><input type="password" id="aPw2" autocomplete="new-password" required>
-      <label class="agree"><input type="checkbox" id="aAgree"> <span><b>[필수] 개인정보 수집·이용 동의</b><br>아이디·이름, 접속 IP, 올린 자료, 만든 문제와 저장한 PDF가 서비스 운영과 부정 사용 방지를 위해 저장돼요. 탈퇴를 원하면 관리자에게 요청해 주세요.</span></label>` : ''}
+      <label class="agree"><input type="checkbox" id="aAgree"> <span><b>[필수] 개인정보 수집·이용 동의</b><br>아이디·이름, 접속 IP, 올린 자료, 만든 문제와 저장한 PDF, 문항 사용 내역이 서비스 운영과 부정 사용 방지를 위해 저장돼요. 탈퇴를 원하면 관리자에게 요청해 주세요.</span></label>` : ''}
       <div class="err" id="aErr" style="min-height:20px;margin-top:10px"></div>
       <button class="btn acc go" type="submit" id="aGo">${su ? '가입 신청하기' : '로그인'}</button>
-      <p class="note" style="margin-top:12px;background:none;padding:0;text-align:center">${su ? '가입 후 관리자 승인이 나면 이용할 수 있어요.' : '처음이신가요? 위의 <b>회원가입</b>을 눌러주세요.'}</p>
+      <p class="note" style="margin-top:12px;background:none;padding:0;text-align:center">${su ? (PUBCFG && PUBCFG.require_approval === false ? `가입하면 바로 이용할 수 있어요${PUBCFG.trial ? ` (체험 ${PUBCFG.trial}문항)` : ''}.` : '가입 신청 후 확인이 끝나면 이용할 수 있어요.') : '처음이신가요? 위의 <b>회원가입</b>을 눌러주세요.'}</p>
     </form>`;
   $$('.authtabs button', P).forEach(b => b.onclick = () => renderAuth(P, b.dataset.m));
   $('#authF', P).onsubmit = async e => {
@@ -835,7 +1022,7 @@ function renderAuth(P, mode) {
       if (su) await api('signup', { username: id, password: pw, name: $('#aName', P).value.trim(), agree: true });
       const r = await api('login', { username: id, password: pw });
       setSession(r.token, r.user); AUTH_READY = true;
-      if (su) toast(r.user.status === 'approved' ? '관리자 계정으로 가입됐어요' : '가입 신청이 접수됐어요. 승인을 기다려 주세요', 3500);
+      if (su) toast(r.user.role === 'admin' ? '관리자 계정으로 가입됐어요' : r.user.status === 'approved' ? `가입됐어요!${r.user.balance ? ` 체험 ${r.user.balance}문항을 드렸어요` : ''}` : '가입 신청이 접수됐어요. 확인이 끝나면 이용할 수 있어요', 3500);
       await refreshMe(); render();
       const P2 = $('#upPanel'); if (P2) P2.scrollIntoView({ block: 'start' });
     } catch (x) { er.textContent = x.message; go.disabled = false; go.textContent = su ? '가입 신청하기' : '로그인'; }
@@ -850,6 +1037,7 @@ function renderNav() {
   const ic = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>';
   N.innerHTML = `<button class="nl hide-s" id="btnHow">사용법</button>` + (!ME ? (CONFIGURED ? `<button class="nl set" id="btnLogin">${ic}<span>로그인</span></button>` : '') :
     `${ME.status === 'approved' ? '<button class="nl" id="btnHist">내 문제지</button>' : ''}
+     ${ME.status === 'approved' && ME.role !== 'admin' ? `<button class="nl bal ${(+ME.balance || 0) < 10 ? 'low' : ''}" id="btnBal" title="내 문항">문항 <b>${(+ME.balance || 0).toLocaleString()}</b></button>` : ''}
      ${ME.role === 'admin' ? `<button class="nl adm" id="btnAdmin">관리자${ME.pending ? `<i class="cnt">${ME.pending}</i>` : ''}</button>` : ''}
      <button class="nl set" id="btnAcct" aria-label="내 계정">${ic}<span class="hide-s">${esc(ME.name)}</span></button>`);
   const on = (id, fn) => { const b = $('#' + id); if (b) b.onclick = fn; };
@@ -858,11 +1046,14 @@ function renderNav() {
   on('btnHist', openHistory);
   on('btnAdmin', () => { S.step = 'admin'; render(); window.scrollTo(0, 0); });
   on('btnAcct', openAccount);
+  on('btnBal', openShop);
 }
 function openAccount() {
-  const st = { approved: '이용 중', pending: '승인 대기', rejected: '승인 거절', blocked: '정지' }[ME.status] || ME.status;
+  const st = { approved: '이용 중', pending: '확인 중', rejected: '이용 불가', blocked: '정지' }[ME.status] || ME.status;
   const m = modal(`<h3>내 계정</h3>
-    <div class="acct"><div><span>이름</span><b>${esc(ME.name)}</b></div><div><span>아이디</span><b>${esc(ME.username)}</b></div><div><span>상태</span><b>${esc(st)}${ME.role === 'admin' ? ' · 관리자' : ''}</b></div></div>
+    <div class="acct"><div><span>이름</span><b>${esc(ME.name)}</b></div><div><span>아이디</span><b>${esc(ME.username)}</b></div><div><span>상태</span><b>${esc(st)}${ME.role === 'admin' ? ' · 관리자' : ''}</b></div><div><span>남은 문항</span><b>${ME.role === 'admin' ? '무제한' : (+ME.balance || 0).toLocaleString() + '개'}</b></div></div>
+    ${ME.status === 'approved' ? '<button class="btn acc" id="aShop" style="width:100%;margin-top:10px">남은 문항 · 사용 내역</button>' : ''}
+    ${contactLink() ? `<div style="margin-top:8px">${contactLink(null, '궁금한 점 문의하기 (카카오톡 채널)')}</div>` : ''}
     <details style="margin-top:14px"><summary style="cursor:pointer;font-weight:700">비밀번호 바꾸기</summary>
       <label class="lb">현재 비밀번호</label><input type="password" id="pOld" autocomplete="current-password">
       <label class="lb">새 비밀번호 (8자 이상)</label><input type="password" id="pNew" autocomplete="new-password">
@@ -871,6 +1062,7 @@ function openAccount() {
     </details>
     <div class="row" style="margin-top:18px"><button class="btn" data-close style="flex:1">닫기</button><button class="btn" id="aOut" style="flex:1;color:var(--bad)">로그아웃</button></div>`);
   $('#aOut', m).onclick = () => { m.remove(); logout(); };
+  const sh = $('#aShop', m); if (sh) sh.onclick = () => { m.remove(); openShop(); };
   $('#pGo', m).onclick = async () => {
     const er = $('#pErr', m);
     try { await api('changePassword', { old: $('#pOld', m).value, new: $('#pNew', m).value }); m.remove(); toast('비밀번호를 바꿨어요'); }
@@ -912,9 +1104,10 @@ async function putFile(u, { bytes, mime }, signal) {
 
 /* =============== 문제 생성 (서버 경유) =============== */
 async function serverGen(kind, prompt, schema, temperature, opt = {}) {
+  // 응답 형식(schema)은 서버가 정해요. count = 이번에 만들 문항 수 (차감 기준)
   if (S.files.some(f => f.status === 'ok' && !f.matId)) await uploadMaterials(opt.signal);
   else await ensureSheet();
-  const body = JSON.stringify({ action: 'gen', sheetId: S.sheetId, materialIds: S.materialIds, kind, prompt, schema, temperature });
+  const body = JSON.stringify({ action: 'gen', sheetId: S.sheetId, materialIds: S.materialIds, kind, prompt, temperature, count: opt.count || 0 });
   for (let attempt = 1; attempt <= 5; attempt++) {
     let res, t0 = Date.now();
     try {
@@ -979,7 +1172,7 @@ async function readSSE(res, opt) {
       if (done) break;
       buf += dec.decode(value, { stream: true });
       let k; while ((k = buf.indexOf('\n')) >= 0) { handle(buf.slice(0, k).replace(/\r$/, '')); buf = buf.slice(k + 1); }
-      if (text) setLoadingDetail(`${opt.detail ? opt.detail + ' · ' : ''}작성 중… ${text.length.toLocaleString()}자`);
+      if (text) { setLoadingDetail(`${opt.detail ? opt.detail + ' · ' : ''}작성 중… ${text.length.toLocaleString()}자`); if (opt.onText) opt.onText(text); }
     }
     handle(buf.trim());
   } catch (e) {
@@ -1035,7 +1228,8 @@ const PARTS_SCHEMA = {
 };
 async function analyze() {
   if (!ME || ME.status !== 'approved') { toast('로그인 후 이용할 수 있어요'); return; }
-  const ctl = showLoading('자료를 읽고 파트를 나누는 중이에요', '사진·PDF 분량에 따라 10초~1분 정도 걸려요');
+  const ctl = showLoading('자료를 읽고 파트를 나누는 중이에요', '', true, { progress: true, note: '자료 분량에 따라 걸리는 시간이 달라요. 보통 10초~1분, 사진·PDF가 많거나 붐비는 시간에는 더 걸릴 수 있어요.' });
+  { const L = loadEl; L._iv = setInterval(() => { const el = Date.now() - L._t0; setProgress(0.92 * (1 - Math.exp(-el / 22000)), `경과 ${mmss(el)}`); }, 500); }
   try {
     const prompt = `첨부한 학습 자료를 분석해서, 시험 문제 출제를 위한 '파트(단원)'로 나눠줘.
 - subject: 과목/주제명 (예: "고등 생명과학Ⅰ - 세포 분열")
@@ -1062,6 +1256,7 @@ async function analyze() {
 }
 function handleErr(e) {
   if (e && e.name === 'AbortError') { toast('취소했어요'); return; }
+  if (e && e.code === 'QM_NO_BALANCE') return alertBox('문항이 부족해요', esc(e.message) + (contactLink() ? `<div style="margin-top:10px">${contactLink()}</div>` : ''), '내 문항 보기', openShop);
   const auth = e && (e.code === 'QM_AUTH' || e.code === 'QM_BLOCKED');
   alertBox('문제가 생겼어요', e && e.html ? e.message : esc(e && e.message || String(e)), auth ? '다시 로그인' : '', () => { S = freshState(); render(); });
   if (auth) renderNav();
@@ -1219,8 +1414,12 @@ function viewSettings() {
   $('#nameChk').onchange = e => st.showName = e.target.checked;
   $('#extraIn').oninput = e => st.extra = e.target.value;
   renderTypeCnt();
-  nav(`<button class="btn back" id="bBack">←</button><button class="btn acc" id="bGen">문제 만들기 (${totalCount()}문항)</button>`);
+  const need = totalCount(), bal = +((ME && ME.balance) || 0), short = !isAdmin() && bal < need;
+  $('#view').insertAdjacentHTML('afterbegin', `<div class="costbar ${short ? 'short' : ''}">${isAdmin() ? '관리자 계정은 문항이 차감되지 않아요.' :
+    `이번 문제지 <b>${need}문항</b> 차감 · 남은 문항 <b>${bal.toLocaleString()}개</b>${short ? ` <br><b>${need - bal}문항이 부족해요.</b> 문항 수를 줄이거나 관리자에게 문의해 주세요.${contactLink() ? `<div style="margin-top:8px">${contactLink()}</div>` : ''}` : ''}`}</div>`);
+  nav(`<button class="btn back" id="bBack">←</button>${short ? `<button class="btn acc" id="bCharge">문항 ${need - bal}개 부족 · 문의 안내</button>` : `<button class="btn acc" id="bGen">문제 만들기 (${need}문항${isAdmin() ? '' : ' 차감'})</button>`}`);
   $('#bBack').onclick = () => go(2);
+  if (short) { $('#bCharge').onclick = () => alertBox('문항이 부족해요', `이번 문제지는 <b>${need}문항</b>이 필요하고, 남은 문항은 <b>${bal}개</b>예요.<br>파트 확인 단계에서 문항 수를 줄이거나, ` + askAdminText(), '내 문항 보기', openShop); return; }
   $('#bGen').onclick = () => {
     const al = typeAlloc(), sum = Object.values(al).reduce((a, b) => a + b, 0);
     if (st.typeMode === 'manual' && sum !== totalCount()) return toast(`유형별 문항 수 합(${sum})이 총 문항 수(${totalCount()})와 같아야 해요`);
@@ -1309,7 +1508,7 @@ ${Object.entries(counts).map(([t, c]) => `- ${TYPE[t].label} (type="${t}") ${c}�
 - 난이도: ${diff}
 - 해설: ${st.explain === 'detail' ? '자세히. 정답 근거를 자료 내용으로 설명하고, 객관식은 주요 오답이 왜 틀렸는지도 설명.' : '핵심만 1~2문장.'}
 - concept: 각 문제가 확인하는 핵심 개념 (짧게)
-${avoid.length ? `\n[이미 출제된 문제 — 같은 내용·같은 질문 반복 금지]\n${avoid.slice(-40).map(s => '- ' + s).join('\n')}\n` : ''}${st.extra.trim() ? `\n[사용자 추가 요청]\n${st.extra.trim()}\n` : ''}${extraLine ? `\n${extraLine}\n` : ''}
+${avoid === null ? '{{AVOID}}' : avoid.length ? `\n[이미 출제된 문제 — 같은 내용·같은 질문 반복 금지]\n${avoid.slice(-40).map(s => '- ' + s).join('\n')}\n` : ''}${st.extra.trim() ? `\n[사용자 추가 요청]\n${st.extra.trim()}\n` : ''}${extraLine ? `\n${extraLine}\n` : ''}
 [규칙]
 1. 반드시 첨부 자료 속 "${part.title}" 부분의 내용에 근거해 출제한다. 자료에 없는 사실을 지어내지 않는다(자료·사례형 제시문은 자료 개념을 적용한 새 상황으로 만들어도 됨). 첨부 자료가 없으면 위 내용과 핵심 개념을 바탕으로 정확한 지식으로 출제한다.
 2. 정답이 명확하게 하나로 정해지도록(복수 정답형 제외) 만들고, 오답 보기는 그럴듯하게 만든다.
@@ -1332,48 +1531,193 @@ function cleanQ(q, partId) {
     concept: String(q.concept || '').trim(), difficulty: q.difficulty || ''
   };
   if (CHOICE_TYPES.includes(out.type) && out.choices.length < 2) out.type = 'short';
+  if (out.type === 'short') toHangulList(out);
   return out;
 }
-let genCtl = null;
+/* 단답형: 본문에 1. 2. / (1) (2) / ① ② 로 나열된 항목을 <보기> ㄱ·ㄴ·ㄷ으로 옮기고, 정답의 번호도 ㄱ·ㄴ·ㄷ으로 맞춰요 */
+const LIST_MARK = /^\s*(?:\(\d{1,2}\)|\d{1,2}\s*[.)](?!\d)|[①-⑩]|[ㄱ-ㅎ]\s*[.)]|\([가-아]\)|[가-아]\s*[.)])\s*/;
+const KOR_ORD = '가나다라마바사아';
+/* 본문 속 1. 2. / 1) 2) / (1) (2) / ① ② / (가) (나) / 가. 나. / ㄱ. ㄴ. 목록을 찾아요 (줄바꿈이 없어도 OK) */
+function liftList(text) {
+  const t = String(text || '');
+  const RE = /(^|\s)(?:\((\d{1,2})\)|(\d{1,2})\s*[.)](?!\d)|([①-⑩])|\(([가-아])\)|([가-아])\s*[.)]|([ㄱ-ㅇ])\s*[.)])\s*/g;
+  const ms = [];
+  for (const m of t.matchAll(RE)) {
+    const [all, pre, p1, p2, c, kp, k2, h] = m;
+    let style, n;
+    if (p1) { style = 'p'; n = +p1; } else if (p2) { style = 'd'; n = +p2; } else if (c) { style = 'c'; n = c.charCodeAt(0) - 0x245F; }
+    else if (kp) { style = 'kp'; n = KOR_ORD.indexOf(kp) + 1; } else if (k2) { style = 'k'; n = KOR_ORD.indexOf(k2) + 1; } else { style = 'h'; n = HANGUL.indexOf(h) + 1; }
+    if (n < 1) continue;
+    ms.push({ style, n, start: m.index + pre.length, end: m.index + all.length });
+  }
+  // 1부터 차례로 이어지는 가장 긴 목록
+  let best = null;
+  for (let i = 0; i < ms.length; i++) {
+    if (ms[i].n !== 1) continue;
+    const run = [ms[i]];
+    for (let j = i + 1; j < ms.length; j++) if (ms[j].style === ms[i].style && ms[j].n === run[run.length - 1].n + 1) run.push(ms[j]);
+    if (run.length >= 2 && (!best || run.length > best.length)) best = run;
+  }
+  if (!best) return null;
+  const items = []; let tail = '';
+  best.forEach((m, i) => {
+    let body = t.slice(m.end, i + 1 < best.length ? best[i + 1].start : t.length);
+    if (i === best.length - 1) { const k = body.indexOf('\n'); if (k >= 0) { tail = body.slice(k + 1).trim(); body = body.slice(0, k); } }
+    items.push(body.replace(/\s*\n\s*/g, ' ').trim());
+  });
+  if (items.some(x => !x)) return null;
+  return { head: t.slice(0, best[0].start).trim(), items, tail, style: best[0].style };
+}
+/* 정답·해설 속 번호 표시를 ㄱ·ㄴ·ㄷ으로 (조사도 맞춰요: 1번는 → ㄱ은) */
+function refsToHangul(text, n, asAnswer) {
+  const toH = d => (d >= 1 && d <= n) ? HANGUL[d - 1] : null;
+  const fixJ = (h, rest) => h + (rest === '는' ? '은' : rest === '가' ? '이' : rest === '를' ? '을' : rest === '와' ? '과' : rest);
+  let s = String(text || '');
+  // 줄 머리 / 답 구분용 표시: (1) 1. 1) ① (가) 가.
+  s = s.replace(/(^|[\s,;/·])(?:\((\d{1,2})\)|(\d{1,2})\s*[.):](?!\d)|([①-⑩])|\(([가-아])\)|([가-아])\s*[.):](?=\s))(?![은는이가을를의에과와도])\s*/g, (m, pre, a, b, c, d, e) => {
+    const k = a ? +a : b ? +b : c ? c.charCodeAt(0) - 0x245F : KOR_ORD.indexOf(d || e) + 1;
+    if (b && !asAnswer && !/^$|\n/.test(pre)) return m; // 해설 문장 속 "3." 같은 숫자는 그대로
+    const h = toH(k); return h ? `${pre}${h}${asAnswer ? ': ' : '. '}` : m;
+  });
+  // 문장 속 참조: ①은, (1)의, 1번은
+  s = s.replace(/(?:([①-⑩])|\((\d{1,2})\)|(?<![\d.])(\d{1,2})번)([은는이가을를의에과와도]?)/g, (m, c, a, b, j) => {
+    const h = toH(c ? c.charCodeAt(0) - 0x245F : +(a || b)); return h ? fixJ(h, j) : m;
+  });
+  return asAnswer ? s.replace(/:\s+/g, ': ').trim().replace(/([^,;/\s])\s+(?=[ㄱ-ㅇ]: )/g, '$1, ') : s;
+}
+function toHangulList(q) {
+  if (!q.statements.length) {
+    for (const k of ['question', 'passage']) {
+      const L = liftList(q[k]); if (!L || L.items.length < 2 || L.items.length > HANGUL.length) continue;
+      q.statements = L.items; q[k] = [L.head, L.tail].filter(Boolean).join('\n'); break;
+    }
+  }
+  if (q.statements.length >= 2) {
+    const n = q.statements.length;
+    q.answer = refsToHangul(q.answer, n, true);
+    q.explanation = refsToHangul(q.explanation, n, false);
+    const toH = d => (d >= 1 && d <= n) ? HANGUL[d - 1] : null;
+    q.question = q.question.replace(/(\d)\s*[~∼-]\s*(\d)\s*(?=의|에|번|항목|각)/g, (m, x, y) => (toH(+x) && toH(+y)) ? `${toH(+x)}~${toH(+y)}` : m);
+  }
+}
+/* 문제 만들기: 서버가 백그라운드로 끝까지 만들어요 (앱을 닫거나 화면을 꺼도 계속됨) */
+const CHUNK = 6;
 async function generateAll(resume) {
+  if (!S.sheetId) return toast('문제지 정보가 없어요. 처음부터 다시 해주세요.');
   const plan = buildPlan();
   if (!resume) { S.qByPart = {}; S.genErrors = {}; }
   S.pages = null;
-  const todo = S.parts.filter(p => p.count > 0 && !(resume && (S.qByPart[p.id] || []).length));
-  if (!todo.length) { go(4); return; }
-  const ctl = showLoading('문제를 만드는 중이에요', '', true);
-  genCtl = ctl;
-  let done = 0, fatal = null;
-  const totalN = todo.reduce((a, p) => a + p.count, 0);
-  for (const part of todo) {
-    if (ctl.signal.aborted) break;
-    const made = [];
-    try {
-      const chunks = splitChunks(plan[part.id], 8);
-      for (const ch of chunks) {
-        const detail = `PART ${S.parts.indexOf(part) + 1} · ${part.title}`;
-        setLoadingDetail(detail); ctl.detail = detail;
-        const avoid = allQuestions().concat(made).map(q => q.question.slice(0, 70));
-        const r = await serverGen('questions', genPrompt(part, ch, avoid), Q_SCHEMA, 0.8, { signal: ctl.signal, detail });
-        const qs = (r.questions || []).map(q => cleanQ(q, part.id)).filter(q => q.question);
-        if (!qs.length) throw new Error('문제가 만들어지지 않았어요');
-        made.push(...qs);
-        S.qByPart[part.id] = made.slice();
-        done += Object.values(ch).reduce((a, b) => a + b, 0);
-        setProgress(done / totalN);
-      }
-      delete S.genErrors[part.id];
-    } catch (e) {
-      if (e.name === 'AbortError') break;
-      if (made.length) S.qByPart[part.id] = made; else delete S.qByPart[part.id];
-      S.genErrors[part.id] = e.message;
-      if (e instanceof FatalError) { fatal = e; break; }
-    }
+  const tasks = [];
+  for (const part of S.parts) {
+    if (!(part.count > 0)) continue;
+    const have = (S.qByPart[part.id] || []).length;
+    if (have >= part.count) { delete S.genErrors[part.id]; continue; }
+    // 이미 있는 만큼은 빼고, 모자란 문항만 만들어요
+    const seq = []; Object.entries(plan[part.id] || {}).forEach(([t, n]) => { for (let i = 0; i < n; i++) seq.push(t); });
+    const need = {}; seq.slice(have).forEach(t => need[t] = (need[t] || 0) + 1);
+    for (const ch of splitChunks(need, CHUNK)) tasks.push({ part: part.id, count: Object.values(ch).reduce((x, y) => x + y, 0), prompt: genPrompt(part, ch, null) });
+    delete S.genErrors[part.id];
   }
-  hideLoading(); genCtl = null;
-  if (allQuestions().length) { saveSheet(); go(4); }
-  if (fatal) handleErr(fatal);
-  else if (!allQuestions().length && Object.keys(S.genErrors).length) handleErr(new Error(Object.values(S.genErrors)[0]));
+  if (!tasks.length) { go(4); return; }
+  const totalN = tasks.reduce((x, t) => x + t.count, 0);
+  clearTimeout(saveTimer);
+  try {
+    await saveSheet(true);
+    const job = await api('jobStart', { sheetId: S.sheetId, materialIds: S.materialIds, tasks, temperature: 0.8,
+                                        avoid: allQuestions().map(q => q.question.slice(0, 70)) });
+    watchJob(job.id, { total: totalN });
+  } catch (e) { handleErr(e); }
+}
+const JOB_LS = 'qm_job';
+let jobWatch = null;
+/* 진행 상황 보기 — 화면을 나가도 서버는 계속 만들어요 */
+function watchJob(jobId, o = {}) {
+  stopJobWatch();
+  const sheetId = S.sheetId;
+  try { localStorage.setItem(JOB_LS, JSON.stringify({ id: jobId, sheetId })); } catch (e) {}
+  const total = o.total || 0;
+  const ctl = showLoading('문제를 만드는 중이에요', '', true, { progress: true, tip: false,
+    note: `${total ? `<b>${total}문항</b>을 만들어요 · 예상 ${estText(total)}<br>` : ''}문제 개수에 따라 만드는 시간이 달라질 수 있어요.
+      <div class="leaveok"><b>이제 나가도 괜찮아요.</b> 다른 앱으로 가거나 화면을 꺼도 서버에서 계속 만들어요. 다 되면 <b>내 문제지</b>에 저장돼요.</div>`,
+    cancelLabel: '만들기 멈추기', extra: '<button class="btn sm pri" id="ldLeave" style="margin-top:10px">나가기 (계속 만들어져요)</button>' });
+  const W = jobWatch = { id: jobId, sheetId, t0: Date.now(), chunkAt: Date.now(), lastIdx: -1, last: null, timer: null, alive: true, fails: 0 };
+  const tick = () => {
+    const j = W.last; if (!j || !loadEl) return;
+    const tot = j.total || total || 1, base = j.done_count || 0;
+    const el = (Date.now() - W.chunkAt) / 1000, n = j.current_count || 0;
+    const guess = j.status === 'running' && n ? n * Math.min(0.9, el / (8 + 3.5 * n)) : 0;
+    setProgress((base + guess) / tot, `${j.produced} / ${tot}문항 · 경과 ${mmss(Date.now() - W.t0)}`);
+    const part = j.current_part && S.parts.find(p => p.id === j.current_part);
+    if (part) setLoadingDetail(`PART ${S.parts.indexOf(part) + 1} · ${part.title}`);
+  };
+  const poll = async () => {
+    if (!W.alive) return;
+    clearTimeout(W.timer);
+    try {
+      const j = await api('jobGet', { jobId });
+      if (!W.alive) return;
+      W.fails = 0;
+      if (j.next_idx !== W.lastIdx) { W.lastIdx = j.next_idx; W.chunkAt = Date.now(); }
+      W.last = j; tick();
+      if (j.status !== 'running') { finishJob(j); return; }
+    } catch (e) {
+      if (!W.alive) return;
+      if (['QM_AUTH', 'QM_NOTFOUND'].includes(e.code)) { stopJobWatch(); hideLoading(); return handleErr(e); }
+      if (++W.fails >= 2) setLoadingDetail('연결을 다시 확인하는 중… (서버에서는 계속 만들고 있어요)');
+    }
+    W.timer = setTimeout(poll, document.hidden ? 8000 : 2500);
+  };
+  W.onVis = () => { if (!document.hidden && W.alive) poll(); };
+  document.addEventListener('visibilitychange', W.onVis);
+  if (loadEl) loadEl._iv = setInterval(tick, 500);
+  setProgress(0, '준비 중…');
+  const c = $('#ldC', loadEl); if (c) c.onclick = async () => {
+    if (!confirm('문제 만들기를 멈출까요? 이미 만든 문제는 남고, 만든 만큼만 문항이 차감돼요.')) return;
+    try { const j = await api('jobCancel', { jobId }); finishJob(j); } catch (e) { toast(e.message); }
+  };
+  const lv = $('#ldLeave', loadEl); if (lv) lv.onclick = () => {
+    stopJobWatch(); hideLoading(); S = freshState(); render(); window.scrollTo(0, 0);
+    alertBox('서버에서 계속 만들고 있어요', '앱을 닫거나 화면을 꺼도 괜찮아요. 다 되면 위쪽 <b>내 문제지</b>에서 열어 볼 수 있어요.');
+  };
+  poll();
+}
+function stopJobWatch() {
+  if (!jobWatch) return;
+  jobWatch.alive = false; clearTimeout(jobWatch.timer);
+  document.removeEventListener('visibilitychange', jobWatch.onVis);
+  jobWatch = null;
+}
+async function finishJob(j) {
+  const W = jobWatch; stopJobWatch();
+  try { localStorage.removeItem(JOB_LS); } catch (e) {}
+  const prev = S, sheetId = (W && W.sheetId) || j.sheet_id;
+  let r;
+  try { r = await api('mySheet', { sheetId }); } catch (e) { hideLoading(); return handleErr(e); }
+  hideLoading();
+  const d = sanitizeSheet(r.data || {});
+  const errs = {};
+  Object.entries(j.errors || {}).forEach(([pid, msg]) => { const p = d.parts.find(x => x.id === pid); if (p && (d.qByPart[pid] || []).length < p.count) errs[pid] = String(msg); });
+  if (j.status === 'cancelled' && !Object.values(d.qByPart).some(l => l.length)) { applySheet(r.data || {}, sheetId, false); S.genErrors = {}; S.step = 3; render(); toast('만들기를 멈췄어요. 문항은 차감되지 않았어요'); refreshBalance(); return; }
+  applySheet(r.data || {}, sheetId, false);
+  S.genErrors = errs;
+  if (allQuestions().length) { saveSheet(true); viewQuestions(); }
+  else { S.step = 3; render(); }
+  refreshBalance(300);
+  if (j.status === 'failed' && j.fatal) alertBox('문제 만들기가 멈췄어요', esc(j.fatal) + (/문항/.test(j.fatal) ? '<br>' + askAdminText() : ''), '내 문항 보기', openShop);
+  else if (j.status === 'cancelled') toast('만들기를 멈췄어요. 만든 문제는 남겨 뒀어요');
+  else if (!allQuestions().length && Object.keys(errs).length) handleErr(new Error(Object.values(errs)[0]));
+  else if (document.hidden === false) toast('문제지가 완성됐어요');
+}
+/* 다시 들어왔을 때: 만들던 작업이 있으면 이어서 보여줘요 */
+async function resumeJobIfAny() {
+  let saved = null; try { saved = JSON.parse(localStorage.getItem(JOB_LS) || 'null'); } catch (e) {}
+  if (!saved || !saved.id || !ME || ME.status !== 'approved') return;
+  try {
+    const j = await api('jobGet', { jobId: saved.id });
+    if (j.status === 'running') { await openSheet(saved.sheetId, true); watchJob(j.id, { total: j.total }); }
+    else { try { localStorage.removeItem(JOB_LS); } catch (e) {}
+      if (j.status === 'done' || j.produced > 0) { await openSheet(saved.sheetId, true); toast(j.status === 'done' ? '만들어 둔 문제지가 완성됐어요' : '만들어 둔 문제지를 열었어요'); } }
+  } catch (e) { try { localStorage.removeItem(JOB_LS); } catch (x) {} }
 }
 function allQuestions() {
   return S.parts.flatMap(p => S.qByPart[p.id] || []);
@@ -1414,6 +1758,8 @@ function qHTML(q, num, wide) {
     const m = (q.question.match(/[㉠-㉭]/g) || []);
     const uniq = [...new Set(m)];
     h += uniq.length ? uniq.map(c => `<div class="aline lbl"><span>${c}</span><i></i></div>`).join('') : `<div class="aline"></div>`;
+  } else if (q.type === 'short' && q.statements.length >= 2 && (q.answer.match(/(^|[\s,;/])[ㄱ-ㅇ]\s*[:.)]/g) || []).length >= 2) {
+    h += q.statements.map((_, i) => `<div class="aline lbl"><span>${HANGUL[i]}</span><i></i></div>`).join('');
   } else if (['short', 'match'].includes(q.type)) {
     h += `<div class="aline lbl"><span>답:</span><i></i></div>`;
   } else if (q.type === 'order') {
@@ -1451,7 +1797,7 @@ function viewQuestions() {
           <div class="qmeta"><span class="badge">${esc(TYPE[q.type].label)}</span>${q.difficulty ? `<span class="badge d">${esc(q.difficulty)}</span>` : ''}${q.concept ? `<span class="badge d">${esc(q.concept)}</span>` : ''}</div>
           ${qHTML(q, numOf[q.id], false)}
           ${S.showAns ? `<div class="ansv"><b>정답 ${esc(fmtAnswer(q))}</b><br>${fmt(q.explanation)}</div>` : ''}
-          <div class="acts">${S.foreign ? '' : '<button class="btn sm ghost" data-a="regen">↻ 다시 만들기</button>'}<button class="btn sm ghost" data-a="edit">✎ 고치기</button><button class="btn sm ghost" data-a="del">삭제</button></div>
+          <div class="acts">${S.foreign ? '' : `<button class="btn sm ghost" data-a="regen">↻ 다시 만들기${isAdmin() ? '' : ' (1문항)'}</button>`}<button class="btn sm ghost" data-a="edit">✎ 고치기</button><button class="btn sm ghost" data-a="del">삭제</button></div>
         </div>`).join('');
     }).join('')}</div>
   `;
@@ -1475,14 +1821,17 @@ function findQ(id) { for (const p of S.parts) { const l = S.qByPart[p.id] || [];
 function removeQ(id) { const f = findQ(id); if (f) f.l.splice(f.i, 1); }
 async function regenQ(id) {
   const f = findQ(id); if (!f) return;
-  const ctl = showLoading('문제를 새로 만드는 중이에요', `${TYPE[f.q.type].label} · ${f.p.title}`);
+  const ctl = showLoading('문제를 새로 만드는 중이에요', `${TYPE[f.q.type].label} · ${f.p.title}`, true, { progress: true, note: '1문항을 새로 만들어요 · 보통 10~30초<br>문제 길이와 붐비는 정도에 따라 시간이 달라질 수 있어요.' });
+  const t0 = Date.now(); let got = 0;
+  const tick = () => { const el = (Date.now() - t0) / 1000; setProgress(got ? 0.95 : Math.min(0.9, el / 25), `${got ? '거의 다 됐어요' : '작성 중'} · 경과 ${mmss(Date.now() - t0)}`); };
+  if (loadEl) loadEl._iv = setInterval(tick, 500); tick();
   try {
     const avoid = allQuestions().map(q => q.question.slice(0, 70));
-    const r = await serverGen('regen', genPrompt(f.p, { [f.q.type]: 1 }, avoid, `[중요] 기존 문제 "${f.q.question.slice(0, 120)}"를 대체할, 내용이 다른 새 문제 1개만 만들어라.`), Q_SCHEMA, 0.95, { signal: ctl.signal, detail: '새 문제' });
+    const r = await serverGen('regen', genPrompt(f.p, { [f.q.type]: 1 }, avoid, `[중요] 기존 문제 "${f.q.question.slice(0, 120)}"를 대체할, 내용이 다른 새 문제 1개만 만들어라.`), Q_SCHEMA, 0.95, { onText: t => { if (/"answer"\s*:/.test(t)) got = 1; }, signal: ctl.signal, detail: '새 문제', count: 1 });
     const q = (r.questions || []).map(x => cleanQ(x, f.p.id)).find(x => x.question);
     if (!q) throw new Error('새 문제를 만들지 못했어요. 다시 시도해주세요.');
     f.l[f.i] = q; S.pages = null; saveSheet();
-    hideLoading(); viewQuestions(); toast('새 문제로 바꿨어요');
+    hideLoading(); viewQuestions(); toast('새 문제로 바꿨어요 (1문항 차감)'); refreshBalance(900);
   } catch (e) { hideLoading(); handleErr(e); }
 }
 function editQ(id) {
@@ -1504,6 +1853,7 @@ function editQ(id) {
       q[k] = ['statements', 'rightItems', 'choices'].includes(k) ? t.value.split('\n').map(s => s.trim()).filter(Boolean) : t.value.trim();
     });
     q.type = $('#eType', m).value;
+    if (q.type === 'short') toHangulList(q);
     S.pages = null; saveSheet(); m.remove(); viewQuestions(); toast('저장했어요');
   };
 }
@@ -1655,7 +2005,7 @@ async function buildPdfBlob(showProgress) {
   }
   doc.setTitle(S.settings.title || '문제지');
   doc.setAuthor(ME ? ME.username : '');
-  doc.setCreator('문제지메이커 (made by ' + CREATOR + ')');
+  doc.setCreator('문제지메이커');
   const name = (S.settings.title || '문제지').replace(/[\\/:*?"<>|]+/g, '').trim().slice(0, 60) + '.pdf';
   return { blob: new Blob([await doc.save()], { type: 'application/pdf' }), name, pages: pages.length };
 }
@@ -1717,10 +2067,13 @@ const sv = (v, n = 5000) => (typeof v === 'string' ? v : v == null ? '' : String
 const iv = (v, lo, hi, d) => { const n = Math.round(+v); return Number.isFinite(n) ? Math.max(lo, Math.min(hi, n)) : d; };
 function sanitizeQ(q, partId) {
   q = q && typeof q === 'object' ? q : {};
+  if (q.raw) { const id = q.id; q = cleanQ(q, partId); q.id = id; } // 서버가 백그라운드로 만든 문제는 여기서 정리
   const arr = v => Array.isArray(v) ? v.slice(0, 12).map(x => sv(x, 1000)) : [];
-  return { id: SAFE_ID(q.id), partId, type: TYPE[q.type] ? q.type : 'short', question: sv(q.question, 4000), passage: sv(q.passage, 6000),
+  const o = { id: SAFE_ID(q.id), partId, type: TYPE[q.type] ? q.type : 'short', question: sv(q.question, 4000), passage: sv(q.passage, 6000),
            statements: arr(q.statements), rightItems: arr(q.rightItems), choices: arr(q.choices), answer: sv(q.answer, 1000),
            explanation: sv(q.explanation, 6000), concept: sv(q.concept, 200), difficulty: ['쉬움', '보통', '어려움'].includes(q.difficulty) ? q.difficulty : '' };
+  if (o.type === 'short') toHangulList(o); // 예전에 만든 문제지도 ㄱ·ㄴ·ㄷ으로
+  return o;
 }
 function sanitizeSettings(s) {
   s = s && typeof s === 'object' ? s : {};
@@ -1757,17 +2110,22 @@ function applySheet(d, id, foreign) {
                      memo: d.memo || '', sheetId: id, materialIds: d.materialIds || [], foreign: !!foreign, maxStep: 5 });
   go(4);
 }
-async function openSheet(id) {
+async function openSheet(id, quiet) {
   showLoading('문제지를 불러오는 중이에요', '', false);
-  try { const r = await api('mySheet', { sheetId: id }); hideLoading(); applySheet(r.data || {}, id, false); toast('불러왔어요'); }
-  catch (e) { hideLoading(); handleErr(e); }
+  try {
+    const r = await api('mySheet', { sheetId: id }); hideLoading(); applySheet(r.data || {}, id, false);
+    if (quiet) return;
+    const j = await api('jobForSheet', { sheetId: id }).catch(() => null);
+    if (j && j.status === 'running') return watchJob(j.id, { total: j.total });
+    toast('불러왔어요');
+  } catch (e) { hideLoading(); handleErr(e); }
 }
 async function openHistory() {
   const m = modal(`<h3>내 문제지</h3><p class="sub" style="font-size:13px">서버에 저장돼서 어느 기기에서든 볼 수 있어요.</p><div id="hl"><div class="note">불러오는 중…</div></div>
     <button class="btn" data-close style="width:100%;margin-top:10px">닫기</button>`);
   try {
     const list = await api('mySheets');
-    $('#hl', m).innerHTML = list.length ? list.map(x => `<div class="hist" data-id="${x.id}"><div class="m"><b>${esc(x.title || x.subject || '문제지')}</b><span>${new Date(x.updated_at).toLocaleString('ko-KR', { dateStyle: 'medium', timeStyle: 'short' })} · ${x.question_count}문항</span></div><button class="xbtn" title="목록에서 지우기">✕</button></div>`).join('') : '<p class="note">아직 만든 문제지가 없어요.</p>';
+    $('#hl', m).innerHTML = list.length ? list.map(x => `<div class="hist" data-id="${x.id}"><div class="m"><b>${esc(x.title || x.subject || '문제지')}</b><span>${new Date(x.updated_at).toLocaleString('ko-KR', { dateStyle: 'medium', timeStyle: 'short' })} · ${x.job && x.job.status === 'running' ? `<b class="mk">만드는 중 ${x.job.produced}/${x.job.total}</b>` : x.question_count + '문항'}</span></div><button class="xbtn" title="목록에서 지우기">✕</button></div>`).join('') : '<p class="note">아직 만든 문제지가 없어요.</p>';
     $$('.hist', m).forEach(row => {
       const id = row.dataset.id;
       $('.m', row).onclick = () => { m.remove(); openSheet(id); };
@@ -1778,31 +2136,32 @@ async function openHistory() {
 function openHow() {
   modal(`<h3>사용법</h3>
     <ol>
-      <li><b>회원가입</b>을 하고 관리자 승인을 기다려요 (처음 한 번만).</li>
-      <li>교과서·필기 사진이나 PDF를 올리고 <b>분석하기</b>를 눌러요.</li>
+      <li><b>회원가입</b>을 해요.</li>
+      <li>가입하면 체험 문항을 받아요 (1문항 = 문제 1개). 다 쓰면 관리자에게 문의해 주세요.</li>
+      <li>교과서·필기 사진이나 PDF를 올리고 <b>분석하기</b>를 눌러요. 분석은 무료예요.</li>
       <li>자동으로 나눠진 파트를 확인하고 파트별 문항 수를 정해요.</li>
       <li>문제 유형·난이도·스타일을 고르고 <b>문제 만들기</b>를 눌러요.</li>
       <li>문제를 확인·수정한 뒤 <b>PDF 저장</b>을 눌러요.</li>
     </ol>
-    <p class="note"><b>잘 되게 하는 팁</b><br>· 만드는 동안에는 화면을 켜 두고 이 화면에 머물러 주세요. 다른 앱으로 가면 연결이 끊길 수 있어요.<br>· 사진은 글씨가 잘 보이게 밝은 곳에서 정면으로 찍어주세요.<br>· PDF가 크면 '쪽 범위'로 필요한 쪽만 골라주세요.<br>· 폰에서는 브라우저 메뉴의 '홈 화면에 추가'로 앱처럼 쓸 수 있어요.</p>
-    <p class="note" style="margin-top:10px">만든 사람: <b>${CREATOR}</b></p>
+    <p class="note"><b>잘 되게 하는 팁</b><br>· <b>문제를 만드는 동안에는 나가도 괜찮아요.</b> 다른 앱으로 가거나 화면을 꺼도 서버에서 계속 만들고, 다 되면 내 문제지에 저장돼요.<br>· 자료를 읽고 파트를 나누는 동안(보통 1분 안쪽)만 화면에 머물러 주세요.<br>· 사진은 글씨가 잘 보이게 밝은 곳에서 정면으로 찍어주세요.<br>· PDF가 크면 '쪽 범위'로 필요한 쪽만 골라주세요.<br>· 폰에서는 브라우저 메뉴의 '홈 화면에 추가'로 앱처럼 쓸 수 있어요.</p>
+    ${contactLink() ? `<div style="margin-top:12px">${contactLink(null, '궁금한 점은 카카오톡 채널로 문의하기')}</div>` : ''}
     <button class="btn pri" data-close style="width:100%;margin-top:14px">확인</button>`);
 }
 
 /* =============== 관리자 =============== */
-const AD = { tab: 'users', filter: 'all', users: null, userFilter: '', sheets: [], total: 0, seq: 0 };
+const AD = { tab: 'stats', filter: 'all', users: null, userFilter: '', sheets: [], total: 0, seq: 0 };
 const ST_LABEL = { pending: '승인 대기', approved: '승인됨', rejected: '거절됨', blocked: '정지됨' };
 const fmtDT = d => d ? new Date(d).toLocaleString('ko-KR', { year: '2-digit', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : '-';
 function viewAdmin() {
   if (!ME || ME.role !== 'admin') { S.step = 1; return render(); }
   $('#view').innerHTML = `
-    <div class="adm-head"><div><span class="k">ADMIN</span><h2>관리자</h2><p class="sub">회원 승인과 제작 기록(내용·자료·IP)을 확인해요.</p></div>
+    <div class="adm-head"><div><span class="k">ADMIN</span><h2>관리자</h2><p class="sub">통계, 회원, 문항 지급, 제작 기록, 운영 설정을 관리해요.</p></div>
       <button class="btn sm" id="adBack">← 홈으로</button></div>
-    <div class="seg" id="adTabs"><button data-t="users" class="${AD.tab === 'users' ? 'on' : ''}">회원 관리 ${ME.pending ? `<i class="cnt">${ME.pending}</i>` : ''}</button><button data-t="sheets" class="${AD.tab === 'sheets' ? 'on' : ''}">제작 기록</button></div>
+    <div class="seg tabs" id="adTabs"><button data-t="stats" class="${AD.tab === 'stats' ? 'on' : ''}">통계</button><button data-t="users" class="${AD.tab === 'users' ? 'on' : ''}">회원 관리 ${ME.pending ? `<i class="cnt">${ME.pending}</i>` : ''}</button><button data-t="sheets" class="${AD.tab === 'sheets' ? 'on' : ''}">제작 기록</button><button data-t="settings" class="${AD.tab === 'settings' ? 'on' : ''}">설정</button></div>
     <div id="adBody" style="margin-top:16px"><div class="note">불러오는 중…</div></div>`;
   $('#adBack').onclick = () => { S = freshState(); render(); };
   $$('#adTabs button').forEach(b => b.onclick = () => { AD.tab = b.dataset.t; viewAdmin(); });
-  AD.tab === 'users' ? adminUsers() : adminSheets(true);
+  ({ stats: adminStats, users: adminUsers, sheets: () => adminSheets(true), settings: adminSettings })[AD.tab]();
 }
 async function adminUsers() {
   const my = ++AD.seq;
@@ -1823,11 +2182,13 @@ async function adminUsers() {
           <div><span>가입</span>${fmtDT(u.created_at)}</div><div><span>가입 IP</span><code>${esc(u.signup_ip || '-')}</code></div>
           <div><span>최근 접속</span>${fmtDT(u.last_seen_at)}</div><div><span>최근 IP</span><code>${esc(u.last_ip || '-')}</code></div>
           <div><span>문제지</span>${u.sheet_count}개</div><div><span>문제 생성</span>오늘 ${u.gen_today} · 총 ${u.gen_total}회</div>
+          <div><span>남은 문항</span><b>${u.role === 'admin' ? '무제한' : (+u.balance || 0).toLocaleString() + '개'}</b></div>
         </div>
         ${u.role === 'admin' ? '' : `<div class="ua">
           ${u.status !== 'approved' ? `<button class="btn sm acc" data-s="approved">${u.status === 'blocked' ? '정지 해제' : '승인'}</button>` : ''}
           ${u.status === 'pending' ? `<button class="btn sm" data-s="rejected">거절</button>` : ''}
           ${u.status === 'approved' ? `<button class="btn sm" data-s="blocked" style="color:var(--bad)">정지</button>` : ''}
+          <button class="btn sm ghost" data-a="grant">문항 지급·차감</button>
           <button class="btn sm ghost" data-a="sheets">제작 기록</button>
           <button class="btn sm ghost" data-a="pw">비밀번호 초기화</button>
         </div>`}
@@ -1842,6 +2203,7 @@ async function adminUsers() {
       try { await api('adminSetStatus', { userId: u.id, status: s }); toast(`${u.name} 님: ${ST_LABEL[s]}`); adminUsers(); } catch (e) { toast(e.message); b.disabled = false; }
     });
     const sb = $('[data-a="sheets"]', c); if (sb) sb.onclick = () => { AD.tab = 'sheets'; AD.userFilter = u.id; viewAdmin(); };
+    const gb = $('[data-a="grant"]', c); if (gb) gb.onclick = () => adminGrantModal(u, adminUsers);
     const pb = $('[data-a="pw"]', c); if (pb) pb.onclick = () => {
       const m = modal(`<h3>비밀번호 초기화</h3><p class="sub">${esc(u.name)} (@${esc(u.username)}) 님의 새 비밀번호를 정해서 직접 알려주세요.</p>
         <input type="text" id="npw" value="${Math.random().toString(36).slice(2, 6)}${Math.floor(1000 + Math.random() * 9000)}" autocomplete="off">
@@ -1907,7 +2269,219 @@ async function adminSheetDetail(id) {
   const o = $('#adOpen', m); if (o) o.onclick = () => { m.remove(); applySheet(data, d.id, true); };
 }
 
-/* =============== 모달 / 로딩 =============== */
+/* =============== 내 문항 (회원) =============== */
+let PUBCFG = null;
+async function loadPublicConfig() {
+  if (PUBCFG || !CONFIGURED) return PUBCFG;
+  try { PUBCFG = await api('publicConfig'); } catch (e) { PUBCFG = null; }
+  return PUBCFG;
+}
+const won = n => (+n || 0).toLocaleString('ko-KR') + '원';
+const isAdmin = () => !!(ME && ME.role === 'admin');
+function openShop() { S.prevStep = S.step === 'shop' ? S.prevStep : S.step; S.step = 'shop'; render(); window.scrollTo(0, 0); }
+async function refreshBalance(delay) {
+  if (delay) await sleep(delay);
+  try { const m = await api('me'); ME = Object.assign(ME || {}, m); renderNav(); } catch (e) {}
+}
+/* 내 문항: 남은 문항 + 사용 내역 + 문의 안내 */
+async function viewShop() {
+  if (!ME) { S.step = 1; return render(); }
+  $('#view').innerHTML = `<div class="note">불러오는 중…</div>`;
+  let d; try { d = await api('shop'); } catch (e) { $('#view').innerHTML = `<p class="err">${esc(e.message)}</p>`; return; }
+  if (S.step !== 'shop') return;
+  ME.balance = d.balance; renderNav();
+  const kindL = { trial: '체험', charge: '충전', admin: '지급', use: '사용', refund: '환불' };
+  $('#view').innerHTML = `
+    <div class="adm-head"><div><span class="k">MY</span><h2>내 문항</h2><p class="sub">1문항으로 문제 1개를 만들 수 있어요. 자료 분석은 무료예요.</p></div>
+      <button class="btn sm" id="shBack">← 돌아가기</button></div>
+    <div class="balcard"><div><span>남은 문항</span><b>${d.is_admin ? '무제한' : (+d.balance).toLocaleString()}</b>${d.is_admin ? '' : '<small>개</small>'}</div>
+      <div class="bc-r">20문항 문제지<br><b>${d.is_admin ? '∞' : Math.floor(d.balance / 20)}장</b> 만들 수 있어요</div></div>
+    <div class="askbox"><b>문항이 더 필요하신가요?</b><p>문항을 다 쓰면 관리자에게 문의해 주세요.</p>
+      ${d.contact ? (isUrl(d.contact) ? `<div style="margin-top:12px">${contactLink(d.contact)}</div><p class="note" style="margin-top:8px">문항 말고도 궁금한 점은 무엇이든 문의해 주세요.</p>` : `<div class="ask-c"><span>문의</span><b>${esc(d.contact)}</b><button class="btn sm" id="cpC">복사</button></div>`) : ''}
+      ${d.notice && d.notice.trim() !== '문항을 다 쓰면 관리자에게 문의해 주세요.' ? `<p class="note" style="margin-top:8px">${esc(d.notice)}</p>` : ''}</div>
+    <div class="sec-t">문항 사용 내역 <small>최근 40건</small></div>
+    <div class="ledger">${(d.ledger || []).map(l => `<div class="lrow"><span class="lk ${l.kind}">${kindL[l.kind] || l.kind}</span><span class="lm">${esc(l.memo || '')}<small>${fmtDT(l.created_at)}</small></span>
+      <b class="${l.delta >= 0 ? 'plus' : 'minus'}">${l.delta >= 0 ? '+' : ''}${l.delta}</b><span class="la2">${l.balance_after}</span></div>`).join('') || '<p class="note">내역이 없어요.</p>'}</div>`;
+  $('#shBack').onclick = () => { S.step = S.prevStep && S.prevStep !== 'shop' ? S.prevStep : 1; render(); };
+  const cp = $('#cpC'); if (cp) cp.onclick = () => { try { navigator.clipboard.writeText(d.contact); toast('복사했어요'); } catch (e) {} };
+}
+const isUrl = c => /^https?:\/\/[^\s"'<>]+$/.test(String(c || '').trim());
+/* 문의처 (카카오톡 채널 등). 링크면 버튼처럼, 아니면 글자로 */
+function contactLink(c, label) {
+  c = String(c || (PUBCFG && PUBCFG.contact) || '').trim(); if (!c) return '';
+  if (!isUrl(c)) return `<b>${esc(c)}</b>`;
+  return `<a class="asklink" href="${esc(c)}" target="_blank" rel="noopener">${esc(label || (/kakao/i.test(c) ? '카카오톡 채널로 문의하기' : '문의하기'))}</a>`;
+}
+function askAdminText() { const l = contactLink(); return `문항이 더 필요하면 관리자에게 문의해 주세요.${l ? `<div style="margin-top:10px">${l}</div>` : ''}`; }
+
+/* =============== 운영 설정 (관리자) =============== */
+async function adminSettings() {
+  const my = ++AD.seq;
+  let d; try { d = await api('adminConfigGet'); } catch (e) { if ($('#adBody')) $('#adBody').innerHTML = `<p class="err">${esc(e.message)}</p>`; return; }
+  const box = $('#adBody'); if (my !== AD.seq || !box || S.step !== 'admin') return;
+  const swTxt = on => on ? '켜짐: 관리자가 승인해야 회원이 이용할 수 있어요.' : '꺼짐: 가입하면 바로 이용할 수 있어요 (체험 문항도 바로 지급).';
+  box.innerHTML = `
+    <div class="sec-t" style="margin-top:0">가입 설정</div>
+    <label class="switch-row"><span><b>가입 승인제</b><small id="swDesc">${swTxt(d.require_approval !== false)}</small></span>
+      <input type="checkbox" class="switch" id="cfReq" ${d.require_approval !== false ? 'checked' : ''}></label>
+    <div class="grid3" style="margin-top:6px"><div><label class="lb">가입 시 체험 문항</label><input type="number" id="cfT" min="0" max="9999" value="${+d.trial || 0}"></div></div>
+    <div class="sec-t">문의 안내 <small>문항 문의와 전체 문의에 함께 쓰여요</small></div>
+    <label class="lb">문의 링크 <small style="font-weight:400;color:var(--mute)">(카카오톡 채널 주소 등 · 사이트 아래쪽과 내 계정에도 보여요)</small></label><input type="text" id="cfC" maxlength="200" value="${esc(d.contact || '')}" placeholder="예: https://pf.kakao.com/_xxxx/chat">
+    <label class="lb">추가 안내 문구 <small style="font-weight:400;color:var(--mute)">(선택)</small></label><textarea id="cfN" rows="2" maxlength="300">${esc(d.notice || '')}</textarea>
+    <p class="note" style="margin-top:8px">회원에게 문항을 주려면 <b>회원 관리</b> 탭에서 회원의 <b>문항 지급·차감</b>을 누르세요.</p>
+    <div class="err" id="cfErr" style="min-height:18px;margin-top:10px"></div>
+    <button class="btn acc go" id="cfSave">설정 저장</button>`;
+  $('#cfReq', box).onchange = e => { $('#swDesc', box).textContent = swTxt(e.target.checked); };
+  $('#cfSave', box).onclick = async () => {
+    const req = $('#cfReq', box).checked;
+    try {
+      let approvePending = false;
+      if (!req && ME.pending > 0) approvePending = confirm(`승인제를 끄면 새 가입자는 바로 이용할 수 있어요.\n지금 승인 대기 중인 ${ME.pending}명도 함께 승인할까요?`);
+      const r = await api('adminConfigSet', { data: { trial: +$('#cfT', box).value || 0, notice: $('#cfN', box).value, contact: $('#cfC', box).value.trim(), require_approval: req, approve_pending: approvePending } });
+      PUBCFG = null; toast(r.approved_now ? `저장했어요 · 대기 회원 ${r.approved_now}명 승인` : '저장했어요'); await refreshBalance(); adminSettings();
+    } catch (e) { $('#cfErr', box).textContent = e.message; }
+  };
+}
+function adminGrantModal(u, done) {
+  const m = modal(`<h3>문항 지급 · 차감</h3><p class="sub">${esc(u.name)} (@${esc(u.username)}) · 지금 남은 문항 <b>${u.balance}개</b></p>
+    <div class="seg" id="gm"><button data-s="1" class="on">지급 (+)</button><button data-s="-1">차감 (−)</button></div>
+    <label class="lb">문항 수</label><input type="number" id="gq" min="1" value="20">
+    <label class="lb">메모 <small style="font-weight:400;color:var(--mute)">(회원 사용 내역에 보여요)</small></label><input type="text" id="gn" maxlength="100" placeholder="예: 추가 지급, 이벤트 지급">
+    <div class="err" id="ge" style="min-height:18px;margin-top:8px"></div>
+    <div class="row" style="margin-top:8px"><button class="btn" data-close style="flex:1">취소</button><button class="btn pri" id="gg" style="flex:2">적용</button></div>`);
+  let sign = 1;
+  $$('#gm button', m).forEach(b => b.onclick = () => { sign = +b.dataset.s; $$('#gm button', m).forEach(x => x.classList.toggle('on', x === b)); });
+  $('#gg', m).onclick = async () => {
+    const n = Math.trunc(+$('#gq', m).value || 0);
+    if (n <= 0) return $('#ge', m).textContent = '1 이상 입력해 주세요.';
+    try { const r = await api('adminGrant', { userId: u.id, delta: sign * n, memo: $('#gn', m).value }); m.remove(); toast(`${u.name} 님 남은 문항: ${r.balance}개`); done(); }
+    catch (e) { $('#ge', m).textContent = e.message; }
+  };
+}
+
+/* =============== 관리자 통계 =============== */
+const STAT = { days: 30, cost: +(LS.get('qm_costPerQ', 15)) || 15, data: null };
+const nfmt = n => (+n || 0).toLocaleString('ko-KR');
+const kfmt = n => { n = +n || 0; const t = (x) => x.toFixed(2).replace(/\.?0+$/, ''); return n >= 1e8 ? t(n / 1e8) + '억' : n >= 1e4 ? t(n / 1e4) + '만' : nfmt(Math.round(n * 100) / 100); };
+const TYPE_LABEL = id => (TYPE[id] && TYPE[id].label) || id || '기타';
+async function adminStats() {
+  const my = ++AD.seq, box = $('#adBody');
+  if (STAT.data && box) box.style.opacity = '.5';
+  let d; try { d = await api('adminStats', { days: STAT.days }); }
+  catch (e) { if (my === AD.seq && $('#adBody')) { $('#adBody').style.opacity = ''; $('#adBody').innerHTML = `<p class="err">${esc(e.message)}</p>`; } return; }
+  if (my !== AD.seq || !$('#adBody') || S.step !== 'admin') return;
+  STAT.data = d; drawStats();
+}
+function drawStats() {
+  const d = STAT.data, k = d.kpi, box = $('#adBody'); box.style.opacity = '';
+  const cost = Math.round(k.questions_period * STAT.cost), costToday = Math.round(k.questions_today * STAT.cost);
+  const failRate = k.requests_period ? Math.round(k.failed_period / k.requests_period * 1000) / 10 : 0;
+  const tile = (label, value, sub, hot) => `<div class="tile ${hot ? 'hot' : ''}"><span>${label}</span><b>${value}</b>${sub ? `<small>${sub}</small>` : ''}</div>`;
+  const P = `최근 ${d.days}일`;
+  box.innerHTML = `
+    <div class="statbar"><div class="seg" id="stDays">${[7, 30, 90].map(n => `<button data-d="${n}" class="${STAT.days === n ? 'on' : ''}">${n}일</button>`).join('')}</div>
+      <span class="note" style="background:none;padding:0">기준: 한국 시간 · ${d.today}까지</span></div>
+    <div class="sgrp">회원 · 사용</div>
+    <div class="tiles">${tile('전체 회원', nfmt(k.users_total) + '명', `${P} +${nfmt(k.users_period)} · 오늘 +${nfmt(k.users_today)}`)}
+      ${tile('활성 회원', nfmt(k.active_7d) + '명', `최근 7일 생성한 회원 · ${P} ${nfmt(k.active_period)}명`)}
+      ${tile('승인 대기', nfmt(k.pending) + '명', `정지·거절 ${nfmt(k.blocked)}명`, k.pending > 0)}
+      ${tile(P + ' 생성 문항', nfmt(k.questions_period) + '개', `오늘 ${nfmt(k.questions_today)} · 누적 ${nfmt(k.questions_total)}`)}
+      ${tile(P + ' 문제지', nfmt(k.sheets_period) + '장', `올린 자료 ${nfmt(k.materials_period)}개 · PDF 저장 ${nfmt(k.exports_period)}회`)}
+      ${tile(P + ' 서버 요청', nfmt(k.requests_period) + '회', `실패 ${nfmt(k.failed_period)}회 (${failRate}%)`, failRate >= 10)}
+      ${tile('남은 문항 합계', nfmt(k.balance_outstanding) + '개', '회원들이 아직 안 쓴 문항')}</div>
+    <div class="sgrp">문항 흐름 (누적)</div>
+    <div class="tiles">${tile('체험으로 지급', nfmt(k.trial_granted) + '개')}${tile('관리자 지급·차감', (k.admin_granted >= 0 ? '+' : '') + nfmt(k.admin_granted) + '개')}${tile('누적 생성', nfmt(k.questions_total) + '개')}</div>
+    <div class="card profit"><div class="pf-h"><b>${P} 예상 구글 사용료</b><label>문항당 원가 <input type="number" id="stCost" min="0" max="500" value="${STAT.cost}">원</label></div>
+      <div class="pf-row"><span>생성 문항</span><b>${nfmt(k.questions_period)}개</b></div>
+      <div class="pf-row"><span>오늘 예상 사용료 (${nfmt(k.questions_today)}문항)</span><b>${won(costToday)}</b></div>
+      <div class="pf-row tot"><span>${P} 예상 사용료</span><b>${won(cost)}</b></div>
+      <p class="note">추정치예요. 구글 결제 화면의 실제 요금과 비교해서 위 칸을 맞추면 더 정확해져요. 체험·관리자 지급 문항도 포함돼요.</p></div>
+    ${chartCard('일별 생성 문항', d.daily, [{ key: 'questions', name: '생성 문항', c: 's1' }], v => nfmt(v) + '개', 'd')}
+    ${chartCard('일별 신규 가입', d.daily, [{ key: 'signups', name: '가입', c: 's1' }], v => nfmt(v) + '명', 'd')}
+    ${chartCard('일별 서버 요청', d.daily.map(x => ({ ...x, okreq: x.requests - x.failed })), [{ key: 'okreq', name: '성공', c: 's1' }, { key: 'failed', name: '실패', c: 's2' }], v => nfmt(v) + '회', 'd')}
+    ${chartCard('시간대별 서버 요청 (' + P + ')', d.hours.map(x => ({ ...x, d: x.h + '시' })), [{ key: 'requests', name: '요청', c: 's1' }], v => nfmt(v) + '회', 'h')}
+    <div class="two">
+      ${barCard('많이 만든 문제 유형', d.types.map(x => ({ l: TYPE_LABEL(x.t), v: x.n })), v => nfmt(v) + '문항')}
+      ${barCard('과목 TOP 10 (문제지 수)', d.subjects.map(x => ({ l: x.subject, v: x.n, s: nfmt(x.q) + '문항' })), v => nfmt(v) + '장')}
+      ${barCard('사용한 모델 (성공 요청)', d.models.map(x => ({ l: x.model, v: x.n })), v => nfmt(v) + '회')}
+      ${barCard('실패 사유 TOP 5', d.errors.map(x => ({ l: x.error, v: x.n })), v => nfmt(v) + '회')}
+    </div>
+    <div class="card"><div class="ch-h"><b>많이 쓰는 회원 TOP 10</b><small>${P} 생성 문항 기준</small></div>
+      ${d.top_users.length ? `<div class="tbl-wrap"><table class="stbl"><tr><th>회원</th><th>생성 문항</th><th>문제지</th><th>남은 문항</th><th>최근 접속</th></tr>
+      ${d.top_users.map(u => `<tr><td><b>${esc(u.name)}</b> <span>@${esc(u.username)}</span></td><td>${nfmt(u.questions)}</td><td>${nfmt(u.sheets)}</td><td>${nfmt(u.balance)}</td><td>${fmtDT(u.last_seen_at)}</td></tr>`).join('')}</table></div>` : '<p class="note">아직 데이터가 없어요.</p>'}</div>`;
+  $$('#stDays button', box).forEach(b => b.onclick = () => { STAT.days = +b.dataset.d; $$('#stDays button', box).forEach(x => x.classList.toggle('on', x === b)); adminStats(); });
+  $('#stCost', box).onchange = e => { STAT.cost = Math.max(0, +e.target.value || 0); LS.set('qm_costPerQ', STAT.cost); drawStats(); };
+  bindCharts(box);
+}
+/* 세로 막대 차트 (SVG) — 막대 위에 올리면 값 표시, 아래 '표로 보기' 제공 */
+function niceMax(v) { if (v <= 0) return 1; const p = Math.pow(10, Math.floor(Math.log10(v))), m = v / p; return (m <= 1 ? 1 : m <= 2 ? 2 : m <= 2.5 ? 2.5 : m <= 5 ? 5 : 10) * p; }
+function chartCard(title, rows, series, fmtV, xk) {
+  const xl = r => xk === 'd' ? String(r.d).slice(5).replace('-', '/') : r.d;
+  const tot = rows.map(r => series.reduce((a, s) => a + (+r[s.key] || 0), 0));
+  const total = tot.reduce((a, b) => a + b, 0);
+  const data = rows.map(r => ({ x: xl(r), v: series.map(s => +r[s.key] || 0) }));
+  return `<div class="card chart" data-rows='${esc(JSON.stringify(data))}' data-series='${esc(JSON.stringify(series.map(s => ({ n: s.name, c: s.c }))))}' data-fmt="${esc(title)}">
+    <div class="ch-h"><b>${esc(title)}</b><small>합계 ${esc(fmtV(total))}</small>
+      ${series.length > 1 ? `<span class="legend">${series.map(s => `<i class="key ${s.c}"></i>${esc(s.name)}`).join('')}</span>` : ''}</div>
+    <div class="ch-wrap" aria-label="${esc(title)}"></div><div class="ch-tip" hidden></div>
+    <details class="tv"><summary>표로 보기</summary><div class="tbl-wrap"><table class="stbl"><tr><th>${xk === 'd' ? '날짜' : '시간'}</th>${series.map(s => `<th>${esc(s.name)}</th>`).join('')}</tr>
+      ${data.map(r => `<tr><td>${esc(r.x)}</td>${r.v.map(v => `<td>${esc(fmtV(v))}</td>`).join('')}</tr>`).join('')}</table></div></details>
+  </div>`;
+}
+/* 실제 화면 폭에 맞춰 막대 차트를 그림 (글자가 늘어나거나 찌그러지지 않게) */
+function drawChartSvg(c) {
+  const rows = JSON.parse(c.dataset.rows), ser = JSON.parse(c.dataset.series), wrap = $('.ch-wrap', c);
+  const W = Math.max(260, Math.round(wrap.clientWidth || 600)), H = 170, L = 40, R = 6, T = 10, B = 22, cw = W - L - R, ch = H - T - B;
+  const tot = rows.map(r => r.v.reduce((a, b) => a + b, 0));
+  const max = niceMax(Math.max(0, ...tot)), n = rows.length || 1, slot = cw / n, bw = Math.min(24, Math.max(2, slot * 0.62));
+  const y = v => T + ch - (v / max) * ch;
+  const every = Math.max(1, Math.ceil(n / Math.floor(cw / 44)));
+  let bars = '';
+  rows.forEach((r, i) => {
+    const x = L + i * slot + (slot - bw) / 2; let base = 0;
+    r.v.forEach((v, si) => {
+      if (v <= 0) return;
+      const top = r.v.slice(si + 1).every(z => !(z > 0)), gap = base > 0 ? 2 : 0;
+      const y0 = y(base) - gap, h = Math.max(1, y0 - y(base + v)), yy = y0 - h, rr = top ? Math.min(4, h, bw / 2) : 0;
+      bars += `<path class="bar ${ser[si].c}" d="M${x},${yy + h} V${yy + rr} q0,-${rr} ${rr},-${rr} H${x + bw - rr} q${rr},0 ${rr},${rr} V${yy + h} Z"/>`;
+      base += v;
+    });
+    bars += `<rect class="hit" tabindex="0" x="${L + i * slot}" y="${T}" width="${slot}" height="${ch}" data-i="${i}"/>`;
+  });
+  wrap.innerHTML = `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" role="img">
+    ${[0, max / 2, max].map(t => `<line class="grid" x1="${L}" x2="${W - R}" y1="${y(t)}" y2="${y(t)}"/><text class="tick" x="${L - 6}" y="${y(t) + 4}" text-anchor="end">${esc(kfmt(t))}</text>`).join('')}
+    ${bars}
+    ${rows.map((r, i) => i % every === 0 ? `<text class="tick" x="${L + i * slot + slot / 2}" y="${H - 6}" text-anchor="middle">${esc(r.x)}</text>` : '').join('')}
+  </svg>`;
+}
+const CHART_FMT = {};
+function bindCharts(root) {
+  $$('.card.chart', root).forEach(c => {
+    drawChartSvg(c);
+    const rows = JSON.parse(c.dataset.rows), ser = JSON.parse(c.dataset.series), tip = $('.ch-tip', c), wrap = $('.ch-wrap', c);
+    const title = c.dataset.fmt;
+    const unit = /매출/.test(title) ? v => won(v) : /가입/.test(title) ? v => nfmt(v) + '명' : /문항/.test(title) ? v => nfmt(v) + '개' : v => nfmt(v) + '회';
+    const show = (el) => {
+      const i = +el.dataset.i, r = rows[i];
+      $$('.hit', c).forEach(h => h.classList.toggle('on', h === el));
+      tip.hidden = false; tip.textContent = '';
+      const hd = document.createElement('div'); hd.className = 'th'; hd.textContent = r.x; tip.append(hd);
+      ser.forEach((s, si) => { const row = document.createElement('div'); row.className = 'tr'; const k = document.createElement('i'); k.className = 'lk2 ' + s.c; const v = document.createElement('b'); v.textContent = unit(r.v[si]); const n = document.createElement('span'); n.textContent = s.n; row.append(k, v, n); tip.append(row); });
+      const wr = wrap.getBoundingClientRect(), er = el.getBoundingClientRect(), cr = c.getBoundingClientRect();
+      let left = er.left - cr.left + er.width / 2 - tip.offsetWidth / 2; left = Math.max(8, Math.min(cr.width - tip.offsetWidth - 8, left));
+      tip.style.left = left + 'px'; tip.style.top = (wr.top - cr.top) + 'px';
+    };
+    wrap.onpointerover = e => { const h = e.target.closest('.hit'); if (h) show(h); };
+    wrap.onfocusin = e => { const h = e.target.closest('.hit'); if (h) show(h); };
+    wrap.onpointerleave = () => { tip.hidden = true; $$('.hit', c).forEach(h => h.classList.remove('on')); };
+    $$('.hit', c).forEach(h => h.setAttribute('tabindex', '0'));
+  });
+}
+function barCard(title, items, fmtV) {
+  const max = Math.max(1, ...items.map(x => +x.v || 0));
+  return `<div class="card"><div class="ch-h"><b>${esc(title)}</b></div>
+    ${items.length ? `<div class="hbars">${items.map(x => `<div class="hb"><span class="hl" title="${esc(x.l)}">${esc(x.l)}</span><span class="ht"><i style="width:${Math.max(2, (+x.v || 0) / max * 100)}%"></i></span><b>${esc(fmtV(x.v))}</b>${x.s ? `<small>${esc(x.s)}</small>` : ''}</div>`).join('')}</div>` : '<p class="note">아직 데이터가 없어요.</p>'}</div>`;
+}
 function modal(html, cls) {
   const m = document.createElement('div'); m.className = 'modal' + (cls ? ' ' + cls : '');
   m.innerHTML = `<div class="box">${html}</div>`;
@@ -1919,29 +2493,49 @@ function alertBox(title, html, btnLabel, btnFn) {
   if (btnLabel) $('#abX', m).onclick = () => { m.remove(); btnFn(); };
 }
 let loadEl = null;
-function showLoading(title, detail, cancellable = true) {
+function showLoading(title, detail, cancellable = true, o = {}) {
   hideLoading();
   const ctl = new AbortController();
   loadEl = document.createElement('div'); loadEl.className = 'loading';
-  loadEl.innerHTML = `<div class="lb2"><div class="spin"></div><div class="t">${esc(title)}</div><div class="d" id="ldD">${esc(detail || '')}</div><div class="prog" id="ldP" style="display:none"><i></i></div>${cancellable ? '<button class="btn sm" id="ldC" style="margin-top:20px">취소</button>' : ''}</div>`;
-  loadEl.querySelector('.lb2').insertAdjacentHTML('beforeend', '<div class="tip">완료될 때까지 화면을 켜 두고 이 화면에 머물러 주세요.</div>');
-  document.body.append(loadEl);
+  loadEl.innerHTML = `<div class="lb2"><div class="spin"></div><div class="t">${esc(title)}</div>
+    <div class="prog" id="ldP" style="${o.progress ? '' : 'display:none'}"><i></i></div>
+    <div class="pinfo" id="ldI" style="${o.progress ? '' : 'display:none'}"><b>0%</b><span>${o.progress ? '준비 중…' : ''}</span></div>
+    <div class="d" id="ldD">${esc(detail || '')}</div>
+    ${o.note ? `<div class="pnote">${o.note}</div>` : ''}
+    ${o.extra || ''}
+    ${cancellable ? `<button class="btn sm" id="ldC" style="margin-top:${o.extra ? 8 : 20}px">${esc(o.cancelLabel || '취소')}</button>` : ''}</div>`;
+  loadEl._max = 0; loadEl._t0 = Date.now();
+  if (o.tip !== false) loadEl.querySelector('.lb2').insertAdjacentHTML('beforeend', '<div class="tip">완료될 때까지 화면을 켜 두고 이 화면에 머물러 주세요.</div>');
+  document.body.append(loadEl); document.documentElement.classList.add('busy');
   try { if (navigator.wakeLock) navigator.wakeLock.request('screen').then(w => { wakeLock = w; }).catch(() => {}); } catch (e) {}
   const c = $('#ldC', loadEl); if (c) c.onclick = () => { ctl.abort(); hideLoading(); };
   ctl.detail = detail; return ctl;
 }
 let wakeLock = null;
-function hideLoading() { if (loadEl) { loadEl.remove(); loadEl = null; } if (wakeLock) { wakeLock.release().catch(() => {}); wakeLock = null; } }
+function hideLoading() { document.documentElement.classList.remove('busy'); if (loadEl) { clearInterval(loadEl._iv); loadEl.remove(); loadEl = null; } if (wakeLock) { wakeLock.release().catch(() => {}); wakeLock = null; } }
 function setLoadingDetail(t) { const d = loadEl && $('#ldD', loadEl); if (d) d.textContent = t; }
-function setProgress(r) { const p = loadEl && $('#ldP', loadEl); if (p) { p.style.display = ''; $('i', p).style.width = Math.round(r * 100) + '%'; } }
+function setProgress(r, label) {
+  const p = loadEl && $('#ldP', loadEl); if (!p) return;
+  r = Math.max(loadEl._max || 0, Math.min(1, r || 0)); loadEl._max = r; // 뒤로 가지 않게
+  p.style.display = ''; $('i', p).style.width = (r * 100).toFixed(1) + '%';
+  const inf = $('#ldI', loadEl); if (inf) { inf.style.display = ''; $('b', inf).textContent = Math.floor(r * 100) + '%'; if (label != null) $('span', inf).textContent = label; }
+}
+const mmss = ms => { const t = Math.max(0, Math.round(ms / 1000)); return `${Math.floor(t / 60)}:${String(t % 60).padStart(2, '0')}`; };
+/* 예상 시간 (대략): 묶음당 대기 + 문항당 작성 시간 */
+function estText(n) {
+  const chunks = Math.ceil(n / 8), lo = chunks * 6 + n * 2.5, hi = chunks * 14 + n * 5;
+  const f = s => s < 60 ? `${Math.max(10, Math.round(s / 10) * 10)}초` : `${Math.round(s / 60)}분`;
+  return f(lo) === f(hi) ? `약 ${f(lo)}` : `약 ${f(lo)}~${f(hi)}`;
+}
 
 /* =============== 시작 =============== */
 $('#brand').onclick = e => { e.preventDefault(); if (S.step === 1) { window.scrollTo({ top: 0, behavior: 'smooth' }); return; } if (S.step !== 1 && !confirm('처음 화면으로 갈까요? (만든 문제지는 [내 문제지]에 있어요)')) return; S = freshState(); render(); };
 window.addEventListener('beforeunload', e => { if (S.files.length && !allQuestions().length) { e.preventDefault(); e.returnValue = ''; } });
-window.addEventListener('resize', () => { if (S.step === 5 && S.pages) showPreview(); });
+window.addEventListener('resize', () => { if (S.step === 5 && S.pages) showPreview(); if (S.step === 'admin') { clearTimeout(window.__rc); window.__rc = setTimeout(() => $$('.card.chart').forEach(c => { drawChartSvg(c); }), 150); } });
 window.addEventListener('DOMContentLoaded', async () => {
   render();
-  if (CONFIGURED && TOKEN) { await refreshMe(); render(); }
+  if (CONFIGURED && TOKEN) { await refreshMe(); render(); resumeJobIfAny(); }
+  if (CONFIGURED) loadPublicConfig().then(() => { loadPricing(); if (S.step === 1 && ME && ME.status === 'pending') renderPanel(); });
   // 수식 글꼴 미리 불러오기
   try { const w = document.createElement('span'); w.style.cssText = 'position:fixed;left:-9999px'; w.textContent = '$x^2$'; document.body.append(w); renderMath(w); setTimeout(() => w.remove(), 3000); } catch (e) {}
 });
