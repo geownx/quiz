@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light">
+<meta name="supported-color-schemes" content="light">
+<title>[문제지메이커] 비밀번호 다시 정하기</title>
+</head>
+<body style="margin:0;padding:0;background:#f6f4ef;-webkit-text-size-adjust:100%;">
+<div style="display:none;max-height:0;overflow:hidden;opacity:0;color:#f6f4ef;font-size:1px;line-height:1px;">새 비밀번호를 정하는 링크예요.&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;</div>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f6f4ef;">
+<tr><td align="center" style="padding:28px 12px 36px;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:600px;background:#ffffff;border-radius:20px;overflow:hidden;border:1px solid #e3e1db;">
+    <tr><td style="padding:0;line-height:0;">
+      <a href="https://geownx.github.io/quiz/" target="_blank" style="display:block;"><img src="https://geownx.github.io/quiz/mail-header.png" width="600" alt="문제지메이커 · 공부한 자료를 올리면 문제지가 나와요" style="display:block;width:100%;max-width:600px;height:auto;border:0;"></a>
+    </td></tr>
+    <tr><td style="padding:34px 32px 8px;font-family:-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Malgun Gothic','맑은 고딕','Noto Sans KR',sans-serif;color:#1f2a44;">
+      <h1 style="margin:0 0 12px;font-size:24px;line-height:1.4;font-weight:800;letter-spacing:-0.5px;color:#1f2a44;">비밀번호를 다시 정해 주세요</h1>
+      <p style="margin:0;font-size:16px;line-height:1.7;color:#46506a;">{{ if .Data.name }}{{ .Data.name }}님, {{ end }}아래 버튼을 누르면 새 비밀번호를 정하는 화면이 열려요. 링크는 한 번만 쓸 수 있고, 시간이 지나면 만료돼요.</p>
+    </td></tr>
+    <tr><td align="center" style="padding:26px 32px 6px;">
+      <table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr>
+        <td align="center" bgcolor="#E2683C" style="border-radius:14px;">
+          <a href="{{ .ConfirmationURL }}" target="_blank" style="display:inline-block;padding:16px 40px;font-family:-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Malgun Gothic','맑은 고딕','Noto Sans KR',sans-serif;font-size:17px;font-weight:800;color:#ffffff;text-decoration:none;border-radius:14px;letter-spacing:-0.3px;">새 비밀번호 정하기</a>
+        </td></tr></table>
+    </td></tr>
+    <tr><td style="padding:22px 32px 0;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#fdf0e3;border:1px solid #f3d6bb;border-radius:14px;"><tr><td style="padding:14px 16px;font-family:-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Malgun Gothic','맑은 고딕','Noto Sans KR',sans-serif;font-size:14px;line-height:1.6;color:#7a3a14;">
+        <b>요청하지 않으셨나요?</b><br>이 메일은 무시해 주세요. 버튼을 누르지 않으면 비밀번호는 바뀌지 않아요.
+      </td></tr></table></td></tr>
+    <tr><td style="padding:22px 32px 30px;font-family:-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Malgun Gothic','맑은 고딕','Noto Sans KR',sans-serif;">
+      <p style="margin:0 0 6px;font-size:13px;line-height:1.6;color:#7a8296;">버튼이 눌리지 않으면 아래 주소를 복사해서 브라우저 주소창에 붙여넣어 주세요.</p>
+      <p style="margin:0;font-size:12px;line-height:1.5;word-break:break-all;"><a href="{{ .ConfirmationURL }}" target="_blank" style="color:#E2683C;text-decoration:underline;">{{ .ConfirmationURL }}</a></p>
+      <p style="margin:16px 0 0;font-size:13px;line-height:1.6;color:#7a8296;">새 비밀번호는 8자 이상, 영문과 숫자를 함께 써 주세요.</p>
+    </td></tr>
+  </table>
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:600px;">
+    <tr><td align="center" style="padding:22px 20px 0;font-family:-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Malgun Gothic','맑은 고딕','Noto Sans KR',sans-serif;">
+      <a href="https://geownx.github.io/quiz/" target="_blank" style="text-decoration:none;"><img src="https://geownx.github.io/quiz/mail-icon.png" width="32" height="32" alt="" style="display:inline-block;vertical-align:middle;border:0;border-radius:8px;"><span style="display:inline-block;vertical-align:middle;margin-left:8px;font-size:15px;font-weight:800;color:#1f2a44;letter-spacing:-0.3px;">문제지<span style="color:#E2683C;">메이커</span></span></a>
+      <p style="margin:12px 0 0;font-size:12px;line-height:1.7;color:#7a8296;">이 메일은 보내기 전용이에요. 궁금한 점은 <a href="https://pf.kakao.com/_iFTxeX/chat" target="_blank" style="color:#46506a;font-weight:700;">카카오톡 채널 문의하기</a>로 알려 주세요.<br>© 2026 문제지메이커 · 제작자 geownx</p>
+    </td></tr>
+  </table>
+</td></tr>
+</table>
+</body>
+</html>
