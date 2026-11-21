@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /mail-header.png
+Disallow: /mail-icon.png
+
+Sitemap: https://quizmaker.pro/sitemap.xml
