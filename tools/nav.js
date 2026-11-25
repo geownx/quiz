@@ -87,7 +87,7 @@
   }
   if (isStandalone()) ls.set(INST, String(Date.now()));
   window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); bip = e; redraw(); });
-  window.addEventListener('appinstalled', () => { bip = null; markInstalled(); redraw(); });
+  window.addEventListener('appinstalled', () => { bip = null; markInstalled(); redraw(); if (window.QTLOG) QTLOG.add('app', 'do', 'appinstalled', '앱 설치 완료'); });
   async function installedSomewhere() {
     if (isStandalone()) { markInstalled(); return true; }
     if (ls.get(INST)) return true;
@@ -146,11 +146,159 @@
       <button class="qi-btn" data-a="go">${bip ? '설치' : DEV.inapp ? '열기 방법' : '방법 보기'}</button><button class="qi-x" data-a="x" aria-label="닫기" title="30일 동안 안 보기">✕</button></div>`;
     box.querySelector('[data-a=x]').onclick = () => { ls.set(HIDE, String(Date.now() + 30 * 86400e3)); redraw(); };
     box.querySelector('[data-a=go]').onclick = async () => {
-      if (bip) { const ev = bip; bip = null; ev.prompt(); try { const r = await ev.userChoice; if (r.outcome === 'accepted') markInstalled(); } catch (e) {} redraw(); return; }
+      if (bip) { const ev = bip; bip = null; ev.prompt(); try { const r = await ev.userChoice; if (window.QTLOG) QTLOG.add('app', 'do', 'install_prompt', r.outcome === 'accepted' ? '설치 창에서 설치함' : '설치 창 닫음'); if (r.outcome === 'accepted') markInstalled(); } catch (e) {} redraw(); return; }
       howModal();
     };
   }
   function installCard(box) { if (!box) return; boxes.add(box); draw(box); }
 
+
+  /* ===== 활동 기록 (관리자 화면에서 봐요) =====
+     로그인한 회원이 한 일을 qm_logs 테이블에 남겨요. 브라우저에 먼저 모아 두었다가 몇 초마다 한꺼번에 보내고,
+     인터넷이 끊기거나 창을 닫아도 다음에 열 때 이어서 보내요. 비밀번호 · 파일 내용은 남기지 않아요. */
+  const QTLOG = (() => {
+    const QK = 'qt_log_q', LK = 'qt_log_lock', PK = 'qt_log_login', MAXQ = 400;
+    const PARTS = [['login', '로그인 · 접속'], ['home', '공부도구 홈'], ['maker', '문제지'], ['checklist', '체크리스트'], ['timer', '타이머'], ['school', '학교생활'], ['app', '앱 설치'], ['admin', '관리자']];
+    let client = null, user = null, timer = null, busy = false, off = false, pre = [];
+    const T0 = Date.now();
+    const ss = { get: k => { try { return sessionStorage.getItem(k); } catch (e) { return null; } }, set: (k, v) => { try { sessionStorage.setItem(k, v); } catch (e) {} } };
+    let sid = ss.get('qt_log_sid'); if (!sid) { sid = Math.random().toString(36).slice(2, 10); ss.set('qt_log_sid', sid); }
+    const browser = DEV.kakao ? '카카오톡' : DEV.inapp ? '앱 안 브라우저' : DEV.samsung ? '삼성 인터넷' : DEV.edge ? 'Edge' : DEV.whale ? '웨일' : DEV.firefox ? 'Firefox' : (DEV.crios || /Chrome/.test(UA)) ? 'Chrome' : /Safari/.test(UA) ? 'Safari' : '기타 브라우저';
+    const device = `${DEV.ipad ? '아이패드' : DEV.ios ? '아이폰' : DEV.android ? (/Mobile/.test(UA) ? '안드로이드' : '안드로이드 태블릿') : /Mac/.test(UA) ? 'Mac' : /Windows/.test(UA) ? 'Windows' : /CrOS/.test(UA) ? '크롬북' : 'PC'} · ${browser}`;
+    const area = () => { const p = location.pathname; if (p.startsWith('/tools/checklist')) return 'checklist'; if (p.startsWith('/tools/timer')) return 'timer'; if (p.startsWith('/tools/school')) return 'school'; if (p.startsWith('/tools')) return 'home'; return /^#\/admin/.test(location.hash) ? 'admin' : 'maker'; };
+    const page = () => (location.pathname + location.search + location.hash).replace(/(access_token|refresh_token|code)=[^&]+/g, '$1=…').slice(0, 250);
+    const load = () => { try { const old = Date.now() - 25 * 86400e3; return JSON.parse(localStorage.getItem(QK) || '[]').filter(x => Date.parse(x.created_at) > old); } catch (e) { return []; } };
+    const save = q => { try { localStorage.setItem(QK, JSON.stringify(q.slice(-MAXQ))); } catch (e) {} };
+    const SECRET = /pass|token|b64|base64|dataurl|blob|bytes|secret/i;
+    function slim(o, d = 0) {
+      if (o == null || typeof o === 'number' || typeof o === 'boolean') return o;
+      if (typeof o === 'string') return o.length > 150 ? o.slice(0, 150) + '…' : o;
+      if (typeof o !== 'object') return String(o).slice(0, 60);
+      if (Array.isArray(o)) return d > 1 ? `[${o.length}개]` : o.slice(0, 12).map(x => slim(x, d + 1)).concat(o.length > 12 ? [`…외 ${o.length - 12}개`] : []);
+      if (d > 2) return '{…}';
+      const r = {}; let n = 0;
+      for (const k of Object.keys(o)) { if (SECRET.test(k)) continue; if (++n > 24) { r['…'] = '생략'; break; } r[k] = slim(o[k], d + 1); }
+      return r;
+    }
+    const recent = new Map();
+    /* part: 기능 파트 (비우면 지금 화면 기준) · kind: login | view | do | click | error | auth_fail */
+    function add(part, kind, action, label, detail, ok = true, opt = {}) {
+      if (off) return;
+      if (kind !== 'do' && kind !== 'login' && area() === 'admin') return; // 관리자가 기록 화면을 보는 건 안 남겨요
+      if (opt.dedupe) { const t = recent.get(opt.dedupe); if (t && Date.now() - t < (opt.gap || 60000)) return; recent.set(opt.dedupe, Date.now()); }
+      const e = { uid: user ? user.id : null, created_at: new Date().toISOString(), part: part || area(), kind, action: String(action || '').slice(0, 60), label: String(label || '').replace(/\s+/g, ' ').trim().slice(0, 240),
+        detail: detail == null ? null : slim(detail), ok: ok !== false, page: page(), device, app: isStandalone(), sid, name: user ? (user.name || null) : null, email: user ? (user.email || null) : (opt.email || null) };
+      // 로그인 확인이 끝나기 전에 한 일은 잠깐 들고 있다가, 로그인이 확인되면 그 회원 기록으로 넣어요
+      if (!user && !opt.anon) { pre.push(e); if (pre.length > 40) pre.shift(); return; }
+      const q = load(); q.push(e); save(q); schedule(opt.now ? 0 : 4000);
+    }
+    function schedule(ms) { clearTimeout(timer); timer = setTimeout(flush, ms); }
+    async function flush() {
+      if (busy || off || !client) return;
+      const lock = +(ls.get(LK) || 0); if (lock > Date.now()) return schedule(3000); // 다른 탭이 보내는 중
+      let q = load(); const uid = user && user.id;
+      const send = q.filter(x => (uid && x.uid === uid) || (!x.uid && x.kind === 'auth_fail')).slice(0, 100);
+      if (!send.length) return;
+      busy = true; ls.set(LK, String(Date.now() + 10000));
+      try {
+        const { error } = await client.from('qm_logs').insert(send.map(x => { const r = Object.assign({}, x); delete r.uid; r.user_id = x.uid; return r; }));
+        const drop = () => save(load().filter(x => !send.some(y => y.created_at === x.created_at && y.label === x.label && y.uid === x.uid)));
+        if (error) {
+          const m = (error.code || '') + ' ' + (error.message || '');
+          if (/PGRST20|42P01|does not exist|schema cache/i.test(m)) off = true; // 아직 SQL을 안 돌렸으면 이번엔 쉬어요 (모아 둔 건 남겨요)
+          else if (/42501|23514|22001|row-level security|violates/i.test(m)) drop(); // 받을 수 없는 기록은 버려요 (계속 막히지 않게)
+        }
+        else { drop(); if (load().some(x => (uid && x.uid === uid))) schedule(500); }
+      } catch (e) {} finally { busy = false; ls.del(LK); }
+    }
+    /* supabase 클라이언트: 공부도구 테이블에 쓰는 일(추가 · 수정 · 삭제)을 자동으로 기록해요 */
+    const TBL = { tools_tasks: 'checklist', tools_subjects: 'checklist', tools_sessions: 'timer', tools_profile: 'school', tools_ddays: 'school' };
+    const mm = s => s >= 3600 ? `${Math.floor(s / 3600)}시간 ${Math.round(s % 3600 / 60)}분` : `${Math.max(1, Math.round(s / 60))}분`;
+    function dbLabel(t, op, v, b) {
+      const arr = Array.isArray(v), one = (arr ? v[0] : v) || {}, n = arr ? v.length : 1, keys = Object.keys(one);
+      if (t === 'tools_tasks') {
+        if (op === 'insert') return n > 1 ? `할 일 ${n}개 추가` : `할 일 추가: ${one.title || ''}${one.minutes ? ` (${one.minutes}분)` : ''}${one.link_title ? ` · 학습 연결 ${one.link_title}` : ''}`;
+        if (op === 'update') return 'done' in one ? (one.done ? '할 일 완료 체크' : '할 일 완료 취소') : `할 일 수정${one.title ? ': ' + one.title : ''}${one.minutes ? ` (${one.minutes}분)` : ''}`;
+        if (op === 'delete') return /done=eq\.true/.test(String(b && b.url || '')) ? '완료한 할 일 지우기' : '할 일 삭제';
+      }
+      if (t === 'tools_subjects') {
+        if (op === 'insert') return n > 1 ? `기본 과목 ${n}개 만들기 (${v.map(x => x.name).join(', ')})` : `과목 추가: ${one.name || ''}`;
+        if (op === 'update') return keys.length === 1 && keys[0] === 'sort' ? '과목 순서 바꾸기' : `과목 수정${one.name ? ': ' + one.name : ''}${one.color ? ' · 색 바꿈' : ''}`;
+        if (op === 'delete') return '과목 삭제';
+      }
+      if (t === 'tools_sessions') {
+        if (op === 'insert') return n > 1 ? `공부 기록 ${n}개 저장 (오프라인에 모아 둔 것)` : one.mode === 'solve' ? `문제 풀이 시간 ${mm(one.seconds || 0)}${one.q_total ? ` · ${one.q_correct || 0}/${one.q_total} 정답` : ''}${one.ref_title ? ' · ' + one.ref_title : ''}` : `${one.mode === 'pomodoro' ? '뽀모도로' : '스톱워치'} ${mm(one.seconds || 0)} 공부 기록`;
+        if (op === 'delete') return '공부 기록 삭제';
+      }
+      if (t === 'tools_profile') return `학교 · 반 설정${one.school_name ? ': ' + one.school_name : ''}${one.grade ? ` ${one.grade}학년` : ''}${one.class_nm ? ` ${one.class_nm}반` : ''}`;
+      if (t === 'tools_ddays') { if (op === 'insert') return `D-day 추가: ${one.title || ''} (${one.day || ''})`; if (op === 'delete') return 'D-day 삭제'; }
+      return `${t} ${op}`;
+    }
+    function wrap(c) {
+      if (!c || c.__qtlog || typeof c.from !== 'function') return c;
+      c.__qtlog = true; const orig = c.from.bind(c);
+      c.from = t => {
+        const qb = orig(t); if (!TBL[t]) return qb;
+        ['insert', 'update', 'upsert', 'delete'].forEach(op => {
+          const f = qb[op]; if (typeof f !== 'function') return;
+          qb[op] = function (...args) {
+            const b = f.apply(qb, args); if (!b || typeof b.then !== 'function') return b;
+            const th = b.then.bind(b), v = args[0];
+            b.then = (res, rej) => th(r => {
+              try {
+                const one = (Array.isArray(v) ? v[0] : v) || {};
+                const part = t === 'tools_sessions' && one.mode === 'solve' ? 'maker' : TBL[t];
+                const lb = dbLabel(t, op, op === 'delete' ? null : v, b);
+                add(part, 'do', `${t}.${op}`, (r && r.error ? '실패 · ' : '') + lb, Object.assign({}, op === 'delete' ? {} : { values: v }, r && r.error ? { error: r.error.message || String(r.error) } : {}), !(r && r.error),
+                  op === 'update' && Object.keys(one).length === 1 && 'sort' in one ? { dedupe: t + 'sort', gap: 4000 } : {});
+              } catch (e) {}
+              return res ? res(r) : r;
+            }, rej);
+            return b;
+          };
+        });
+        return qb;
+      };
+      return c;
+    }
+    function setClient(c) { client = wrap(c); if (user) schedule(1500); return client; }
+    function setUser(u) {
+      if (!u || !u.id) { user = null; pre = []; return; }
+      const first = !user || user.id !== u.id; user = { id: u.id, name: u.name || '', email: u.email || '' };
+      if (!first) return;
+      if (pre.length) { const q = load(); pre.forEach(e => Object.assign(e, { uid: user.id, name: user.name || null, email: user.email || null })); q.push(...pre); pre = []; save(q); }
+      const p = ls.get(PK); let pend = null; try { pend = p && JSON.parse(p); } catch (e) {}
+      if (pend && Date.now() - pend.at < 30 * 60e3) {
+        ls.del(PK);
+        const HOW = { google: '구글', kakao: '카카오', email: '이메일' };
+        add('login', 'login', pend.what, `${pend.what === 'signup' ? '회원가입' : '로그인'} (${HOW[pend.how] || pend.how})${isStandalone() ? ' · 앱' : ''}`, { how: pend.how }, true, { now: true });
+        ss.set('qt_log_visit_' + u.id, '1');
+      } else if (!ss.get('qt_log_visit_' + u.id)) {
+        ss.set('qt_log_visit_' + u.id, '1');
+        add('login', 'login', 'visit', isStandalone() ? '앱으로 접속' : '접속', { ua: UA.slice(0, 200), screen: `${screen.width}×${screen.height}` });
+      }
+      schedule(1500);
+    }
+    const pending = (what, how) => ls.set(PK, JSON.stringify({ what, how, at: Date.now() }));
+    const fail = (email, msg, what) => add('login', 'auth_fail', what === 'signup' ? 'signup_fail' : 'login_fail', `${what === 'signup' ? '가입' : '로그인'} 실패: ${msg}`, { email }, false, { anon: true, email, now: true });
+    let viewName = '', viewAt = Date.now();
+    function view(label, detail) { viewName = label; viewAt = Date.now(); add(null, 'view', 'view', label, detail, true, { dedupe: 'v' + page(), gap: 2500 }); }
+    /* 누른 버튼 · 링크 */
+    document.addEventListener('click', e => {
+      const el = e.target && e.target.closest && e.target.closest('button,a,[role=button],summary,label,.srow,[data-a],[data-k],[data-t],[data-d],[data-c]');
+      if (!el || el.closest('[data-nolog]')) return;
+      let txt = (el.getAttribute('aria-label') || el.getAttribute('title') || el.innerText || el.textContent || '').replace(/\s+/g, ' ').trim();
+      if (!txt) return; txt = txt.slice(0, 60);
+      const href = el.getAttribute && el.getAttribute('href');
+      add(null, 'click', el.tagName.toLowerCase(), txt, href ? { href: href.slice(0, 120) } : null, true, { dedupe: 'c' + txt + page(), gap: 250 });
+    }, true);
+    window.addEventListener('error', e => add(null, 'error', 'js', `화면 오류: ${e.message || '알 수 없음'}`, { src: String(e.filename || '').slice(-80), line: e.lineno }, false, { dedupe: 'e' + e.message, gap: 30000 }));
+    window.addEventListener('unhandledrejection', e => { const m = e.reason && (e.reason.message || String(e.reason)); if (!m || /AbortError/.test(m)) return; add(null, 'error', 'promise', `처리 안 된 오류: ${m}`, null, false, { dedupe: 'p' + m, gap: 30000 }); });
+    window.addEventListener('pagehide', () => { const s = Math.round((Date.now() - T0) / 1000); if (s >= 5) add(null, 'view', 'leave', `나감 · ${s >= 60 ? mm(s) : s + '초'} 머묾`, { last: viewName }); });
+    document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') flush(); });
+    window.addEventListener('online', () => schedule(500));
+    return { add, flush, view, setClient, setUser, pending, fail, wrap, PARTS, device, slim };
+  })();
+  window.QTLOG = QTLOG;
   window.QTNAV = { render, IC, LOGO, isDark, applyTheme, userIcon: IC.user, installCard, setAccount, howModal, isStandalone, markInstalled, DEV };
 })();

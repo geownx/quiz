@@ -947,6 +947,50 @@ details.adv .sec-t:first-of-type{margin-top:4px}
   .ld-card{display:block}.ld-card i{margin-bottom:12px}.ld-card small{display:block}
   .ld-sec{margin-top:44px}.ld-h h3{font-size:24px}
 }
+
+/* ===== 관리자 · 활동 기록 ===== */
+.lg-setup{padding:18px}.lg-setup b{font-size:16px}.lg-setup p{margin:8px 0 0;line-height:1.6;color:var(--ink2)}
+.lg-today{font-size:14px;color:var(--ink2);margin-bottom:12px}.lg-today b{color:var(--ink);margin-right:6px}
+.lg-who{display:grid;grid-template-columns:44px 1fr auto;gap:12px;align-items:center;padding:16px;margin-bottom:14px}
+.lg-who .av{width:44px;height:44px;border-radius:50%;background:var(--acc2);color:var(--acc);display:grid;place-items:center;font-weight:800;font-size:18px}
+.lg-who .un b{display:block;font-size:17px}.lg-who .un span{font-size:13px;color:var(--mute)}
+.lg-meta{grid-column:1/-1;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.lg-meta div{background:var(--soft);border-radius:12px;padding:9px 11px}.lg-meta span{display:block;font-size:11.5px;color:var(--mute)}.lg-meta b{font-size:14px}
+.lg-dev{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:12.5px}.lg-dev>span{color:var(--mute);margin-right:2px}
+.lg-dev i{font-style:normal;background:var(--soft);border-radius:999px;padding:4px 10px}.lg-dev small{color:var(--acc);font-weight:800}
+.lg-parts{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}.lg-parts::-webkit-scrollbar{display:none}
+.lg-parts button{flex:0 0 auto;display:flex;flex-direction:column;align-items:flex-start;gap:1px;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:12px;padding:7px 12px;font:inherit;cursor:pointer}
+.lg-parts button span{font-size:12.5px;font-weight:700}.lg-parts button b{font-size:15px}
+.lg-parts button.on{background:var(--acc);border-color:var(--acc);color:#fff}
+.lg-parts button.f b{color:var(--bad)}.lg-parts button.f.on{background:var(--bad);border-color:var(--bad)}.lg-parts button.f.on b{color:#fff}
+.lg-hint{font-size:12px;color:var(--mute);margin:6px 0 10px}
+.lg-tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px}
+.lg-tools input[type=text]{flex:1 1 180px;min-width:0}.lg-tools input[type=date]{flex:0 0 auto;width:auto;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:10px;padding:9px 10px;font:inherit;font-size:14px;outline:none;-webkit-appearance:none;appearance:none;min-height:42px}
+.lg-ck{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--ink2);white-space:nowrap}.lg-ck input{width:auto;margin:0}
+.lg-day h5{margin:16px 0 6px;font-size:13px;color:var(--mute);position:sticky;top:0;background:var(--bg);padding:4px 0;z-index:1}
+.lgr{display:grid;grid-template-columns:62px 78px minmax(0,1fr);gap:10px;align-items:start;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:5px;cursor:pointer}
+.lgr:hover{border-color:var(--acc)}
+.lgr time{font-size:12.5px;color:var(--mute);font-variant-numeric:tabular-nums;padding-top:2px}
+.lgp{font-size:11.5px;font-weight:800;border-radius:7px;padding:3px 7px;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;background:var(--soft);color:var(--ink2)}
+.lgp.p-login{background:#e8f1ff;color:#2f6fdc}.lgp.p-maker{background:var(--acc2);color:var(--acc)}.lgp.p-checklist{background:#e6f7ee;color:#1d8a52}
+.lgp.p-timer{background:#fff1e3;color:#c46a12}.lgp.p-school{background:#f3ecff;color:#7a4bd6}.lgp.p-home{background:#e8f6f8;color:#16808f}
+.lgp.p-app{background:#fdeef6;color:#c23b7f}.lgp.p-admin{background:#eceef3;color:#4a5068}
+body.dark .lgp{filter:brightness(.85) saturate(1.2)}
+.lgm b{display:block;font-size:14px;font-weight:600;line-height:1.45;word-break:break-all}
+.lgm small{display:block;font-size:12px;color:var(--mute);margin-top:2px}.lgm small a{color:var(--acc);font-weight:700;cursor:pointer}
+.lgk{font-style:normal;font-size:11px;font-weight:800;color:var(--mute);border:1px solid var(--line);border-radius:6px;padding:0 5px;margin-right:6px;vertical-align:1px}
+.lgr.k-click .lgm b{font-weight:500;color:var(--ink2)}
+.lgr.bad{border-color:#f3c2c2;background:#fff7f7}.lgr.bad .lgm b{color:var(--bad)}body.dark .lgr.bad{background:rgba(220,60,60,.08)}
+.lgd{grid-column:1/-1;border-top:1px dashed var(--line);margin-top:4px;padding-top:8px;display:grid;gap:4px;cursor:auto}
+.lgd div{display:grid;grid-template-columns:72px 1fr;gap:8px;font-size:12.5px}.lgd span{color:var(--mute)}.lgd code{word-break:break-all;white-space:pre-wrap}
+.lgd pre{margin:4px 0 0;background:var(--soft);border-radius:10px;padding:10px;font-size:12px;overflow:auto;max-height:280px;white-space:pre-wrap;word-break:break-all}
+.lg-more{width:100%;margin-top:10px}.lg-end{text-align:center;color:var(--mute);font-size:12.5px;margin:14px 0}
+@media(max-width:699px){
+  .lgr{grid-template-columns:54px minmax(0,1fr);gap:4px 8px}
+  .lgr .lgp{grid-column:2;justify-self:start}.lgr .lgm{grid-column:1/-1}
+  .lg-meta{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .lg-who{grid-template-columns:40px 1fr}.lg-who #lgAll{grid-column:1/-1}
+}
 /* 약한 파트 → 할 일 */
 .weak{border:1px solid var(--acc);background:var(--acc2);border-radius:16px;padding:14px;margin-top:12px}
 .weak b{display:block;font-size:15px}
@@ -1043,10 +1087,51 @@ async function api(action, data = {}, opt = {}) {
   if (!res.ok || (j && j.error)) {
     const err = (j && j.error) || {};
     const e = new Error(err.message || `서버 오류 (${res.status})`); e.code = err.code || 'HTTP'; e.status = res.status;
+    logApi(action, data, null, e);
     if (e.code === 'QM_AUTH' && tok) { ME = null; renderNav(); }
     throw e;
   }
+  logApi(action, data, j);
   return j;
+}
+/* 활동 기록: 서버에 무언가를 바꾸는 요청만 남겨요 (읽기만 하는 요청은 빼요) */
+const LOG_SKIP = /^(me|sync|items|itemGet|outputGet|jobGet|jobsRunning|publicConfig|review|ledger|reportsSeen|uploadDirect|admin(Users|Stats|Reports|Items|Item|ConfigGet))$/;
+const pctOf = (a, b) => b ? Math.round(a / b * 100) : 0;
+const LOG_L = {
+  uploadUrls: d => `자료 올리기: 파일 ${(d.files || []).length}개`,
+  itemCreate: d => `학습 만들기: ${d.title || '(제목 없음)'}`,
+  analyze: () => '자료 분석 시작',
+  materialDelete: () => '자료 삭제',
+  itemUpdate: d => `학습 수정${d.title ? ': ' + d.title : ''}`,
+  itemDelete: () => '학습 삭제',
+  jobCancel: () => '만들기 취소',
+  create: d => `${KIND_L[d.kind] || d.kind || '문제지'} 만들기${d.settings && d.settings.total ? ` · ${d.settings.total}문제` : ''}${d.wrong ? ` · 틀린 문제 ${d.wrong.length}개 기준` : ''}${d.title ? ` · ${d.title}` : ''}`,
+  outputSave: d => d.data ? '문제 고치기 저장' : d.progress && d.progress.answers && !Object.keys(d.progress.answers).length ? '풀기 처음부터 다시' : d.progress && d.progress.ck ? '플래시카드 · 노트 진행 저장' : '푸는 중 · 진행 저장',
+  regen: () => '문제 하나 다시 만들기',
+  report: d => `문제 오류 신고${d.reason ? ': ' + d.reason : ''}`,
+  exportUrl: () => 'PDF 저장 시작',
+  exportDone: d => `PDF 저장 완료${d.pages ? ` · ${d.pages}쪽` : ''}`,
+  attemptSave: d => `채점 · ${d.correct}/${d.total} 정답 (${pctOf(d.correct, d.total)}점)`,
+  setSolveMode: d => `채점 방식 바꾸기: ${d.mode}`,
+  setName: d => `이름 바꾸기: ${d.name || ''}`,
+  adminUserUpdate: d => `회원 정보 수정 · ${d.status ? '상태 ' + d.status : d.coins ? `코인 ${d.coins > 0 ? '+' : ''}${d.coins}` : d.subDays ? (d.subDays < 0 ? '정액제 끝냄' : `정액제 ${d.subDays}일`) : d.solveMode ? '채점 방식 ' + d.solveMode : ''}`,
+  adminReportDecide: d => `오류 신고 처리: ${d.accept ? '오류 맞음' : '오류 아님'}`,
+  adminConfigSet: () => '운영 설정 저장',
+};
+function logApi(action, data, res, err) {
+  if (!window.QTLOG || LOG_SKIP.test(action)) return;
+  try {
+    const d = data || {}, f = LOG_L[action], lb = f ? f(d) : action;
+    const det = {}; Object.keys(d).forEach(k => { if (!/^(answers|results|data|progress|b64|wrong)$/.test(k)) det[k] = d[k]; });
+    if (d.progress) det.answered = Object.keys(d.progress.answers || d.progress.ck || {}).length;
+    if (d.wrong) det.wrong = d.wrong.length;
+    if (O && d.outputId === O.id) det.output = O.title;
+    if (res && typeof res === 'object') ['id', 'outputId', 'itemId', 'jobId', 'coins', 'cost'].forEach(k => { if (res[k] != null && typeof res[k] !== 'object') det['res_' + k] = res[k]; });
+    if (err) Object.assign(det, { error: err.message, code: err.code });
+    if (action === 'outputSave' && d.progress && d.progress.answers && !Object.keys(d.progress.answers).length) return; // 채점 뒤 진행 기록 정리 (따로 안 남겨요)
+    const save = action === 'outputSave' && d.progress;
+    QTLOG.add(/^admin/.test(action) ? 'admin' : 'maker', 'do', action, (err ? '실패 · ' : '') + lb, det, !err, save ? { dedupe: 'os' + d.outputId, gap: 120000 } : {});
+  } catch (e) {}
 }
 function handleErr(e) {
   if (!e || e.name === 'AbortError') return;
@@ -1064,6 +1149,7 @@ function authClient() {
   if (SBC || FAKE) return SBC;
   if (!CONFIGURED || !window.supabase) return null;
   SBC = window.supabase.createClient(SB_ORIGIN, CONFIG.SUPABASE_KEY, { auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true } });
+  if (window.QTLOG) QTLOG.setClient(SBC);
   return SBC;
 }
 async function getToken() {
@@ -1112,6 +1198,7 @@ async function reportNews() {
   if (rw) refreshMe();
 }
 async function logout() {
+  if (window.QTLOG) { QTLOG.add('login', 'login', 'logout', '로그아웃'); try { await Promise.race([QTLOG.flush(), new Promise(r => setTimeout(r, 1500))]); } catch (e) {} QTLOG.setUser(null); }
   if (FAKE) FAKE.out = true; else { try { await authClient().auth.signOut(); } catch (e) {} }
   ME = null; stopAllWatch(); renderNav(); go('#/'); toast('로그아웃했어요');
 }
@@ -1162,6 +1249,7 @@ let ROUTE = [];
 function go(h) { if (location.hash === h) route(); else location.hash = h; }
 function nav(html) { $('#navin').innerHTML = html; $('#navbar').style.display = html ? '' : 'none'; document.body.classList.toggle('has-nav', !!html); }
 const APP = () => $('#app');
+const VIEW_L = { lib: '학습 목록', item: '학습 보기', new: '만들기 설정', out: '만든 결과 보기', pdf: 'PDF 문제지 보기', solve: '사이트에서 풀기', flash: '플래시카드', note: '요약 노트', map: '마인드맵', review: '오답 노트', me: '내 계정' };
 function route() {
   const h = location.hash || '#/';
   if (/access_token=|error_description=|type=recovery/.test(h)) return; // 로그인 링크 처리 중
@@ -1174,6 +1262,7 @@ function route() {
   if (r === 'reset') return viewReset();
   if (!ME) return viewLanding(r && r !== 'auth' ? null : a);
   if (ME.status === 'pending' || ME.status === 'blocked') return viewWaiting();
+  if (window.QTLOG && r && r !== 'admin') QTLOG.view((VIEW_L[r] || r || '처음 화면') + (r === 'lib' && a ? (a === 'cam' ? ' (사진 찍기)' : ' (파일 올리기)') : ''), a && r !== 'lib' ? { id: a } : null);
   switch (r) {
     case 'item': return viewItem(a);
     case 'new': return viewCreate(a, b);
@@ -1185,7 +1274,7 @@ function route() {
     case 'map': return viewMap(a);
     case 'review': return viewReview(a);
     case 'me': return viewAccount();
-    case 'admin': return isAdmin() ? viewAdmin(a) : go('#/lib');
+    case 'admin': return isAdmin() ? viewAdmin(a, b) : go('#/lib');
     case 'lib': return viewLibrary(a);
     default: if (!r) { location.replace('/tools/'); return; } return go('#/lib');
   }
@@ -1203,7 +1292,7 @@ function renderNav() {
     return;
   }
   const ok = ME.status === 'approved', cnt = (+ME.pending || 0) + (+ME.reports || 0);
-  linkAppAccount();
+  linkAppAccount(); logUser();
   QTNAV.render({ active: 'maker', tabs: ok, right: `${ok && !adm ? `<button class="qn-pill ${hasSub() ? '' : (+ME.coins || 0) < 3 ? 'low' : ''}" id="btnCoin" title="내 코인">${hasSub() ? '<b>정액제</b>' : `코인 <b>${nfmt(ME.coins)}</b>`}</button>` : ''}
     ${adm ? `<button class="qn-pill adm" id="btnAdmin">관리자${cnt ? ` <i class="cnt">${cnt}</i>` : ''}</button>` : ''}
     <button class="qn-ib" id="btnAcct" title="내 계정" aria-label="내 계정">${IC.user}</button>` });
@@ -1725,6 +1814,7 @@ function renderAuth(mode, email) {
   $$('.oauth button', P).forEach(b => b.onclick = async () => {
     if (su && false) return;
     if (FAKE) { FAKE.out = false; await afterLogin(); return; }
+    if (window.QTLOG) QTLOG.pending('login', b.dataset.p);
     try { const { error } = await authClient().auth.signInWithOAuth({ provider: b.dataset.p, options: { redirectTo: siteUrl() } }); if (error) throw error; }
     catch (e) { $('#aErr', P).textContent = authMsg(e); }
   });
@@ -1751,14 +1841,16 @@ function renderAuth(mode, email) {
       if (su) {
         const { data, error } = await A.signUp({ email: em, password: pw, options: { data: { name: $('#aName', P).value.trim() }, emailRedirectTo: siteUrl() } });
         if (error) throw error;
+        if (window.QTLOG) QTLOG.pending('signup', 'email');
         if (data.session) return afterLogin($('#aName', P).value.trim());
         return renderAuth('sent', em);
       }
       const { error } = await A.signInWithPassword({ email: em, password: pw });
       if (error) throw error;
+      if (window.QTLOG) QTLOG.pending('login', 'email');
       await afterLogin();
     } catch (x) {
-      er.textContent = authMsg(x); btn.disabled = false; btn.textContent = su ? '이메일로 가입하기' : '로그인';
+      er.textContent = authMsg(x); if (window.QTLOG) QTLOG.fail(em, authMsg(x), su ? 'signup' : 'login'); btn.disabled = false; btn.textContent = su ? '이메일로 가입하기' : '로그인';
       if (/Email not confirmed/i.test(x.message || '')) er.insertAdjacentHTML('beforeend', ` <button type="button" class="linkbtn" id="aResend">인증 메일 다시 받기</button>`), $('#aResend', P).onclick = () => renderAuth('sent', em);
     }
   };
@@ -3096,14 +3188,122 @@ async function viewAccount() {
 /* =============== 관리자 =============== */
 const AD = { tab: 'stats', q: '', seq: 0 };
 const ST_LABEL = { pending: '확인 대기', approved: '이용 중', blocked: '정지' };
-function viewAdmin(tab) {
+function viewAdmin(tab, sub) {
   if (tab) AD.tab = tab;
+  AD.sub = AD.tab === 'logs' ? (sub || null) : null;
   APP().innerHTML = `<div class="wrap">
-    <div class="adm-head"><div><span class="k">ADMIN</span><h2>관리자</h2><p class="sub">통계, 회원 · 코인 · 정액제, 학습 기록, 운영 설정을 관리해요.</p></div></div>
-    <div class="seg tabs" id="adTabs">${[['stats', '통계'], ['users', `회원 ${ME.pending ? `<i class="cnt">${ME.pending}</i>` : ''}`], ['reports', `오류 신고 ${ME.reports ? `<i class="cnt">${ME.reports}</i>` : ''}`], ['items', '학습 기록'], ['settings', '설정']].map(([k, l]) => `<button data-t="${k}" class="${AD.tab === k ? 'on' : ''}">${l}</button>`).join('')}</div>
+    <div class="adm-head"><div><span class="k">ADMIN</span><h2>관리자</h2><p class="sub">통계, 회원 · 코인 · 정액제, 학습 기록, 활동 기록, 운영 설정을 관리해요.</p></div></div>
+    <div class="seg tabs" id="adTabs">${[['stats', '통계'], ['users', `회원 ${ME.pending ? `<i class="cnt">${ME.pending}</i>` : ''}`], ['reports', `오류 신고 ${ME.reports ? `<i class="cnt">${ME.reports}</i>` : ''}`], ['items', '학습 기록'], ['logs', '활동 기록'], ['settings', '설정']].map(([k, l]) => `<button data-t="${k}" class="${AD.tab === k ? 'on' : ''}">${l}</button>`).join('')}</div>
     <div id="adBody" style="margin-top:16px"><div class="note">불러오는 중…</div></div></div>`;
   $$('#adTabs button').forEach(b => b.onclick = () => go('#/admin/' + b.dataset.t));
+  { const tb = $('#adTabs'), on = $('#adTabs .on'); if (tb && on) tb.scrollLeft = on.offsetLeft - 24; }
+  if (AD.tab === 'logs') return adminLogs(AD.sub);
   ({ stats: adminStats, users: adminUsers, reports: adminReports, items: adminItems, settings: adminSettings }[AD.tab] || adminStats)();
+}
+
+/* ===== 관리자 · 활동 기록 (회원이 한 일을 파트별로) ===== */
+const LG = { uid: null, part: 'all', q: '', date: '', clicks: false, rows: [], more: false, sum: {}, dev: [], open: new Set() };
+const LG_PARTS = () => (window.QTLOG ? QTLOG.PARTS : []);
+const LG_PL = k => (LG_PARTS().find(x => x[0] === k) || [k, k])[1];
+const LG_KIND = { view: '화면', click: '누름', error: '오류', auth_fail: '실패' };
+const LG_DAY = d => `${d.getMonth() + 1}월 ${d.getDate()}일 (${'일월화수목금토'[d.getDay()]})`;
+const LG_T = d => [d.getHours(), d.getMinutes(), d.getSeconds()].map(n => String(n).padStart(2, '0')).join(':');
+const lgAgo = iso => { if (!iso) return '-'; const m = Math.round((Date.now() - Date.parse(iso)) / 60000); return m < 1 ? '방금' : m < 60 ? `${m}분 전` : m < 1440 ? `${Math.round(m / 60)}시간 전` : m < 43200 ? `${Math.round(m / 1440)}일 전` : fmtD(iso); };
+function lgErrBox(e) {
+  const m = (e && ((e.code || '') + ' ' + (e.message || ''))) || '';
+  if (/PGRST20|42P01|42883|does not exist|schema cache|Could not find/i.test(m))
+    return `<div class="card lg-setup"><b>활동 기록 테이블이 아직 없어요</b><p>Supabase SQL Editor에서 <code>supabase_logs.sql</code>을 실행해 주세요. 맨 위의 관리자 이메일을 이 계정 이메일(<b>${esc(ME.email || '')}</b>)로 바꾸고 실행하면 돼요.</p><p class="note">오류: ${esc(m.trim())}</p></div>`;
+  return `<p class="err">${esc((e && e.message) || String(e))}</p>`;
+}
+async function adminLogs(uid) {
+  const my = ++AD.seq, c = authClient(), box0 = adBox(my);
+  if (!box0) return;
+  if (!c) { box0.innerHTML = '<p class="note">이 화면에서는 기록을 불러올 수 없어요.</p>'; return; }
+  if (LG.uid !== (uid || null)) { LG.uid = uid || null; LG.part = 'all'; LG.date = ''; LG.open = new Set(); }
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  let ok, sum;
+  try {
+    const [a, b] = await Promise.all([c.rpc('qm_is_log_admin'), c.rpc('qm_log_summary', { p_user: LG.uid, p_since: LG.uid ? null : today.toISOString() })]);
+    if (a.error) throw a.error; if (b.error) throw b.error; ok = a.data; sum = b.data || [];
+  } catch (e) { const bx = adBox(my); if (bx) bx.innerHTML = lgErrBox(e); return; }
+  const box = adBox(my); if (!box) return;
+  if (!ok) { box.innerHTML = `<div class="card lg-setup"><b>이 계정은 기록 관리자로 등록되지 않았어요</b><p><code>supabase_logs.sql</code> 맨 위의 관리자 이메일을 <b>${esc(ME.email || '')}</b>로 바꾸고 다시 실행해 주세요.</p></div>`; return; }
+  LG.sum = {}; LG.dev = [];
+  sum.forEach(r => { if (r.k[0] === '@') LG.dev.push(r); else LG.sum[r.k] = r; });
+  const cnt = k => nfmt((LG.sum[k] && LG.sum[k].n) || 0);
+  const first = LG.sum.__first, all = LG.sum.__all;
+  const name = LG.uid ? (LG.rows.find(r => r.user_id === LG.uid) || {}) : null;
+  box.innerHTML = `<div class="lg" data-nolog>
+    ${LG.uid ? `<div class="card lg-who"><div class="av">${esc(((name && (name.name || name.email)) || '?').slice(0, 1))}</div>
+        <div class="un"><b id="lgName">${esc((name && name.name) || '회원')}</b><span id="lgMail">${esc((name && name.email) || '')}</span></div>
+        <button class="btn sm ghost" id="lgAll">← 전체 기록</button>
+        <div class="lg-meta"><div><span>처음 기록</span><b>${first && first.last_at ? fmtDT(first.last_at) : '-'}</b></div><div><span>마지막 활동</span><b>${all && all.last_at ? lgAgo(all.last_at) : '-'}</b></div><div><span>전체 기록</span><b>${cnt('__all')}건</b></div><div><span>누른 버튼</span><b>${cnt('__click')}번</b></div></div>
+        ${LG.dev.length ? `<div class="lg-dev"><span>쓴 기기</span>${LG.dev.sort((x, y) => y.n - x.n).map(d => `<i>${esc(d.k.slice(1))} <small>${nfmt(d.n)}</small></i>`).join('')}</div>` : ''}</div>`
+      : `<div class="lg-today"><b>오늘</b> 활동 ${cnt('__all')}건 · 실패·오류 ${cnt('__fail')}건 · 누른 버튼 ${cnt('__click')}번</div>`}
+    <div class="lg-parts">${[['all', '전체', '__all']].concat(LG_PARTS().map(([k, l]) => [k, l, k]), [['fail', '실패 · 오류', '__fail']]).map(([k, l, sk]) =>
+      `<button data-p="${k}" class="${LG.part === k ? 'on' : ''} ${k === 'fail' ? 'f' : ''}"><span>${esc(l)}</span><b>${cnt(sk)}</b></button>`).join('')}</div>
+    <p class="lg-hint">${LG.uid ? '숫자는 이 회원의 전체 기록 수예요.' : '숫자는 오늘 기록 수예요. 이름을 누르면 그 회원 기록만 볼 수 있어요.'}</p>
+    <div class="lg-tools">
+      ${LG.uid ? '' : `<input type="text" id="lgQ" placeholder="이름 · 이메일 검색" value="${esc(LG.q)}">`}
+      <input type="date" id="lgD" value="${esc(LG.date)}" title="이 날짜까지의 기록">
+      <label class="lg-ck"><input type="checkbox" id="lgC" ${LG.clicks ? 'checked' : ''}> 누른 버튼까지 보기</label>
+      <button class="btn sm" id="lgGo">새로고침</button>
+    </div>
+    <div id="lgList"><div class="note">불러오는 중…</div></div>
+  </div>`;
+  $$('.lg-parts button', box).forEach(b => b.onclick = () => { LG.part = b.dataset.p; $$('.lg-parts button', box).forEach(x => x.classList.toggle('on', x === b)); lgLoad(my); });
+  const all2 = $('#lgAll', box); if (all2) all2.onclick = () => go('#/admin/logs');
+  const qi = $('#lgQ', box); if (qi) qi.onkeydown = e => { if (e.key === 'Enter') { LG.q = qi.value.trim(); lgLoad(my); } };
+  $('#lgD', box).onchange = e => { LG.date = e.target.value; lgLoad(my); };
+  $('#lgC', box).onchange = e => { LG.clicks = e.target.checked; lgLoad(my); };
+  $('#lgGo', box).onclick = () => { if (qi) LG.q = qi.value.trim(); adminLogs(LG.uid); };
+  lgLoad(my);
+}
+async function lgFetch(append) {
+  const c = authClient();
+  let q = c.from('qm_logs').select('id,created_at,user_id,name,email,part,kind,action,label,detail,ok,page,device,app,sid').order('created_at', { ascending: false }).order('id', { ascending: false }).limit(100);
+  if (LG.uid) q = q.eq('user_id', LG.uid);
+  if (LG.part === 'fail') q = q.eq('ok', false); else if (LG.part !== 'all') q = q.eq('part', LG.part);
+  if (!LG.clicks) q = q.neq('kind', 'click');
+  const t = LG.uid ? '' : LG.q.replace(/[,()*%\\:"]/g, ' ').trim();
+  if (t) q = q.or(`email.ilike.*${t}*,name.ilike.*${t}*`);
+  if (append && LG.rows.length) q = q.lt('created_at', LG.rows[LG.rows.length - 1].created_at);
+  else if (LG.date) { const d = new Date(LG.date + 'T00:00:00'); d.setDate(d.getDate() + 1); q = q.lt('created_at', d.toISOString()); }
+  const { data, error } = await q; if (error) throw error;
+  LG.rows = append ? LG.rows.concat(data || []) : (data || []); LG.more = (data || []).length === 100;
+}
+async function lgLoad(my, append) {
+  const L = () => my === AD.seq && $('#lgList');
+  if (!append && L()) L().innerHTML = '<div class="note">불러오는 중…</div>';
+  try { await lgFetch(append); } catch (e) { if (L()) L().innerHTML = lgErrBox(e); return; }
+  const box = L(); if (!box) return;
+  if (LG.uid) { const r = LG.rows.find(x => x.name || x.email); if (r) { const n = $('#lgName'), m = $('#lgMail'), av = $('.lg-who .av'); if (n) n.textContent = r.name || '(이름 없음)'; if (m) m.textContent = r.email || ''; if (av) av.textContent = (r.name || r.email || '?').slice(0, 1); } }
+  if (!LG.rows.length) { box.innerHTML = '<p class="note">기록이 없어요.</p>'; return; }
+  let day = '', html = '';
+  LG.rows.forEach((r, i) => {
+    const d = new Date(r.created_at), dk = LG_DAY(d);
+    if (dk !== day) { if (day) html += '</div>'; day = dk; html += `<div class="lg-day"><h5>${dk}</h5>`; }
+    const kt = LG_KIND[r.kind] || (r.kind === 'login' ? '' : '');
+    html += `<div class="lgr ${r.ok ? '' : 'bad'} k-${esc(r.kind)} ${LG.open.has(r.id) ? 'open' : ''}" data-i="${i}">
+      <time>${LG_T(d)}</time><span class="lgp p-${esc(r.part)}">${esc(LG_PL(r.part))}</span>
+      <div class="lgm"><b>${kt ? `<i class="lgk">${kt}</i>` : ''}${esc(r.label || r.action || '')}</b>
+        <small>${LG.uid ? '' : r.user_id ? `<a data-u="${esc(r.user_id)}">${esc(r.name || '(이름 없음)')} · ${esc(r.email || '')}</a> · ` : r.email ? `<span>${esc(r.email)} (로그인 전)</span> · ` : ''}${esc(r.device || '')}${r.app ? ' · 앱' : ''}</small></div>
+      ${LG.open.has(r.id) ? lgDetail(r) : ''}</div>`;
+  });
+  html += '</div>';
+  box.innerHTML = html + (LG.more ? '<button class="btn lg-more" id="lgMore">더 보기</button>' : `<p class="lg-end">${nfmt(LG.rows.length)}건 · 끝</p>`);
+  $$('.lgr', box).forEach(el => el.onclick = e => {
+    const a = e.target.closest('a[data-u]'); if (a) { e.stopPropagation(); return go('#/admin/logs/' + a.dataset.u); }
+    if (e.target.closest('.lgd')) return;
+    const r = LG.rows[+el.dataset.i]; if (LG.open.has(r.id)) LG.open.delete(r.id); else LG.open.add(r.id);
+    el.classList.toggle('open'); const old = $('.lgd', el); if (old) old.remove(); else el.insertAdjacentHTML('beforeend', lgDetail(r));
+  });
+  const mo = $('#lgMore', box); if (mo) mo.onclick = () => { mo.disabled = true; mo.textContent = '불러오는 중…'; lgLoad(my, true); };
+}
+function lgDetail(r) {
+  const row = (k, v) => v == null || v === '' ? '' : `<div><span>${k}</span><code>${esc(String(v))}</code></div>`;
+  return `<div class="lgd">${row('시간', new Date(r.created_at).toLocaleString('ko-KR'))}${row('종류', `${r.kind} · ${r.action || ''}`)}${row('화면 주소', r.page)}${row('기기', `${r.device || ''}${r.app ? ' · 앱으로 실행' : ' · 브라우저'}`)}${row('접속 묶음', r.sid)}
+    ${r.detail ? `<pre>${esc(JSON.stringify(r.detail, null, 2))}</pre>` : ''}</div>`;
 }
 const adBox = my => (my === AD.seq && ROUTE[0] === 'admin') ? $('#adBody') : null;
 async function adminUsers() {
@@ -3122,11 +3322,11 @@ async function adminUsers() {
         <div><span>가입</span>${fmtDT(u.created_at)}</div><div><span>최근 접속</span>${fmtDT(u.last_seen_at)}</div>
         <div><span>가입 IP</span><code>${esc(u.signup_ip || '-')}</code></div><div><span>최근 IP</span><code>${esc(u.last_ip || '-')}</code></div>
         <div style="grid-column:1/-1"><span>풀기 채점 방식</span><select data-sm style="margin-top:4px">${[['ask', '매번 묻기'], ['one', '한 문제씩 고정'], ['all', '다 풀고 한 번에 고정']].map(([v, l]) => `<option value="${v}" ${(u.solve_mode || 'ask') === v ? 'selected' : ''}>${l}</option>`).join('')}</select></div></div>
-      ${u.role === 'admin' ? '' : `<div class="ua">
+      ${u.role === 'admin' ? '<div class="ua"><button class="btn sm ghost" data-a="logs">활동 기록</button></div>' : `<div class="ua">
         <button class="btn sm acc" data-a="coin">코인 지급·차감</button><button class="btn sm" data-a="sub">정액제</button>
         ${u.status === 'pending' ? '<button class="btn sm pri" data-s="approved">승인</button>' : ''}
         ${u.status === 'blocked' ? '<button class="btn sm" data-s="approved">정지 해제</button>' : `<button class="btn sm ghost" data-s="blocked" style="color:var(--bad)">정지</button>`}
-        <button class="btn sm ghost" data-a="items">학습 기록</button></div>`}</div>`).join('') : '<p class="note">회원이 없어요.</p>'}`;
+        <button class="btn sm ghost" data-a="items">학습 기록</button><button class="btn sm ghost" data-a="logs">활동 기록</button></div>`}</div>`).join('') : '<p class="note">회원이 없어요.</p>'}`;
   const q = $('#adQ', box); $('#adQGo', box).onclick = () => { AD.q = q.value.trim(); adminUsers(); }; q.onkeydown = e => { if (e.key === 'Enter') $('#adQGo', box).click(); };
   $$('.ucard', box).forEach(c => {
     const u = users.find(x => x.id === c.dataset.id);
@@ -3140,6 +3340,7 @@ async function adminUsers() {
     };
     const sb = $('[data-a="sub"]', c); if (sb) sb.onclick = () => subModal(u);
     const ib = $('[data-a="items"]', c); if (ib) ib.onclick = () => { AD.q = u.email || ''; go('#/admin/items'); };
+    const lb = $('[data-a="logs"]', c); if (lb) lb.onclick = () => go('#/admin/logs/' + u.id);
   });
 }
 function grantModal(u) {
@@ -3310,6 +3511,10 @@ window.addEventListener('resize', () => { if (ROUTE[0] === 'pdf' && O && O.pages
 
 /* 앱 설치: 서비스 워커 + 계정에 '이 종류 기기에서 앱으로 열었음' 기록 (설치 안내는 nav.js) */
 if ('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('/sw.js', { scope: '/' }).catch(() => {});
+async function logUser() {
+  if (!window.QTLOG || FAKE || !ME || !authClient()) return;
+  try { const { data } = await authClient().auth.getSession(); const u = data && data.session && data.session.user; if (u) QTLOG.setUser({ id: u.id, name: ME.name, email: ME.email || u.email }); } catch (e) {}
+}
 let APP_ACC = false;
 function linkAppAccount() {
   if (APP_ACC || FAKE || !window.QTNAV || !ME || !authClient()) return; APP_ACC = true;
