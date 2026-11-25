@@ -81,7 +81,7 @@
 
   /* 위 메뉴 · 폰 아래 탭바는 nav.js (메인과 같이 씀) */
   function renderHeader(page, me) {
-    const active = page === 'hub' ? 'home' : page === 'checklist' || page === 'timer' ? 'study' : page;
+    const active = page === 'hub' ? 'home' : page;
     if (window.QTNAV) QTNAV.render({ active, tabs: !!me, right: me ? `<a class="qn-ib" href="/#/me" title="내 계정" aria-label="내 계정">${QTNAV.userIcon}</a>` : `<a class="qn-pill acc" href="/#/">로그인</a>` });
     const f = document.createElement('footer'); f.className = 'site';
     f.innerHTML = `© 2026 문제지메이커 · 제작자 <b>geownx</b>${me && me.email ? `<br><span style="font-size:12px">${esc(me.name || '')} ${esc(me.email)} 계정에 저장돼요</span>` : ''}`;

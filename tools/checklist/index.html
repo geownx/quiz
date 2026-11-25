@@ -33,18 +33,7 @@
 .dlab>span{font-size:12px;color:var(--mute);font-weight:600;cursor:pointer}
 .dlab>span.rel{color:var(--acc);cursor:default}
 .dpk input{position:absolute;inset:0;opacity:0;width:100%;height:100%;cursor:pointer;border:0;padding:0}
-.stats{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px 14px;margin-bottom:12px}
-.stats .pt{display:flex;align-items:baseline;gap:8px;margin-bottom:8px}
-.stats .pt b{font-size:16px}
-.stats .pt span{margin-left:auto;font-size:13px;color:var(--mute);font-weight:700}
-.more{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:8px}
-.more[hidden]{display:none}
-.more .minw{flex:0 0 130px;position:relative}
-.more .minw input{padding-right:26px}
-.more .minw span{position:absolute;right:10px;top:50%;transform:translateY(-50%);color:var(--mute);font-size:13px;pointer-events:none}
-.more .lnk{margin:0}
-.tlink{border:0;background:none;color:var(--mute);font-size:13px;font-weight:600;cursor:pointer;padding:6px 2px}
-.tlink:hover{color:var(--ink)}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:12px}
 .stat{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 13px;min-width:0}
 .stat small{display:block;color:var(--mute);font-size:12px;font-weight:600}
 .stat b{display:block;font-size:21px;letter-spacing:-.5px;margin-top:2px;font-variant-numeric:tabular-nums;white-space:nowrap}
@@ -116,7 +105,7 @@ body.dark .tag{filter:brightness(1.35)}
 .play{flex:0 0 auto;width:34px;height:34px;border-radius:10px;background:var(--acc2);color:var(--acc);display:grid;place-items:center;text-decoration:none;font-size:13px}
 .play:hover{background:var(--acc);color:#fff}
 .empty{text-align:center;color:var(--ink2);padding:34px 10px;font-size:14px;line-height:1.7;background:var(--card);border:1px dashed var(--line2);border-radius:16px}
-.tools{display:flex;gap:6px;justify-content:center;align-items:center;margin-top:12px;color:var(--line2)}
+.tools{display:flex;gap:8px;margin-top:14px}
 .tools .btn{flex:1;font-size:13px;color:var(--ink2);padding:10px 8px}
 .notice{margin-bottom:12px}
 .notice .card{display:flex;gap:12px;align-items:center;border-color:var(--acc)}
@@ -158,7 +147,7 @@ const subOf = id => S.subs.find(s => s.id === id) || NONE;
 /* ---------- 화면 뼈대 ---------- */
 function shell() {
   $('#app').innerHTML = `<div class="wrap cl">
-    <div id="ssw"></div>
+    <h1>📚 공부 체크리스트</h1>
     <div class="clg">
     <div class="g-run" id="runbar"></div>
     <div class="g-quote" id="quote"></div>
@@ -170,15 +159,17 @@ function shell() {
     <div class="stats" id="stats"></div>
     <form class="addbox" id="addF" autocomplete="off">
       <div class="addrow"><input type="text" id="aT" maxlength="100" placeholder="오늘 할 공부 적기" enterkeyhint="done">
+        <div class="minw"><input type="number" id="aM" min="0" max="600" inputmode="numeric" placeholder="시간" aria-label="예상 시간(분)"><span>분</span></div>
         <button class="btn acc" type="submit" id="aGo">추가</button></div>
       <div class="spick" id="spick"></div>
-      <div class="more" id="more" hidden><div class="minw"><input type="number" id="aM" min="0" max="600" inputmode="numeric" placeholder="목표 시간" aria-label="목표 시간(분)"><span>분</span></div><div class="lnk" id="lnk"></div></div>
+      <div class="lnk" id="lnk"></div>
     </form>
     <div class="filters" id="filters"></div>
     <ul class="tl" id="list"></ul>
-    <div class="tools"><button class="tlink" id="tCopy">어제 못 한 일 가져오기</button><span>·</span><button class="tlink" id="tClear">완료 지우기</button></div>
+    <div class="tools"><button class="btn" id="tCopy">어제 못 한 일 가져오기</button><button class="btn" id="tClear">완료 항목 지우기</button></div>
     </div>
     <a class="g-side card sidet" href="/tools/timer/" id="sideT"></a>
+    <div class="g-inst" id="inst"></div>
     </div>
   </div>`;
   $('#dPrev').onclick = () => setDay(QT.shiftKey(S.day, -1));
@@ -188,7 +179,7 @@ function shell() {
   $('#addF').onsubmit = e => { e.preventDefault(); addTask(); };
   $('#tCopy').onclick = copyYesterday;
   $('#tClear').onclick = clearDone;
-  QT.studySwitch($('#ssw'), 'todo');
+  QT.installCard($('#inst'));
   QT.quoteBoard($('#quote'));
   QT.timerBanner($('#runbar'));
 }
@@ -204,7 +195,10 @@ function render() {
   const pct = all.length ? Math.round(done.length / all.length * 100) : 0;
   const plan = all.reduce((a, t) => a + (+t.minutes || 0), 0), studied = Math.round(TM.sum(S.ses) / 60);
   const hm = m => m >= 60 ? `${Math.floor(m / 60)}시간${m % 60 ? ' ' + m % 60 + '분' : ''}` : `${m}분`;
-  $('#stats').innerHTML = `<div class="pt"><b>${all.length ? `${done.length}/${all.length} 완료` : '할 일 없음'}</b><span>${studied ? `공부 ${hm(studied)}` : plan ? `목표 ${hm(plan)}` : ''}${S.streak ? `${studied || plan ? ' · ' : ''}🔥 ${S.streak}일 연속` : ''}</span></div><div class="bar"><i style="width:${pct}%"></i></div>`;
+  $('#stats').innerHTML = `
+    <div class="stat ${pct === 100 && all.length ? 'hot' : ''}"><small>달성률</small><b>${pct}%</b><div class="bar"><i style="width:${pct}%"></i></div></div>
+    <div class="stat"><small>할 일</small><b>${done.length}<span style="font-size:14px;color:var(--mute)"> / ${all.length}</span></b><em>${studied ? `공부 ${hm(studied)}${plan ? ' / ' + hm(plan) : ''}` : plan ? `계획 ${hm(plan)}` : '시간 미정'}</em></div>
+    <div class="stat ${S.streak ? 'hot' : ''}"><small>연속 달성</small><b>${S.streak}일 ${S.streak ? '🔥' : ''}</b><em>다 끝낸 날 기준</em></div>`;
 
   const sd = $('#sideT'); if (sd) { const by = TM.by(S.ses, 'subject_id'), rows = Object.entries(by).sort((a, b) => b[1] - a[1]).slice(0, 4);
     sd.innerHTML = `<b>⏱️ ${today ? '오늘' : '이날'} 공부한 시간</b><strong>${TM.dur(TM.sum(S.ses))}</strong>${rows.map(([k, v]) => { const su = k === 'none' ? NONE : subOf(k); return `<span style="${cvars(su.color)}"><i></i>${esc(su.name)} <em>${TM.dur(v)}</em></span>`; }).join('')}<u>타이머 열기 →</u>`; }
@@ -212,11 +206,9 @@ function render() {
   // 과목 고르기 (추가할 때)
   if (S.pick !== null && !S.subs.some(s => s.id === S.pick)) S.pick = null;
   $('#spick').innerHTML = S.subs.map(s => `<button type="button" class="sc ${S.pick === s.id ? 'on' : ''}" data-s="${s.id}" style="${cvars(s.color)}"><i></i>${esc(s.name)}</button>`).join('')
-    + `<button type="button" class="sc edit" id="sEdit">과목 편집</button><button type="button" class="sc edit" id="mOpen">${$('#more').hidden ? '＋ 목표 시간 · 학습' : '− 접기'}</button>`;
+    + `<button type="button" class="sc edit" id="sEdit">＋ 과목 추가 · 편집</button>`;
   $$('#spick [data-s]').forEach(b => b.onclick = () => { S.pick = S.pick === b.dataset.s ? null : b.dataset.s; LS.set('qt_cl_pick', S.pick); render(); });
   $('#sEdit').onclick = subjectManager;
-  $('#mOpen').onclick = () => { const m = $('#more'); m.hidden = !m.hidden; render(); if (!m.hidden) $('#aM').focus(); };
-  if (S.link && $('#more').hidden) $('#more').hidden = false;
 
   $('#lnk').innerHTML = S.link ? `<span class="lk on">📝 ${esc(S.link.title)} <button type="button" id="lkX" aria-label="연결 해제">✕</button></span>` : `<button type="button" class="lk" id="lkGo">📝 문제지메이커 학습 연결</button>`;
   const lg = $('#lkGo'); if (lg) lg.onclick = () => pickItem(it => { S.link = it; render(); $('#aT').focus(); });
@@ -225,7 +217,7 @@ function render() {
   // 과목별 보기
   const used = [...new Set(all.map(t => t.subject_id || 'none'))];
   if (S.filter !== 'all' && !used.includes(S.filter)) S.filter = 'all';
-  $('#filters').innerHTML = used.length > 1 && all.length >= 6 ? `<button class="sc all ${S.filter === 'all' ? 'on' : ''}" data-f="all">전체 ${all.length}</button>` + used.map(u => {
+  $('#filters').innerHTML = used.length > 1 ? `<button class="sc all ${S.filter === 'all' ? 'on' : ''}" data-f="all">전체 ${all.length}</button>` + used.map(u => {
     const s = u === 'none' ? NONE : subOf(u), n = all.filter(t => (t.subject_id || 'none') === u).length;
     return `<button class="sc ${S.filter === u ? 'on' : ''}" data-f="${u}" style="${cvars(s.color)}"><i></i>${esc(s.name)} ${n}</button>`;
   }).join('') : '';
@@ -235,7 +227,7 @@ function render() {
   const shown = all.filter(t => S.filter === 'all' || (t.subject_id || 'none') === S.filter).sort((a, b) => a.done - b.done);
   const L = $('#list');
   if (!S.loaded && !all.length) L.innerHTML = '<div class="empty">불러오는 중…</div>';
-  else if (!shown.length) L.innerHTML = `<div class="empty">${today ? '오늘 할 공부를 추가해 보세요 ✨' : '이 날은 할 일이 없어요'}</div>`;
+  else if (!shown.length) L.innerHTML = `<div class="empty">${today ? '오늘 할 공부를 추가해 보세요 ✨' : '이 날은 할 일이 없어요'}<br><small style="color:var(--mute)">과목을 고르고 할 일을 적으면 돼요</small></div>`;
   const studiedBy = TM.by(S.ses, 'task_id');
   if (shown.length) L.innerHTML = shown.map(t => { const s = subOf(t.subject_id), st = studiedBy[t.id] || 0; return `<li class="ti ${t.done ? 'done' : ''}" data-id="${t.id}" style="${cvars(s.color)}">
       <button class="ck" aria-label="${t.done ? '완료 취소' : '완료'}">${t.done ? '✓' : ''}</button>

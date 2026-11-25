@@ -163,23 +163,16 @@ async function loadRecent() {
 }
 
 /* ---------- 오늘 학교 + 가까운 시험 ---------- */
+/* 가까운 시험 D-day 한 줄 (시간표 · 급식은 학교 탭에서) */
 async function drawSchool() {
-  const box = $('#tdSchool'), p = SC.cache.get('profile');
-  if (!p || !p.school_code) { box.innerHTML = `<a class="sl1" href="/tools/school/"><span>학교</span>우리 학교를 고르면 급식 · 시간표 · 시험 D-day가 나와요 →</a>`; return; }
-  const t = QT.todayKey(), w = SC.weekRange(t);
-  let tt = {}, meals = {}, dd = [], ex = [];
+  const box = $('#tdSchool'), p = SC.cache.get('profile'), t = QT.todayKey();
+  let dd = [], ex = [];
   await Promise.all([
-    SC.timetable(p, w.mon, w.fri).then(r => tt = r).catch(() => {}),
-    SC.meals(p, w.mon, QT.shiftKey(w.mon, 6)).then(r => meals = r).catch(() => {}),
     SC.ddays().then(r => dd = r).catch(() => {}),
-    SC.schedule(p, t, QT.shiftKey(t, 200)).then(r => ex = SC.exams(r)).catch(() => {}),
+    p && p.school_code ? SC.schedule(p, t, QT.shiftKey(t, 200)).then(r => ex = SC.exams(r)).catch(() => {}) : null,
   ]);
   const next = [...ex.filter(e => e.day >= t), ...dd.filter(d => d.day >= t)].sort((a, b) => a.day < b.day ? -1 : 1)[0];
-  const lunch = (meals[t] || []).find(m => m.type === '중식') || (meals[t] || [])[0];
-  const cls = (tt[t] || []).map(x => x.s);
-  box.innerHTML = `<a class="sl1" href="/tools/school/"><span>시간표</span>${cls.length ? cls.map(esc).join(' · ') : '수업 없음'}</a>
-    <a class="sl1" href="/tools/school/"><span>${lunch ? esc(lunch.type) : '급식'}</span>${lunch ? lunch.dishes.slice(0, 5).map(d => esc(d.name)).join(', ') : '정보 없음'}</a>
-    ${next ? `<div class="ddx"><div><b>${SC.dLabel(next.day)}</b><span>${esc(next.title)}</span></div>${(next.auto || /고사|시험|모의|수능|평가/.test(next.title)) ? '<button class="btn sm acc" id="exBtn">대비 문제지</button>' : ''}</div>` : ''}`;
+  box.innerHTML = next ? `<div class="ddx"><div><b>${SC.dLabel(next.day)}</b><span>${esc(next.title)}</span></div>${(next.auto || /고사|시험|모의|수능|평가/.test(next.title)) ? '<button class="btn sm acc" id="exBtn">대비 문제지</button>' : ''}</div>` : '';
   const b = $('#exBtn'); if (b) b.onclick = () => QT.examPicker(next.title);
 }
 

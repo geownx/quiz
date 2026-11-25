@@ -22,10 +22,9 @@
 <link rel="stylesheet" href="/tools/common.css">
 <link rel="stylesheet" href="/tools/nav.css">
 <style>
-.tabs{display:flex;background:none;border-radius:0;padding:0;gap:16px;margin:-4px 0 10px;justify-content:center}
-.tabs[hidden]{display:none}
-.tabs button{flex:0 0 auto;border:0;background:none;border-radius:0;padding:6px 2px;font-size:14.5px;border-bottom:2.5px solid transparent;font-weight:700;color:var(--mute);cursor:pointer}
-.tabs button.on{color:var(--ink);border-bottom-color:var(--acc)}
+.tabs{display:flex;background:var(--soft2);border-radius:14px;padding:4px;gap:4px;margin-bottom:14px}
+.tabs button{flex:1;border:0;background:none;border-radius:11px;padding:10px 4px;font-size:14px;font-weight:700;color:var(--mute);cursor:pointer}
+.tabs button.on{background:var(--card);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.1)}
 .tabs button:disabled{opacity:.4;cursor:not-allowed}
 .spick{display:flex;gap:6px;overflow-x:auto;padding:2px 0 4px;scrollbar-width:none}
 .spick::-webkit-scrollbar{display:none}
@@ -139,20 +138,16 @@ async function keepAwake(on) {
 
 /* ---------- 화면 뼈대 ---------- */
 function shell() {
-  $('#app').innerHTML = `<div class="wrap"><div id="ssw"></div>
-    <div class="tabs" id="tabs"><button data-t="stopwatch">스톱워치</button><button data-t="pomodoro">뽀모도로</button></div>
-    <div id="pane"></div></div>`;
-  $$('#tabs button').forEach(b => b.onclick = () => { S.tab = b.dataset.t; LS.set('qt_tm_lastmode', S.tab); draw(); });
+  $('#app').innerHTML = `<div class="wrap"><h1>⏱️ 공부 타이머</h1>
+    <div class="tabs" id="tabs"><button data-t="stopwatch">⏱ 스톱워치</button><button data-t="pomodoro">🍅 뽀모도로</button><button data-t="stats">📊 기록</button></div>
+    <div id="pane"></div><div id="inst"></div></div>`;
+  $$('#tabs button').forEach(b => b.onclick = () => { S.tab = b.dataset.t; draw(); });
+  QT.installCard($('#inst'));
   document.addEventListener('click', e => { if (e.target.closest('#toStats')) { e.preventDefault(); S.tab = 'stats'; history.replaceState(null, '', '?tab=stats'); draw(); window.scrollTo(0, 0); } });
 }
 function draw() {
   const r = TM.run();
   if (r && S.tab !== 'stats') S.tab = r.mode;
-  QT.studySwitch($('#ssw'), S.tab === 'stats' ? 'stats' : 'timer');
-  $('#tabs').hidden = S.tab === 'stats';
-  const sw = $('#ssw [data-k="stats"]'), tw = $('#ssw [data-k="timer"]');
-  if (sw) sw.onclick = e => { e.preventDefault(); S.tab = 'stats'; history.replaceState(null, '', '?tab=stats'); draw(); };
-  if (tw) tw.onclick = e => { e.preventDefault(); if (S.tab === 'stats') { S.tab = (r && r.mode) || LS.get('qt_tm_lastmode', 'stopwatch'); history.replaceState(null, '', location.pathname); draw(); } };
   $$('#tabs button').forEach(b => { b.classList.toggle('on', b.dataset.t === S.tab); b.disabled = !!r && b.dataset.t !== 'stats' && b.dataset.t !== r.mode; });
   clearInterval(TICK);
   if (S.tab === 'stats') return drawStats();
@@ -163,7 +158,7 @@ function draw() {
 function pickerHTML(locked) {
   const open = S.tasks.filter(t => !t.done);
   return `<div class="spick" id="sp">${[...S.subs, NONE].map(s => `<button class="sc ${S.pick === s.id ? 'on' : ''}" data-s="${s.id || ''}" style="${cv(s.color)}" ${locked ? 'disabled' : ''}><i></i>${esc(s.name)}</button>`).join('')}</div>
-    ${open.length || S.task ? `<label class="lb">할 일과 연결 (선택)</label>
+    ${open.length || S.task ? `<label class="lb">오늘 체크리스트 할 일과 연결 (선택)</label>
     <select id="tk" ${locked ? 'disabled' : ''}><option value="">연결 안 함</option>${S.tasks.filter(t => !t.done || t.id === S.task).map(t => `<option value="${t.id}" ${S.task === t.id ? 'selected' : ''}>${esc(subOf(t.subject_id).name)} · ${esc(t.title)}</option>`).join('')}</select>` : ''}`;
 }
 function bindPicker() {
@@ -184,9 +179,10 @@ function drawTimer() {
         <div class="in"><div class="ph" id="ph"></div><div class="t ${pomo ? '' : 'sm'}" id="tt">00:00</div><div class="l" id="tl"></div></div></div>
       <div class="ctl" id="ctl"></div>
       <div class="tom" id="tom"></div>
+      <p class="hint">${pomo ? '집중 시간이 끝나면 자동으로 기록되고 휴식이 시작돼요.' : '끝내기를 누르면 공부 기록에 저장돼요.'} 앱을 닫아도 시간은 계속 흘러가요.</p>
 
     </div>
-    <div class="card t-side"><div class="ch"><b>오늘 공부</b><span style="font-weight:800;color:var(--acc)" id="tdSum"></span></div><div id="tdBy"></div><a class="btn" href="?tab=stats" id="toStats" style="width:100%;margin-top:14px">기록 보기</a></div></div>`;
+    <div class="card t-side"><div class="ch"><b>오늘 공부</b><span style="font-weight:800;color:var(--acc)" id="tdSum"></span></div><div id="tdBy"></div><a class="btn" href="?tab=stats" id="toStats" style="width:100%;margin-top:14px">📊 공부 기록 보기</a></div></div>`;
   bindPicker();
   $$('#pf [data-v]').forEach(b => b.onclick = () => { S.pomo.focus = +b.dataset.v; LS.set('qt_tm_pomo', S.pomo); drawTimer(); });
   $$('#pb [data-v]').forEach(b => b.onclick = () => { S.pomo.brk = +b.dataset.v; LS.set('qt_tm_pomo', S.pomo); drawTimer(); });
@@ -344,7 +340,7 @@ function drawStatParts() {
   $('#dT').textContent = `${pd.main}${pd.rel ? ' · ' + pd.rel : ''}`; $('#dS').textContent = TM.dur(TM.sum(sel));
   $('#dBy').innerHTML = subjectBars(TM.by(sel, 'subject_id'));
   const hm = iso => { const d = new Date(iso); return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`; };
-  $('#dL').innerHTML = sel.length ? sel.slice().reverse().map(s => { const su = subOf(s.subject_id); return `<li style="${cv(su.color)}"><span class="tg">${esc(su.name)}</span><span class="m"><span>${s.mode === 'pomodoro' ? '뽀모도로' : s.mode === 'solve' ? `문제 풀기${s.q_total ? ` · ${Math.round(s.q_correct)}/${s.q_total}` : ''}` : '스톱워치'}</span><small>${hm(s.started_at)} 시작</small></span><b>${TM.dur(s.seconds)}</b><button class="del" data-x="${s.id}" aria-label="기록 지우기">✕</button></li>`; }).join('')
+  $('#dL').innerHTML = sel.length ? sel.slice().reverse().map(s => { const su = subOf(s.subject_id); return `<li style="${cv(su.color)}"><span class="tg">${esc(su.name)}</span><span class="m"><span>${s.mode === 'pomodoro' ? '🍅 뽀모도로' : s.mode === 'solve' ? `📝 문제 풀기${s.q_total ? ` · ${Math.round(s.q_correct)}/${s.q_total}` : ''}` : '⏱ 스톱워치'}</span><small>${hm(s.started_at)} 시작</small></span><b>${TM.dur(s.seconds)}</b><button class="del" data-x="${s.id}" aria-label="기록 지우기">✕</button></li>`; }).join('')
     : '<li class="empty2" style="display:block;border:0">이날은 기록이 없어요</li>';
   $$('#dL [data-x]').forEach(b => b.onclick = async () => { if (!confirm('이 기록을 지울까요?')) return; try { await TM.remove(b.dataset.x); S.stat = S.stat.filter(s => s.id !== b.dataset.x); S.today = S.today.filter(s => s.id !== b.dataset.x); drawStatParts(); } catch (e) { toast(TM.errMsg(e), 3500); } });
   // 최근 7일
