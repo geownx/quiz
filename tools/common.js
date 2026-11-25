@@ -157,5 +157,18 @@
     draw(); document.addEventListener('qt-installable', draw);
   }
 
-  window.QT = { CONFIG, $, $$, esc, LS, toast, modal, sb, boot, todayKey, shiftKey, parseKey, prettyDate, isKey, registerSW, installCard, isStandalone };
+  /* Supabase 오류를 사람이 읽을 수 있게 + 원래 오류도 짧게 붙여요 */
+  function dbErr(e, what) {
+    const m = String((e && e.message) || e || ''), code = (e && e.code) || '';
+    const raw = `${code ? code + ' ' : ''}${m}`.slice(0, 120);
+    if (code === 'PGRST106' || /Invalid schema|schema must be one of/i.test(m)) return `Supabase에서 public 스키마가 Data API에 열려 있지 않아요. (Project Settings → Data API 확인) [${raw}]`;
+    if (code === 'PGRST205' || code === '42P01' || /relation .* does not exist|Could not find the table|schema cache/i.test(m)) return `서버에서 ${what} 테이블을 못 찾았어요. SQL 실행 · Data API 설정을 확인해 주세요. [${raw}]`;
+    if (code === '42501' || /permission denied|row-level security/i.test(m)) return `권한이 없어요. 다시 로그인하거나 SQL의 권한 부분을 확인해 주세요. [${raw}]`;
+    if (/JWT|not authorized/i.test(m)) return '로그인이 만료됐어요. 다시 로그인해 주세요.';
+    if (/Failed to fetch|NetworkError|Load failed/i.test(m)) return '인터넷 연결을 확인해 주세요.';
+    if (/duplicate key|unique/i.test(m)) return '이미 있는 이름이에요.';
+    return m || '잠시 후 다시 시도해 주세요.';
+  }
+
+  window.QT = { dbErr, CONFIG, $, $$, esc, LS, toast, modal, sb, boot, todayKey, shiftKey, parseKey, prettyDate, isKey, registerSW, installCard, isStandalone };
 })();

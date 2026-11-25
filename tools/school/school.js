@@ -7,12 +7,12 @@
   const must = ({ data, error }) => { if (error) throw new Error(errMsg(error)); return data; };
   function errMsg(e) {
     const m = String((e && e.message) || e || '');
-    if (/relation .* does not exist|Could not find the table|schema cache/i.test(m)) return '서버에 학교생활 테이블이 아직 없어요. (Supabase SQL 실행 필요)';
-    if (/NO_KEY|NEIS_KEY/.test(m)) return '서버에 나이스 인증키가 아직 없어요.';
-    if (/Failed to fetch|NetworkError|Load failed/i.test(m)) return '인터넷 연결을 확인해 주세요.';
-    if (/404|not found|Requested function/i.test(m)) return '서버에 나이스 함수(neis)가 아직 없어요.';
-    return m || '잠시 후 다시 시도해 주세요.';
+    if (/NO_KEY|NEIS_KEY/.test(m)) return '서버에 나이스 인증키(NEIS_KEY)가 아직 없어요.';
+    if (/^404$|Requested function/i.test(m)) return '서버에 나이스 함수(neis)가 아직 없어요.';
+    if (/^\[.*\]$|서버|인터넷|권한|로그인|테이블|이미 있는/.test(m)) return m;
+    return QT.dbErr(e, '학교생활');
   }
+
   const ymd = k => k.replace(/-/g, '');
   const fromYmd = s => `${s.slice(0, 4)}-${s.slice(4, 6)}-${s.slice(6, 8)}`;
   /* 학년도는 3월부터, 2학기는 8월부터 (방학 중엔 다음 학기 기준) */

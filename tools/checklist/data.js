@@ -10,12 +10,10 @@
   const must = ({ data, error }) => { if (error) throw new Error(errMsg(error)); return data; };
   function errMsg(e) {
     const m = String((e && e.message) || e || '');
-    if (/relation .* does not exist|Could not find the table|schema cache/i.test(m)) return '서버에 체크리스트 테이블이 아직 없어요. (Supabase SQL 실행 필요)';
-    if (/JWT|not authorized|permission denied|row-level security/i.test(m)) return '권한이 없어요. 다시 로그인해 주세요.';
-    if (/Failed to fetch|NetworkError|Load failed/i.test(m)) return '인터넷 연결을 확인해 주세요.';
-    if (/duplicate key|unique/i.test(m)) return '이미 있는 과목 이름이에요.';
-    return m || '잠시 후 다시 시도해 주세요.';
+    if (/^\[.*\]$|서버|인터넷|권한|로그인|테이블|이미 있는/.test(m)) return m;
+    return QT.dbErr(e, '체크리스트');
   }
+
   const nextColor = list => {
     const used = new Set(list.map(s => s.color.toLowerCase()));
     return PALETTE.find(c => !used.has(c)) || PALETTE[list.length % PALETTE.length];

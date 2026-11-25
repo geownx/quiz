@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>공부 타이머 · 문제지메이커</title>
+<meta name="description" content="과목별 공부 타이머, 뽀모도로, 공부 기록 달력과 통계. 문제지메이커 계정에 저장돼요.">
+<meta name="theme-color" content="#f6f7fb">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="문제지메이커">
+<meta property="og:title" content="공부 타이머 · 문제지메이커">
+<meta property="og:description" content="과목별 공부 타이머, 뽀모도로, 공부 기록 달력과 통계.">
+<meta property="og:url" content="https://quizmaker.pro/tools/timer/">
+<meta property="og:image" content="https://quizmaker.pro/og.png">
+<link rel="manifest" href="/tools/manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="/tools/icons/icon-192.png">
+<link rel="apple-touch-icon" href="/tools/icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="공부도구">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="/tools/common.css">
+<style>
+.tabs{display:flex;background:var(--soft2);border-radius:14px;padding:4px;gap:4px;margin-bottom:14px}
+.tabs button{flex:1;border:0;background:none;border-radius:11px;padding:10px 4px;font-size:14px;font-weight:700;color:var(--mute);cursor:pointer}
+.tabs button.on{background:var(--card);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.1)}
+.tabs button:disabled{opacity:.4;cursor:not-allowed}
+.spick{display:flex;gap:6px;overflow-x:auto;padding:2px 0 4px;scrollbar-width:none}
+.spick::-webkit-scrollbar{display:none}
+.sc{flex:0 0 auto;display:inline-flex;align-items:center;gap:6px;border:1.5px solid var(--line);background:var(--card);border-radius:999px;padding:7px 13px;font-size:13.5px;font-weight:600;color:var(--ink2);cursor:pointer;white-space:nowrap}
+.sc i{width:9px;height:9px;border-radius:50%;background:var(--c);flex:0 0 auto}
+.sc.on{border-color:var(--c);background:var(--cb);color:var(--ink)}
+.sc:disabled{cursor:default}
+.lb{display:block;font-weight:700;font-size:13px;margin:12px 0 6px;color:var(--mute)}
+select{appearance:none;-webkit-appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--mute) 50%),linear-gradient(135deg,var(--mute) 50%,transparent 50%);background-position:calc(100% - 18px) 50%,calc(100% - 13px) 50%;background-size:5px 5px;background-repeat:no-repeat;padding-right:34px}
+.clock{position:relative;width:250px;height:250px;margin:18px auto 8px}
+.clock svg{position:absolute;inset:0;transform:rotate(-90deg)}
+.clock .tr{fill:none;stroke:var(--line);stroke-width:10}
+.clock .pr{fill:none;stroke:var(--c,var(--acc));stroke-width:10;stroke-linecap:round;transition:stroke-dashoffset .3s linear}
+.clock .in{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:0 30px}
+.clock .ph{font-size:13px;font-weight:800;color:var(--c,var(--acc));margin-bottom:4px}
+.clock .t{font-size:46px;font-weight:800;letter-spacing:-1px;font-variant-numeric:tabular-nums;line-height:1.1}
+.clock .t.sm{font-size:40px}
+.clock .l{font-size:13px;color:var(--mute);margin-top:6px;max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.clock.run .t{color:var(--ink)}
+.ctl{display:flex;gap:10px;justify-content:center;margin:6px 0 4px}
+.ctl .btn{min-width:104px;padding:13px 18px;font-size:15.5px;border-radius:14px}
+.ctl .btn.stop{color:var(--bad)}
+.opts{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:6px 0 2px}
+.seg{display:inline-flex;background:var(--soft);border-radius:10px;padding:3px;gap:2px}
+.seg button{border:0;background:none;border-radius:8px;padding:6px 10px;font-size:12.5px;font-weight:700;color:var(--mute);cursor:pointer}
+.seg button.on{background:var(--card);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.seg span{font-size:12px;color:var(--mute);font-weight:700;padding:6px 4px 6px 8px}
+.tom{text-align:center;font-size:13px;color:var(--mute);margin-top:2px;min-height:20px}
+.hint{text-align:center;font-size:12.5px;color:var(--mute);margin:8px 0 0;line-height:1.5}
+/* 요약 · 통계 */
+.tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-bottom:12px}
+.tile{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 13px}
+.tile small{display:block;font-size:12px;color:var(--mute);font-weight:600}
+.tile b{display:block;font-size:20px;letter-spacing:-.4px;margin-top:2px;font-variant-numeric:tabular-nums}
+.tile em{display:block;font-style:normal;font-size:11.5px;color:var(--ink2);margin-top:2px}
+.tile.hot b{color:var(--acc)}
+.sbars{display:grid;gap:9px}
+.sbar{display:grid;grid-template-columns:72px minmax(0,1fr) auto;gap:8px;align-items:center;font-size:13px}
+.sbar .n{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:600;display:flex;gap:6px;align-items:center}
+.sbar .n i{width:8px;height:8px;border-radius:50%;background:var(--c);flex:0 0 auto}
+.sbar .b{height:10px;border-radius:6px;background:var(--soft);overflow:hidden}
+.sbar .b i{display:block;height:100%;background:var(--c);border-radius:6px}
+.sbar b{font-variant-numeric:tabular-nums;font-size:12.5px;white-space:nowrap}
+.ch{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.ch b{font-size:15.5px;flex:1}
+.mnav{display:flex;align-items:center;gap:4px}
+.mnav button{border:0;background:var(--soft);border-radius:8px;width:28px;height:28px;cursor:pointer;color:var(--ink)}
+.mnav span{font-size:13px;font-weight:700;min-width:62px;text-align:center}
+.cal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}
+.cal .h{text-align:center;font-size:11.5px;font-weight:700;color:var(--mute);padding-bottom:2px}
+.cal .d{aspect-ratio:1;border-radius:9px;background:var(--soft);border:0;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--ink2);padding:0;position:relative}
+.cal .d small{font-size:9.5px;font-weight:700;opacity:.85}
+.cal .d.e{background:transparent;cursor:default}
+.cal .d.l1{background:rgba(91,108,255,.18)}.cal .d.l2{background:rgba(91,108,255,.38)}.cal .d.l3{background:rgba(91,108,255,.62);color:#fff}.cal .d.l4{background:rgba(91,108,255,.88);color:#fff}
+body.dark .cal .d.l1{background:rgba(125,139,255,.2)}body.dark .cal .d.l2{background:rgba(125,139,255,.4)}body.dark .cal .d.l3{background:rgba(125,139,255,.65)}body.dark .cal .d.l4{background:rgba(125,139,255,.9)}
+.cal .d.today{box-shadow:inset 0 0 0 2px var(--acc)}
+.cal .d.sel{outline:2.5px solid var(--ink);outline-offset:1px}
+.cal .d.fut{opacity:.4}
+.leg{display:flex;gap:4px;align-items:center;justify-content:flex-end;font-size:11px;color:var(--mute);margin-top:8px}
+.leg i{width:12px;height:12px;border-radius:3px;background:var(--soft)}
+.days{display:flex;align-items:flex-end;gap:6px;height:130px;padding-top:6px}
+.days .col{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;height:100%;justify-content:flex-end;min-width:0}
+.days .bar{width:100%;max-width:28px;border-radius:6px 6px 3px 3px;background:var(--acc);min-height:2px}
+.days .col.zero .bar{background:var(--line)}
+.days .v{font-size:10.5px;color:var(--mute);font-weight:700;white-space:nowrap}
+.days .x{font-size:11.5px;color:var(--mute);font-weight:700}
+.days .col.today .x{color:var(--acc)}
+.sl{list-style:none;margin:0;padding:0}
+.sl li{display:flex;align-items:center;gap:10px;padding:9px 0;border-top:1px solid var(--line);font-size:14px}
+.sl li:first-child{border-top:0}
+.sl .tg{font-size:11.5px;font-weight:700;border-radius:6px;padding:2px 7px;background:var(--cb);color:var(--c);white-space:nowrap}
+.sl .m{flex:1;min-width:0}
+.sl .m small{display:block;font-size:12px;color:var(--mute)}
+.sl .m span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
+.sl b{font-variant-numeric:tabular-nums;white-space:nowrap}
+.sl .del{border:0;background:none;color:var(--mute);cursor:pointer;font-size:14px;width:28px;height:28px;border-radius:8px}
+.tmg>.card,.stg>.card{min-width:0}
+@media(min-width:700px){.tiles{grid-template-columns:repeat(4,minmax(0,1fr))}.stg{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;align-items:start}.stg>.card{margin:0}.tabs{max-width:520px;margin-left:auto;margin-right:auto}.clock{width:290px;height:290px}.clock .t{font-size:54px}.clock .t.sm{font-size:46px}}
+@media(min-width:1024px){.tmg{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:20px;align-items:start}.tmg>.card{margin:0}.t-main{padding:26px}.clock{width:330px;height:330px}.clock .t{font-size:62px}.clock .t.sm{font-size:52px}.stg{grid-template-columns:minmax(0,1.1fr) minmax(0,1fr)}}
+.empty2{color:var(--mute);font-size:14px;text-align:center;padding:14px 0}
+</style>
+</head>
+<body>
+<main id="app"></main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="/tools/common.js"></script>
+<script src="/tools/checklist/data.js"></script>
+<script src="/tools/timer/timer.js"></script>
+<script>
+'use strict';
+const { $, $$, esc, toast, modal, CL, TM, LS } = QT;
+const NONE = { id: null, name: '과목 없음', color: '#8a8f9c' };
+const S = { tab: 'stopwatch', subs: [], tasks: [], today: [], pick: LS.get('qt_tm_pick', null), task: null,
+  pomo: LS.get('qt_tm_pomo', { focus: 25, brk: 5 }), month: QT.todayKey().slice(0, 7), sel: QT.todayKey(), stat: [], statRange: 'week' };
+const rgba = (hex, a) => { const n = parseInt(String(hex).slice(1), 16); return `rgba(${n >> 16 & 255},${n >> 8 & 255},${n & 255},${a})`; };
+const cv = c => `--c:${c};--cb:${rgba(c, .13)}`;
+const subOf = id => S.subs.find(s => s.id === id) || NONE;
+let TICK = null, wake = null;
+
+/* ---------- 소리 · 진동 (화면을 보고 있을 때) ---------- */
+function beep(n = 2) {
+  try { const A = new (window.AudioContext || window.webkitAudioContext)(); for (let i = 0; i < n; i++) { const o = A.createOscillator(), g = A.createGain(); o.frequency.value = 880; o.connect(g); g.connect(A.destination);
+    const t = A.currentTime + i * .35; g.gain.setValueAtTime(.0001, t); g.gain.exponentialRampToValueAtTime(.3, t + .02); g.gain.exponentialRampToValueAtTime(.0001, t + .25); o.start(t); o.stop(t + .27); } } catch (e) {}
+  try { navigator.vibrate && navigator.vibrate([200, 100, 200]); } catch (e) {}
+}
+/* 타이머가 도는 동안 화면이 꺼지지 않게 */
+async function keepAwake(on) {
+  try { if (on && !wake && navigator.wakeLock && document.visibilityState === 'visible') { wake = await navigator.wakeLock.request('screen'); wake.addEventListener('release', () => { wake = null; }); } if (!on && wake) { wake.release(); wake = null; } } catch (e) {}
+}
+
+/* ---------- 화면 뼈대 ---------- */
+function shell() {
+  $('#app').innerHTML = `<div class="wrap"><h1>⏱️ 공부 타이머</h1>
+    <div class="tabs" id="tabs"><button data-t="stopwatch">⏱ 스톱워치</button><button data-t="pomodoro">🍅 뽀모도로</button><button data-t="stats">📊 기록</button></div>
+    <div id="pane"></div><div id="inst"></div></div>`;
+  $$('#tabs button').forEach(b => b.onclick = () => { S.tab = b.dataset.t; draw(); });
+  document.addEventListener('click', e => { if (e.target.closest('#toStats')) { e.preventDefault(); S.tab = 'stats'; draw(); window.scrollTo(0, 0); } });
+  QT.installCard($('#inst'));
+}
+function draw() {
+  const r = TM.run();
+  if (r && S.tab !== 'stats') S.tab = r.mode;
+  $$('#tabs button').forEach(b => { b.classList.toggle('on', b.dataset.t === S.tab); b.disabled = !!r && b.dataset.t !== 'stats' && b.dataset.t !== r.mode; });
+  clearInterval(TICK);
+  if (S.tab === 'stats') return drawStats();
+  drawTimer();
+}
+
+/* ---------- 과목 · 할 일 고르기 ---------- */
+function pickerHTML(locked) {
+  const open = S.tasks.filter(t => !t.done);
+  return `<div class="spick" id="sp">${[...S.subs, NONE].map(s => `<button class="sc ${S.pick === s.id ? 'on' : ''}" data-s="${s.id || ''}" style="${cv(s.color)}" ${locked ? 'disabled' : ''}><i></i>${esc(s.name)}</button>`).join('')}</div>
+    ${open.length || S.task ? `<label class="lb">오늘 체크리스트 할 일과 연결 (선택)</label>
+    <select id="tk" ${locked ? 'disabled' : ''}><option value="">연결 안 함</option>${S.tasks.filter(t => !t.done || t.id === S.task).map(t => `<option value="${t.id}" ${S.task === t.id ? 'selected' : ''}>${esc(subOf(t.subject_id).name)} · ${esc(t.title)}</option>`).join('')}</select>` : ''}`;
+}
+function bindPicker() {
+  $$('#sp [data-s]').forEach(b => b.onclick = () => { S.pick = b.dataset.s || null; LS.set('qt_tm_pick', S.pick); const t = S.tasks.find(x => x.id === S.task); if (t && t.subject_id !== S.pick) S.task = null; drawTimer(); });
+  const tk = $('#tk'); if (tk) tk.onchange = () => { S.task = tk.value || null; const t = S.tasks.find(x => x.id === S.task); if (t) { S.pick = t.subject_id; LS.set('qt_tm_pick', S.pick); } drawTimer(); };
+}
+const labelOf = () => { const t = S.tasks.find(x => x.id === S.task); return t ? t.title : subOf(S.pick).name; };
+
+/* ---------- 스톱워치 · 뽀모도로 ---------- */
+function drawTimer() {
+  const r = TM.run(), pomo = S.tab === 'pomodoro', locked = !!r;
+  const sub = r ? subOf(r.subject_id) : subOf(S.pick);
+  $('#pane').innerHTML = `<div class="tmg"><div class="card t-main">
+      ${pickerHTML(locked)}
+      ${pomo && !r ? `<div class="opts" style="margin-top:12px"><div class="seg" id="pf"><span>집중</span>${[25, 50].map(n => `<button data-v="${n}" class="${S.pomo.focus === n ? 'on' : ''}">${n}분</button>`).join('')}</div>
+        <div class="seg" id="pb"><span>휴식</span>${[5, 10].map(n => `<button data-v="${n}" class="${S.pomo.brk === n ? 'on' : ''}">${n}분</button>`).join('')}</div></div>` : ''}
+      <div class="clock ${r && r.seg ? 'run' : ''}" style="${cv(sub.color)}"><svg viewBox="0 0 250 250"><circle class="tr" cx="125" cy="125" r="112"/><circle class="pr" id="pr" cx="125" cy="125" r="112" stroke-dasharray="703.7" stroke-dashoffset="703.7"/></svg>
+        <div class="in"><div class="ph" id="ph"></div><div class="t ${pomo ? '' : 'sm'}" id="tt">00:00</div><div class="l" id="tl"></div></div></div>
+      <div class="ctl" id="ctl"></div>
+      <div class="tom" id="tom"></div>
+      <p class="hint">${pomo ? '집중 시간이 끝나면 자동으로 기록되고 휴식이 시작돼요.' : '끝내기를 누르면 공부 기록에 저장돼요.'} 앱을 닫아도 시간은 계속 흘러가요.</p>
+    </div>
+    <div class="card t-side"><div class="ch"><b>오늘 공부</b><span style="font-weight:800;color:var(--acc)" id="tdSum"></span></div><div id="tdBy"></div><a class="btn" href="?tab=stats" id="toStats" style="width:100%;margin-top:14px">📊 공부 기록 보기</a></div></div>`;
+  bindPicker();
+  $$('#pf [data-v]').forEach(b => b.onclick = () => { S.pomo.focus = +b.dataset.v; LS.set('qt_tm_pomo', S.pomo); drawTimer(); });
+  $$('#pb [data-v]').forEach(b => b.onclick = () => { S.pomo.brk = +b.dataset.v; LS.set('qt_tm_pomo', S.pomo); drawTimer(); });
+  drawCtl(); drawToday(); tick();
+  TICK = setInterval(tick, 250);
+}
+function drawCtl() {
+  const r = TM.run(), c = $('#ctl'); if (!c) return;
+  if (!r) c.innerHTML = `<button class="btn acc" id="cGo">▶ 시작</button>`;
+  else if (r.mode === 'pomodoro') c.innerHTML = `${r.seg ? '<button class="btn" id="cPa">⏸ 멈춤</button>' : `<button class="btn acc" id="cRe">▶ ${r.pomo.phase === 'focus' && !r.acc ? '집중 시작' : '계속'}</button>`}<button class="btn" id="cSk">⏭ ${r.pomo.phase === 'focus' ? '휴식으로' : '휴식 끝'}</button><button class="btn stop" id="cSt">■ 끝내기</button>`;
+  else c.innerHTML = `${r.seg ? '<button class="btn" id="cPa">⏸ 멈춤</button>' : '<button class="btn acc" id="cRe">▶ 계속</button>'}<button class="btn stop" id="cSt">■ 끝내기</button>`;
+  const on = (id, f) => { const b = $('#' + id); if (b) b.onclick = f; };
+  on('cGo', start); on('cPa', pause); on('cRe', resume); on('cSt', finish); on('cSk', skip);
+}
+function tick() {
+  let r = TM.run(); if (!$('#tt')) return;
+  if (r && r.mode === 'pomodoro') r = advance(r);
+  const pr = $('#pr'), C = 703.7;
+  if (!r) {
+    const pomo = S.tab === 'pomodoro';
+    $('#tt').textContent = pomo ? TM.ms2(S.pomo.focus * 60) : '00:00:00';
+    $('#ph').textContent = pomo ? '집중 준비' : '';
+    $('#tl').textContent = labelOf(); pr.style.strokeDashoffset = C; keepAwake(false); return;
+  }
+  const e = TM.elapsed(r);
+  if (r.mode === 'pomodoro') {
+    const p = r.pomo;
+    $('#tt').textContent = TM.ms2(p.len - e);
+    $('#ph').textContent = p.phase === 'focus' ? `집중 · ${p.round}번째 🍅` : p.phase === 'long' ? '긴 휴식 ☕' : '휴식 ☕';
+    pr.style.strokeDashoffset = C * (1 - Math.min(1, e / p.len));
+    const cl = $('.clock'); if (cl) cl.style.setProperty('--c', p.phase === 'focus' ? subOf(r.subject_id).color : '#2f9e6b');
+  } else {
+    $('#tt').textContent = TM.hms(e); $('#ph').textContent = r.seg ? '공부 중' : '멈춤';
+    pr.style.strokeDashoffset = C * (1 - (e % 3600) / 3600);
+  }
+  $('#tl').textContent = r.label || '';
+  keepAwake(!!r.seg);
+}
+/* 뽀모도로: 시간이 다 되면 다음 단계로 (앱을 닫았다 와도 맞춰서) */
+function advance(r) {
+  let changed = false;
+  for (let guard = 0; guard < 4 && r.seg; guard++) {
+    const p = r.pomo, e = TM.elapsed(r); if (e < p.len) break;
+    const end = r.seg + (p.len * 1000 - r.acc);
+    if (p.phase === 'focus') {
+      saveSession({ mode: 'pomodoro', subject_id: r.subject_id, task_id: r.task_id, seconds: p.len, started_at: p.start || end - p.len * 1000, ended_at: end }, true);
+      const long = p.round % 4 === 0;
+      Object.assign(p, { phase: long ? 'long' : 'break', len: (long ? 15 : p.brk) * 60, start: end }); r.acc = 0; r.seg = end;
+      if (Date.now() - end < 5000) { beep(2); toast(long ? '🍅 4번째 집중 끝! 15분 쉬어요' : '🍅 집중 끝! 쉬는 시간이에요'); }
+    } else {
+      Object.assign(p, { phase: 'focus', len: p.focus * 60, round: p.round + 1, start: null }); r.acc = 0; r.seg = null;
+      if (Date.now() - end < 5000) { beep(3); toast('☕ 휴식 끝! 다시 집중해요'); }
+    }
+    changed = true;
+  }
+  if (changed) { TM.setRun(r); drawCtl(); }
+  return r;
+}
+function start() {
+  const now = Date.now(), pomo = S.tab === 'pomodoro';
+  const r = { mode: pomo ? 'pomodoro' : 'stopwatch', subject_id: S.pick, task_id: S.task, label: labelOf(), acc: 0, seg: now, started: now };
+  if (pomo) r.pomo = { phase: 'focus', len: S.pomo.focus * 60, focus: S.pomo.focus, brk: S.pomo.brk, round: 1, start: now };
+  LS.set('qt_tm_pick', S.pick); TM.setRun(r); draw();
+}
+function pause() { const r = TM.run(); if (!r || !r.seg) return; r.acc += Date.now() - r.seg; r.seg = null; TM.setRun(r); drawCtl(); tick(); }
+function resume() { const r = TM.run(); if (!r || r.seg) return; r.seg = Date.now(); if (r.mode === 'pomodoro' && !r.pomo.start) r.pomo.start = r.seg; if (!r.started) r.started = r.seg; TM.setRun(r); drawCtl(); tick(); }
+function skip() {
+  let r = TM.run(); if (!r) return; const p = r.pomo, now = Date.now();
+  if (p.phase === 'focus') {
+    const e = TM.elapsed(r, now);
+    if (e >= 60) saveSession({ mode: 'pomodoro', subject_id: r.subject_id, task_id: r.task_id, seconds: e, started_at: p.start || now - e * 1000, ended_at: now }, true);
+    Object.assign(p, { phase: 'break', len: p.brk * 60, start: now }); r.acc = 0; r.seg = now;
+  } else { Object.assign(p, { phase: 'focus', len: p.focus * 60, round: p.round + 1, start: null }); r.acc = 0; r.seg = null; }
+  TM.setRun(r); drawCtl(); tick();
+}
+async function finish() {
+  const r = TM.run(); if (!r) return; const now = Date.now();
+  const e = r.mode === 'pomodoro' ? (r.pomo.phase === 'focus' ? TM.elapsed(r, now) : 0) : TM.elapsed(r, now);
+  if (e < 60) {
+    if (r.mode === 'stopwatch' && !confirm('1분이 안 돼서 기록하지 않아요. 끝낼까요?')) return;
+    TM.setRun(null); keepAwake(false); draw(); return;
+  }
+  TM.setRun(null); keepAwake(false); S.pick = r.subject_id; S.task = r.task_id;
+  const start = r.mode === 'pomodoro' ? (r.pomo.start || now - e * 1000) : r.started;
+  await saveSession({ mode: r.mode, subject_id: r.subject_id, task_id: r.task_id, seconds: Math.min(e, 43200), started_at: start, ended_at: now });
+  draw();
+  const t = S.tasks.find(x => x.id === r.task_id);
+  const m = modal(`<div style="text-align:center;padding:6px 0"><div style="font-size:40px">📚</div><h3 style="margin:6px 0 2px">${TM.dur(e)} 공부했어요</h3><p class="sub" style="margin:0">${esc(subOf(r.subject_id).name)}${t ? ' · ' + esc(t.title) : ''} · 기록에 저장했어요</p></div>
+    ${t && !t.done ? `<label style="display:flex;gap:10px;align-items:center;background:var(--soft);border-radius:12px;padding:12px;margin-top:14px;font-weight:600;cursor:pointer"><input type="checkbox" id="fDone" style="width:20px;height:20px;accent-color:var(--acc)"> 체크리스트에서 이 할 일 완료로 체크</label>` : ''}
+    <button class="btn acc" id="fOk" style="width:100%;margin-top:16px">확인</button>`);
+  $('#fOk', m).onclick = async () => { const d = $('#fDone', m); if (d && d.checked) { try { await CL.setDone(t.id, true); t.done = true; toast('✅ 완료로 체크했어요'); } catch (x) { toast(CL.errMsg(x), 3500); } } m.remove(); drawTimer(); };
+}
+async function saveSession(s, quiet) {
+  try { const row = await TM.save(s); if (row.day === QT.todayKey()) S.today.push(row); drawToday(); if (!quiet && row.queued) toast('인터넷이 끊겨서 기기에 저장했어요. 연결되면 올라가요', 3500); }
+  catch (e) { toast(TM.errMsg(e), 4000); }
+}
+function drawToday() {
+  const box = $('#tdBy'); if (!box) return;
+  const tot = TM.sum(S.today), by = TM.by(S.today, 'subject_id'), tomato = S.today.filter(s => s.mode === 'pomodoro').length;
+  $('#tdSum').textContent = TM.dur(tot);
+  const tm = $('#tom'); if (tm) tm.textContent = S.tab === 'pomodoro' && tomato ? `오늘 ${'🍅'.repeat(Math.min(tomato, 12))}${tomato > 12 ? ` ×${tomato}` : ''}` : '';
+  box.innerHTML = subjectBars(by) || '<p class="empty2">아직 오늘 기록이 없어요</p>';
+}
+function subjectBars(by) {
+  const rows = Object.entries(by).sort((a, b) => b[1] - a[1]); if (!rows.length) return '';
+  const max = rows[0][1];
+  return `<div class="sbars">${rows.map(([k, v]) => { const s = subOf(k === 'none' ? null : k); return `<div class="sbar" style="${cv(s.color)}"><span class="n"><i></i>${esc(s.name)}</span><span class="b"><i style="width:${Math.max(3, v / max * 100)}%"></i></span><b>${TM.dur(v)}</b></div>`; }).join('')}</div>`;
+}
+
+/* ---------- 기록 (달력 · 통계) ---------- */
+async function drawStats() {
+  $('#pane').innerHTML = `<div class="tiles" id="tiles"></div><div class="stg">
+    <div class="card"><div class="ch"><b>📅 공부 달력</b><div class="mnav"><button id="mP" aria-label="이전 달">‹</button><span id="mL"></span><button id="mN" aria-label="다음 달">›</button></div></div><div id="cal"></div>
+      <div class="leg">적게 <i></i><i style="background:rgba(91,108,255,.18)"></i><i style="background:rgba(91,108,255,.38)"></i><i style="background:rgba(91,108,255,.62)"></i><i style="background:rgba(91,108,255,.88)"></i> 많이</div></div>
+    <div class="card"><div class="ch"><b id="dT"></b><span style="font-weight:800;color:var(--acc)" id="dS"></span></div><div id="dBy"></div><ul class="sl" id="dL" style="margin-top:10px"></ul></div>
+    <div class="card"><div class="ch"><b>최근 7일</b></div><div class="days" id="d7"></div></div>
+    <div class="card"><div class="ch"><b>과목별</b><div class="seg" id="rg"><button data-r="week">이번 주</button><button data-r="month">이번 달</button></div></div><div id="rBy"></div></div></div>`;
+  $('#mP').onclick = () => moveMonth(-1); $('#mN').onclick = () => moveMonth(1);
+  $$('#rg button').forEach(b => b.onclick = () => { S.statRange = b.dataset.r; drawStatParts(); });
+  await loadStats();
+}
+function moveMonth(n) { const [y, m] = S.month.split('-').map(Number), d = new Date(y, m - 1 + n, 1); S.month = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`; loadStats(); }
+async function loadStats() {
+  const t = QT.todayKey(), [y, m] = S.month.split('-').map(Number), last = new Date(y, m, 0).getDate();
+  const mFrom = `${S.month}-01`, mTo = `${S.month}-${String(last).padStart(2, '0')}`;
+  const from = [mFrom, QT.shiftKey(t, -60)].sort()[0], to = [mTo, t].sort()[1];
+  if (!S.statFrom || from < S.statFrom || to > S.statTo) {
+    $('#cal').innerHTML = '<p class="empty2">불러오는 중…</p>';
+    try { S.stat = await TM.sessions(from, to); S.statFrom = from; S.statTo = to; } catch (e) { $('#cal').innerHTML = `<p class="empty2 err">${esc(TM.errMsg(e))}</p>`; return; }
+  }
+  if (!S.sel.startsWith(S.month)) S.sel = S.month === t.slice(0, 7) ? t : mFrom;
+  drawStatParts();
+}
+function drawStatParts() {
+  const t = QT.todayKey(), byDay = {}; S.stat.forEach(s => { byDay[s.day] = (byDay[s.day] || 0) + (+s.seconds || 0); });
+  const w = (() => { const d = QT.parseKey(t), k = (d.getDay() + 6) % 7; return QT.shiftKey(t, -k); })();
+  const sumRange = (a, b) => S.stat.filter(s => s.day >= a && s.day <= b);
+  const week = TM.sum(sumRange(w, t)), month = TM.sum(sumRange(t.slice(0, 8) + '01', t));
+  let streak = 0, k = byDay[t] ? t : QT.shiftKey(t, -1); while (byDay[k] && streak < 400) { streak++; k = QT.shiftKey(k, -1); }
+  const days7 = [...Array(7)].map((_, i) => QT.shiftKey(t, i - 6)), avg7 = days7.reduce((a, d) => a + (byDay[d] || 0), 0) / 7;
+  $('#tiles').innerHTML = `<div class="tile hot"><small>오늘</small><b>${TM.dur(byDay[t] || 0)}</b></div><div class="tile"><small>이번 주</small><b>${TM.dur(week)}</b></div>
+    <div class="tile"><small>이번 달</small><b>${TM.dur(month)}</b><em>최근 7일 하루 평균 ${TM.dur(avg7)}</em></div><div class="tile ${streak ? 'hot' : ''}"><small>연속 공부</small><b>${streak}일 ${streak ? '🔥' : ''}</b><em>하루도 안 빠지고 공부한 날</em></div>`;
+  // 달력
+  const [y, m] = S.month.split('-').map(Number), first = new Date(y, m - 1, 1), lastD = new Date(y, m, 0).getDate(), pad = (first.getDay() + 6) % 7;
+  $('#mL').textContent = `${y}. ${m}월`;
+  const lv = s => !s ? '' : s < 1800 ? 'l1' : s < 3600 * 2 ? 'l2' : s < 3600 * 4 ? 'l3' : 'l4';
+  let h = '월화수목금토일'.split('').map(x => `<div class="h">${x}</div>`).join('') + '<div class="d e"></div>'.repeat(pad);
+  for (let d = 1; d <= lastD; d++) { const key = `${S.month}-${String(d).padStart(2, '0')}`, s = byDay[key] || 0;
+    h += `<button class="d ${lv(s)} ${key === t ? 'today' : ''} ${key === S.sel ? 'sel' : ''} ${key > t ? 'fut' : ''}" data-d="${key}">${d}${s ? `<small>${s >= 3600 ? (s / 3600).toFixed(1) + 'h' : Math.round(s / 60) + 'm'}</small>` : ''}</button>`; }
+  $('#cal').innerHTML = `<div class="cal">${h}</div>`;
+  $$('#cal [data-d]').forEach(b => b.onclick = () => { S.sel = b.dataset.d; drawStatParts(); });
+  // 고른 날
+  const sel = S.stat.filter(s => s.day === S.sel), pd = QT.prettyDate(S.sel);
+  $('#dT').textContent = `${pd.main}${pd.rel ? ' · ' + pd.rel : ''}`; $('#dS').textContent = TM.dur(TM.sum(sel));
+  $('#dBy').innerHTML = subjectBars(TM.by(sel, 'subject_id'));
+  const hm = iso => { const d = new Date(iso); return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`; };
+  $('#dL').innerHTML = sel.length ? sel.slice().reverse().map(s => { const su = subOf(s.subject_id); return `<li style="${cv(su.color)}"><span class="tg">${esc(su.name)}</span><span class="m"><span>${s.mode === 'pomodoro' ? '🍅 뽀모도로' : '⏱ 스톱워치'}</span><small>${hm(s.started_at)} 시작</small></span><b>${TM.dur(s.seconds)}</b><button class="del" data-x="${s.id}" aria-label="기록 지우기">✕</button></li>`; }).join('')
+    : '<li class="empty2" style="display:block;border:0">이날은 기록이 없어요</li>';
+  $$('#dL [data-x]').forEach(b => b.onclick = async () => { if (!confirm('이 기록을 지울까요?')) return; try { await TM.remove(b.dataset.x); S.stat = S.stat.filter(s => s.id !== b.dataset.x); S.today = S.today.filter(s => s.id !== b.dataset.x); drawStatParts(); } catch (e) { toast(TM.errMsg(e), 3500); } });
+  // 최근 7일
+  const mx = Math.max(1, ...days7.map(d => byDay[d] || 0));
+  $('#d7').innerHTML = days7.map(d => { const s = byDay[d] || 0, dd = QT.parseKey(d); return `<div class="col ${s ? '' : 'zero'} ${d === t ? 'today' : ''}"><span class="v">${s ? (s >= 3600 ? (s / 3600).toFixed(1) + 'h' : Math.round(s / 60) + 'm') : ''}</span><span class="bar" style="height:${Math.max(2, s / mx * 100)}px"></span><span class="x">${'일월화수목금토'[dd.getDay()]}</span></div>`; }).join('');
+  // 과목별
+  $$('#rg button').forEach(b => b.classList.toggle('on', b.dataset.r === S.statRange));
+  const rl = S.statRange === 'week' ? sumRange(w, t) : sumRange(t.slice(0, 8) + '01', t);
+  $('#rBy').innerHTML = subjectBars(TM.by(rl, 'subject_id')) || '<p class="empty2">기록이 없어요</p>';
+}
+
+/* ---------- 시작 ---------- */
+(async () => {
+  QT.registerSW();
+  const ctx = await QT.boot('timer'); if (!ctx) return;
+  CL.init(ctx.user.id); TM.init(ctx.user.id);
+  const q = new URLSearchParams(location.search);
+  if (q.get('tab') === 'stats') S.tab = 'stats';
+  S.subs = CL.cache.get('subjects', []); S.tasks = CL.cache.get('day_' + QT.todayKey(), []);
+  if (q.get('task')) { S.task = q.get('task'); const t = S.tasks.find(x => x.id === S.task); if (t) S.pick = t.subject_id; if (S.tab !== 'stats') S.tab = 'stopwatch'; }
+  if (q.get('mode') === 'pomodoro') S.tab = 'pomodoro';
+  if (q.toString()) history.replaceState(null, '', location.pathname);
+  shell(); draw();
+  try {
+    const t = QT.todayKey();
+    [S.subs, S.tasks, S.today] = await Promise.all([CL.subjects(), CL.tasks(t), TM.sessions(t, t)]);
+    if (S.task) { const tk = S.tasks.find(x => x.id === S.task); if (tk && !TM.run()) S.pick = tk.subject_id; }
+    if (S.pick && !S.subs.some(s => s.id === S.pick)) S.pick = null;
+    if (S.tab !== 'stats') drawTimer(); else drawToday();
+  } catch (e) { toast(TM.errMsg(e), 4000); }
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') { TM.flush(); if (S.tab !== 'stats') tick(); } else keepAwake(false); });
+  window.addEventListener('storage', e => { if (e.key === 'qt_tm_run') draw(); });
+})();
+</script>
+</body>
+</html>

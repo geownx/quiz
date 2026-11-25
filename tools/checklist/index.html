@@ -68,6 +68,36 @@ ul.tl{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:
 .tag{font-size:11.5px;font-weight:700;border-radius:6px;padding:2px 7px;background:var(--cb);color:var(--c)}
 body.dark .tag{filter:brightness(1.35)}
 .ti.done{opacity:.8}
+.tm .stu{color:var(--acc);font-weight:700}
+/* ===== 화면 크기별 배치 ===== */
+.clg{display:grid;grid-template-columns:minmax(0,1fr);grid-template-areas:"run" "quote" "notice" "main" "inst"}
+.g-run{grid-area:run}.g-quote{grid-area:quote}.g-notice{grid-area:notice}.g-main{grid-area:main;min-width:0}.g-inst{grid-area:inst}
+.g-side{display:none}
+.sidet{text-decoration:none;color:var(--ink);padding:16px}
+.sidet b{display:block;font-size:14px;color:var(--mute)}
+.sidet strong{display:block;font-size:28px;letter-spacing:-.6px;margin:4px 0 10px}
+.sidet span{display:flex;align-items:center;gap:6px;font-size:13.5px;padding:3px 0}
+.sidet span i{width:8px;height:8px;border-radius:50%;background:var(--c)}
+.sidet span em{margin-left:auto;font-style:normal;color:var(--mute);font-weight:700}
+.sidet u{display:block;text-decoration:none;color:var(--acc);font-weight:700;font-size:13.5px;margin-top:10px}
+/* 패드: 넓게, 할 일 2줄 배치 */
+@media(min-width:700px){
+  .stats .stat b{font-size:24px}
+  ul.tl{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  .addrow .minw{flex-basis:110px}
+}
+/* 컴퓨터: 왼쪽 할 일 · 오른쪽 명언 · 공부 시간 */
+@media(min-width:1024px){
+  .clg{grid-template-columns:minmax(0,1fr) 340px;column-gap:24px;grid-template-rows:auto auto auto auto 1fr;
+    grid-template-areas:"run run" "main quote" "main side" "main notice" "main inst"}
+  .g-side{display:block;grid-area:side;align-self:start}
+  .g-quote .quote{margin-bottom:12px}
+  .g-quote,.g-notice,.g-inst{align-self:start}
+  .g-inst .install{margin-top:0}
+  ul.tl{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+.play{flex:0 0 auto;width:34px;height:34px;border-radius:10px;background:var(--acc2);color:var(--acc);display:grid;place-items:center;text-decoration:none;font-size:13px}
+.play:hover{background:var(--acc);color:#fff}
 .empty{text-align:center;color:var(--ink2);padding:34px 10px;font-size:14px;line-height:1.7;background:var(--card);border:1px dashed var(--line2);border-radius:16px}
 .tools{display:flex;gap:8px;margin-top:14px}
 .tools .btn{flex:1;font-size:13px;color:var(--ink2);padding:10px 8px}
@@ -95,11 +125,12 @@ body.dark .tag{filter:brightness(1.35)}
 <script src="/tools/common.js"></script>
 <script src="/tools/checklist/data.js"></script>
 <script src="/tools/quotes.js"></script>
+<script src="/tools/timer/timer.js"></script>
 <script>
 'use strict';
-const { $, $$, esc, toast, modal, CL, LS } = QT;
+const { $, $$, esc, toast, modal, CL, LS, TM } = QT;
 const NONE = { id: null, name: '과목 없음', color: '#8a8f9c' };
-const S = { subs: [], tasks: [], day: QT.todayKey(), filter: 'all', pick: null, streak: 0, uid: null, loaded: false };
+const S = { subs: [], tasks: [], ses: [], day: QT.todayKey(), filter: 'all', pick: null, streak: 0, uid: null, loaded: false };
 { const d = new URLSearchParams(location.search).get('d'); if (QT.isKey(d)) S.day = d; }
 
 const rgba = (hex, a) => { const n = parseInt(String(hex).slice(1), 16); return `rgba(${n >> 16 & 255},${n >> 8 & 255},${n & 255},${a})`; };
@@ -108,10 +139,13 @@ const subOf = id => S.subs.find(s => s.id === id) || NONE;
 
 /* ---------- 화면 뼈대 ---------- */
 function shell() {
-  $('#app').innerHTML = `<div class="wrap">
+  $('#app').innerHTML = `<div class="wrap cl">
     <h1>📚 공부 체크리스트</h1>
-    <div id="quote"></div>
-    <div class="notice" id="notice"></div>
+    <div class="clg">
+    <div class="g-run" id="runbar"></div>
+    <div class="g-quote" id="quote"></div>
+    <div class="g-notice notice" id="notice"></div>
+    <div class="g-main">
     <div class="dnav"><button id="dPrev" aria-label="이전 날">‹</button>
       <div class="dlab"><label class="dpk"><strong id="dMain"></strong><input type="date" id="dPick" aria-label="날짜 고르기"></label><span id="dRel"></span></div>
       <button id="dNext" aria-label="다음 날">›</button></div>
@@ -125,7 +159,10 @@ function shell() {
     <div class="filters" id="filters"></div>
     <ul class="tl" id="list"></ul>
     <div class="tools"><button class="btn" id="tCopy">어제 못 한 일 가져오기</button><button class="btn" id="tClear">완료 항목 지우기</button></div>
-    <div id="inst"></div>
+    </div>
+    <a class="g-side card sidet" href="/tools/timer/" id="sideT"></a>
+    <div class="g-inst" id="inst"></div>
+    </div>
   </div>`;
   $('#dPrev').onclick = () => setDay(QT.shiftKey(S.day, -1));
   $('#dNext').onclick = () => setDay(QT.shiftKey(S.day, 1));
@@ -136,6 +173,7 @@ function shell() {
   $('#tClear').onclick = clearDone;
   QT.installCard($('#inst'));
   QT.quoteBoard($('#quote'));
+  QT.timerBanner($('#runbar'));
 }
 
 /* ---------- 그리기 ---------- */
@@ -147,12 +185,15 @@ function render() {
 
   const all = S.tasks, done = all.filter(t => t.done);
   const pct = all.length ? Math.round(done.length / all.length * 100) : 0;
-  const plan = all.reduce((a, t) => a + (+t.minutes || 0), 0), got = done.reduce((a, t) => a + (+t.minutes || 0), 0);
+  const plan = all.reduce((a, t) => a + (+t.minutes || 0), 0), studied = Math.round(TM.sum(S.ses) / 60);
   const hm = m => m >= 60 ? `${Math.floor(m / 60)}시간${m % 60 ? ' ' + m % 60 + '분' : ''}` : `${m}분`;
   $('#stats').innerHTML = `
     <div class="stat ${pct === 100 && all.length ? 'hot' : ''}"><small>달성률</small><b>${pct}%</b><div class="bar"><i style="width:${pct}%"></i></div></div>
-    <div class="stat"><small>할 일</small><b>${done.length}<span style="font-size:14px;color:var(--mute)"> / ${all.length}</span></b><em>${plan ? `${hm(got)} / ${hm(plan)}` : '시간 미정'}</em></div>
+    <div class="stat"><small>할 일</small><b>${done.length}<span style="font-size:14px;color:var(--mute)"> / ${all.length}</span></b><em>${studied ? `공부 ${hm(studied)}${plan ? ' / ' + hm(plan) : ''}` : plan ? `계획 ${hm(plan)}` : '시간 미정'}</em></div>
     <div class="stat ${S.streak ? 'hot' : ''}"><small>연속 달성</small><b>${S.streak}일 ${S.streak ? '🔥' : ''}</b><em>다 끝낸 날 기준</em></div>`;
+
+  const sd = $('#sideT'); if (sd) { const by = TM.by(S.ses, 'subject_id'), rows = Object.entries(by).sort((a, b) => b[1] - a[1]).slice(0, 4);
+    sd.innerHTML = `<b>⏱️ ${today ? '오늘' : '이날'} 공부한 시간</b><strong>${TM.dur(TM.sum(S.ses))}</strong>${rows.map(([k, v]) => { const su = k === 'none' ? NONE : subOf(k); return `<span style="${cvars(su.color)}"><i></i>${esc(su.name)} <em>${TM.dur(v)}</em></span>`; }).join('')}<u>타이머 열기 →</u>`; }
 
   // 과목 고르기 (추가할 때)
   if (S.pick !== null && !S.subs.some(s => s.id === S.pick)) S.pick = null;
@@ -175,9 +216,11 @@ function render() {
   const L = $('#list');
   if (!S.loaded && !all.length) L.innerHTML = '<div class="empty">불러오는 중…</div>';
   else if (!shown.length) L.innerHTML = `<div class="empty">${today ? '오늘 할 공부를 추가해 보세요 ✨' : '이 날은 할 일이 없어요'}<br><small style="color:var(--mute)">과목을 고르고 할 일을 적으면 돼요</small></div>`;
-  else L.innerHTML = shown.map(t => { const s = subOf(t.subject_id); return `<li class="ti ${t.done ? 'done' : ''}" data-id="${t.id}" style="${cvars(s.color)}">
+  const studiedBy = TM.by(S.ses, 'task_id');
+  if (shown.length) L.innerHTML = shown.map(t => { const s = subOf(t.subject_id), st = studiedBy[t.id] || 0; return `<li class="ti ${t.done ? 'done' : ''}" data-id="${t.id}" style="${cvars(s.color)}">
       <button class="ck" aria-label="${t.done ? '완료 취소' : '완료'}">${t.done ? '✓' : ''}</button>
-      <div class="tb"><div class="tt">${esc(t.title)}</div><div class="tm"><span class="tag">${esc(s.name)}</span>${t.minutes ? `<span>⏱ ${t.minutes}분</span>` : ''}</div></div></li>`; }).join('');
+      <div class="tb"><div class="tt">${esc(t.title)}</div><div class="tm"><span class="tag">${esc(s.name)}</span>${t.minutes ? `<span>목표 ${t.minutes}분</span>` : ''}${st ? `<span class="stu">공부 ${TM.dur(st)}</span>` : ''}</div></div>
+      ${t.done || S.day !== QT.todayKey() ? '' : `<a class="play" href="/tools/timer/?task=${t.id}" aria-label="이 할 일 타이머 시작" title="타이머 시작">▶</a>`}</li>`; }).join('');
   $$('#list .ti').forEach(li => {
     $('.ck', li).onclick = () => toggle(li.dataset.id);
     $('.tb', li).onclick = () => editTask(li.dataset.id);
@@ -189,7 +232,8 @@ async function setDay(k) {
   S.day = k; S.filter = 'all';
   history.replaceState(null, '', k === QT.todayKey() ? location.pathname : `?d=${k}`);
   S.tasks = CL.cache.get('day_' + k, []); S.loaded = false; render();
-  try { const list = await CL.tasks(k); if (S.day !== k) return; S.tasks = list; S.loaded = true; render(); } catch (e) { S.loaded = true; render(); toast(CL.errMsg(e), 3500); }
+  S.ses = [];
+  try { const [list, ses] = await Promise.all([CL.tasks(k), TM.sessions(k, k).catch(() => [])]); if (S.day !== k) return; S.tasks = list; S.ses = ses; S.loaded = true; render(); } catch (e) { S.loaded = true; render(); toast(CL.errMsg(e), 3500); }
 }
 async function refreshStreak() { try { S.streak = await CL.streak(); render(); } catch (e) {} }
 
@@ -318,14 +362,14 @@ function legacyNotice() {
 (async () => {
   QT.registerSW();
   const ctx = await QT.boot('checklist'); if (!ctx) return;
-  CL.init(ctx.user.id); S.uid = ctx.user.id;
+  CL.init(ctx.user.id); TM.init(ctx.user.id); S.uid = ctx.user.id;
   S.subs = CL.cache.get('subjects', []); S.tasks = CL.cache.get('day_' + S.day, []); S.streak = CL.cache.get('streak', 0);
   S.pick = LS.get('qt_cl_pick', null);
   shell(); render();
   try {
     S.subs = await CL.subjects();
     if (S.pick === null && S.subs[0]) S.pick = S.subs[0].id;
-    S.tasks = await CL.tasks(S.day); S.loaded = true; render(); legacyNotice();
+    [S.tasks, S.ses] = await Promise.all([CL.tasks(S.day), TM.sessions(S.day, S.day).catch(() => [])]); S.loaded = true; render(); legacyNotice();
     refreshStreak();
   } catch (e) {
     S.loaded = true; render();

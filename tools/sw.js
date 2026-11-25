@@ -1,9 +1,9 @@
 /* 공부도구 서비스 워커: 홈 화면 앱으로 빨리 열리고, 인터넷이 잠깐 끊겨도 화면이 뜨게 해요.
    파일을 고치면 아래 VERSION 숫자를 올려 주세요. */
-const VERSION = 'qt-v4';
+const VERSION = 'qt-v5';
 const SHELL = [
   '/tools/', '/tools/common.css', '/tools/common.js',
-  '/tools/checklist/', '/tools/checklist/data.js', '/tools/quotes.js', '/tools/school/', '/tools/school/school.js',
+  '/tools/checklist/', '/tools/checklist/data.js', '/tools/quotes.js', '/tools/school/', '/tools/school/school.js', '/tools/timer/', '/tools/timer/timer.js',
   '/tools/manifest.webmanifest', '/tools/icons/icon-192.png',
 ];
 self.addEventListener('install', e => {

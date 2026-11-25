@@ -49,7 +49,9 @@ a.tool:hover{transform:translateY(-2px);box-shadow:0 10px 24px -14px rgba(31,42,
 .sct .row1 em{font-style:normal;font-weight:800;color:var(--acc);font-size:14px}
 .sct .ln{font-size:13.5px;color:var(--ink2);line-height:1.6;margin-top:4px}
 .sct .ln span{color:var(--mute);font-weight:700;margin-right:6px}
-.t1 .ti{background:var(--acc2)}.t2 .ti{background:#fdf3d8}.t3 .ti{background:#e6f1fb}
+.t1 .ti{background:var(--acc2)}.t4 .ti{background:#e6f6ee}body.dark .t4 .ti{background:#16302a}.t2 .ti{background:#fdf3d8}.t3 .ti{background:#e6f1fb}
+@media(min-width:700px){.grid{grid-template-columns:repeat(3,minmax(0,1fr))}.hubg .h-left{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;align-items:start}.hubg .h-left>*{margin:0}}
+@media(min-width:1024px){.hubg{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:24px;align-items:start}.hubg .h-left{grid-template-columns:minmax(0,1fr)}.hubg .h-right .sec-t{margin-top:0}.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 body.dark .t2 .ti{background:#33290f}body.dark .t3 .ti{background:#17283d}
 </style>
 </head>
@@ -59,32 +61,36 @@ body.dark .t2 .ti{background:#33290f}body.dark .t3 .ti{background:#17283d}
 <script src="/tools/common.js"></script>
 <script src="/tools/checklist/data.js"></script>
 <script src="/tools/school/school.js"></script>
+<script src="/tools/timer/timer.js"></script>
 <script>
 'use strict';
-const { $, $$, esc, toast, CL, SC } = QT;
-const H = { subs: [], tasks: [], loaded: false };
+const { $, $$, esc, toast, CL, SC, TM } = QT;
+const H = { subs: [], tasks: [], ses: [], loaded: false };
 const subColor = id => (H.subs.find(s => s.id === id) || { color: '#8a8f9c' }).color;
 
 function shell(me) {
   const hour = new Date().getHours(), hi = hour < 6 ? '늦은 밤이에요' : hour < 12 ? '좋은 아침이에요' : hour < 18 ? '오늘도 화이팅' : '오늘 하루 마무리해요';
   $('#app').innerHTML = `<div class="wrap">
     <h1>🧰 공부도구</h1><p class="sub">${esc(me.name ? `${me.name}님, ${hi}` : hi)} ✏️ 문제지메이커 계정에 저장돼서 폰과 PC에서 이어져요.</p>
-    <div class="card today" id="today"></div>
-    <div id="school"></div>
-    <div class="sec-t">도구</div>
+    <div id="runbar"></div>
+    <div class="hubg"><div class="h-left"><div class="card today" id="today"></div>
+    <div id="school"></div></div>
+    <div class="h-right"><div class="sec-t">도구</div>
     <div class="grid">
       <a class="tool t1" href="/tools/checklist/"><span class="ti">✅</span><b>공부 체크리스트</b><span>과목별로 할 일을 정리하고 연속 달성 기록 쌓기</span></a>
+      <a class="tool t4" href="/tools/timer/"><span class="ti">⏱️</span><b>공부 타이머</b><span>과목별 스톱워치 · 뽀모도로 · 공부 기록 달력</span></a>
       <a class="tool t2" href="/tools/school/"><span class="ti">🏫</span><b>학교생활</b><span>급식 · 시간표 · 학사일정 · 시험 D-day</span></a>
       <a class="tool t3" href="/#/"><span class="ti">📝</span><b>문제지 만들기</b><span>자료를 올려서 문제지·플래시카드 만들기</span></a>
     </div>
-    <div id="inst"></div>
+    <div id="inst"></div></div></div>
   </div>`;
   QT.installCard($('#inst'));
+  QT.timerBanner($('#runbar'));
 }
 function drawToday() {
   const all = H.tasks, done = all.filter(t => t.done).length, pct = all.length ? Math.round(done / all.length * 100) : 0;
   const shown = all.slice().sort((a, b) => a.done - b.done).slice(0, 6);
-  $('#today').innerHTML = `<div class="th"><b>오늘 할 일</b><span>${QT.prettyDate(QT.todayKey()).main}</span><em>${all.length ? `${done}/${all.length}` : ''}</em></div>
+  $('#today').innerHTML = `<div class="th"><b>오늘 할 일</b><span>${QT.prettyDate(QT.todayKey()).main}${H.ses.length ? ` · 공부 ${TM.dur(TM.sum(H.ses))}` : ''}</span><em>${all.length ? `${done}/${all.length}` : ''}</em></div>
     ${all.length ? `<div class="bar"><i style="width:${pct}%"></i></div>` : ''}
     ${!H.loaded && !all.length ? '<p class="note" style="margin:0 0 10px">불러오는 중…</p>'
       : all.length ? `<ul class="mini">${shown.map(t => `<li class="${t.done ? 'done' : ''}" data-id="${t.id}" style="--c:${subColor(t.subject_id)}"><button class="ck" aria-label="완료">${t.done ? '✓' : ''}</button><span class="t">${esc(t.title)}</span><span class="dot"></span></li>`).join('')}</ul>`
@@ -116,7 +122,8 @@ async function drawSchool() {
     <div class="ln"><span>${lunch ? esc(lunch.type) : '급식'}</span>${lunch ? lunch.dishes.slice(0, 6).map(d => esc(d.name)).join(', ') : '정보 없음'}</div></a>`;
 }
 async function load() {
-  try { [H.subs, H.tasks] = await Promise.all([CL.subjects(), CL.tasks(QT.todayKey())]); H.loaded = true; drawToday(); }
+  const t = QT.todayKey();
+  try { [H.subs, H.tasks, H.ses] = await Promise.all([CL.subjects(), CL.tasks(t), TM.sessions(t, t).catch(() => [])]); H.loaded = true; drawToday(); }
   catch (e) { H.loaded = true; drawToday(); toast(CL.errMsg(e), 4000); }
 }
 (async () => {
@@ -124,7 +131,7 @@ async function load() {
   const ctx = await QT.boot('hub'); if (!ctx) return;
   CL.init(ctx.user.id);
   H.subs = CL.cache.get('subjects', []); H.tasks = CL.cache.get('day_' + QT.todayKey(), []);
-  SC.init(ctx.user.id);
+  SC.init(ctx.user.id); TM.init(ctx.user.id);
   shell(ctx.me); drawToday(); load(); drawSchool();
   SC.profile().then(p => { if (p) drawSchool(); }).catch(() => {});
   document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') load(); });
