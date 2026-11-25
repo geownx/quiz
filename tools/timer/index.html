@@ -11,7 +11,7 @@
 <meta property="og:title" content="공부 타이머 · 문제지메이커">
 <meta property="og:description" content="과목별 공부 타이머, 뽀모도로, 공부 기록 달력과 통계.">
 <meta property="og:url" content="https://quizmaker.pro/tools/timer/">
-<meta property="og:image" content="https://quizmaker.pro/og.png">
+<meta property="og:image" content="https://quizmaker.pro/og.png?v=2">
 <link rel="manifest" href="/tools/manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="192x192" href="/tools/icons/icon-192.png">
 <link rel="apple-touch-icon" href="/tools/icons/apple-touch-icon.png">
@@ -22,9 +22,10 @@
 <link rel="stylesheet" href="/tools/common.css">
 <link rel="stylesheet" href="/tools/nav.css">
 <style>
-.tabs{display:flex;background:var(--soft2);border-radius:14px;padding:4px;gap:4px;margin-bottom:14px}
-.tabs button{flex:1;border:0;background:none;border-radius:11px;padding:10px 4px;font-size:14px;font-weight:700;color:var(--mute);cursor:pointer}
-.tabs button.on{background:var(--card);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.1)}
+.tabs{display:flex;background:none;border-radius:0;padding:0;gap:16px;margin:-4px 0 10px;justify-content:center}
+.tabs[hidden]{display:none}
+.tabs button{flex:0 0 auto;border:0;background:none;border-radius:0;padding:6px 2px;font-size:14.5px;border-bottom:2.5px solid transparent;font-weight:700;color:var(--mute);cursor:pointer}
+.tabs button.on{color:var(--ink);border-bottom-color:var(--acc)}
 .tabs button:disabled{opacity:.4;cursor:not-allowed}
 .spick{display:flex;gap:6px;overflow-x:auto;padding:2px 0 4px;scrollbar-width:none}
 .spick::-webkit-scrollbar{display:none}
@@ -138,16 +139,20 @@ async function keepAwake(on) {
 
 /* ---------- 화면 뼈대 ---------- */
 function shell() {
-  $('#app').innerHTML = `<div class="wrap"><h1>⏱️ 공부 타이머</h1>
-    <div class="tabs" id="tabs"><button data-t="stopwatch">⏱ 스톱워치</button><button data-t="pomodoro">🍅 뽀모도로</button><button data-t="stats">📊 기록</button></div>
-    <div id="pane"></div><div id="inst"></div></div>`;
-  $$('#tabs button').forEach(b => b.onclick = () => { S.tab = b.dataset.t; draw(); });
-  document.addEventListener('click', e => { if (e.target.closest('#toStats')) { e.preventDefault(); S.tab = 'stats'; draw(); window.scrollTo(0, 0); } });
-  QT.installCard($('#inst'));
+  $('#app').innerHTML = `<div class="wrap"><div id="ssw"></div>
+    <div class="tabs" id="tabs"><button data-t="stopwatch">스톱워치</button><button data-t="pomodoro">뽀모도로</button></div>
+    <div id="pane"></div></div>`;
+  $$('#tabs button').forEach(b => b.onclick = () => { S.tab = b.dataset.t; LS.set('qt_tm_lastmode', S.tab); draw(); });
+  document.addEventListener('click', e => { if (e.target.closest('#toStats')) { e.preventDefault(); S.tab = 'stats'; history.replaceState(null, '', '?tab=stats'); draw(); window.scrollTo(0, 0); } });
 }
 function draw() {
   const r = TM.run();
   if (r && S.tab !== 'stats') S.tab = r.mode;
+  QT.studySwitch($('#ssw'), S.tab === 'stats' ? 'stats' : 'timer');
+  $('#tabs').hidden = S.tab === 'stats';
+  const sw = $('#ssw [data-k="stats"]'), tw = $('#ssw [data-k="timer"]');
+  if (sw) sw.onclick = e => { e.preventDefault(); S.tab = 'stats'; history.replaceState(null, '', '?tab=stats'); draw(); };
+  if (tw) tw.onclick = e => { e.preventDefault(); if (S.tab === 'stats') { S.tab = (r && r.mode) || LS.get('qt_tm_lastmode', 'stopwatch'); history.replaceState(null, '', location.pathname); draw(); } };
   $$('#tabs button').forEach(b => { b.classList.toggle('on', b.dataset.t === S.tab); b.disabled = !!r && b.dataset.t !== 'stats' && b.dataset.t !== r.mode; });
   clearInterval(TICK);
   if (S.tab === 'stats') return drawStats();
@@ -158,7 +163,7 @@ function draw() {
 function pickerHTML(locked) {
   const open = S.tasks.filter(t => !t.done);
   return `<div class="spick" id="sp">${[...S.subs, NONE].map(s => `<button class="sc ${S.pick === s.id ? 'on' : ''}" data-s="${s.id || ''}" style="${cv(s.color)}" ${locked ? 'disabled' : ''}><i></i>${esc(s.name)}</button>`).join('')}</div>
-    ${open.length || S.task ? `<label class="lb">오늘 체크리스트 할 일과 연결 (선택)</label>
+    ${open.length || S.task ? `<label class="lb">할 일과 연결 (선택)</label>
     <select id="tk" ${locked ? 'disabled' : ''}><option value="">연결 안 함</option>${S.tasks.filter(t => !t.done || t.id === S.task).map(t => `<option value="${t.id}" ${S.task === t.id ? 'selected' : ''}>${esc(subOf(t.subject_id).name)} · ${esc(t.title)}</option>`).join('')}</select>` : ''}`;
 }
 function bindPicker() {
@@ -179,9 +184,9 @@ function drawTimer() {
         <div class="in"><div class="ph" id="ph"></div><div class="t ${pomo ? '' : 'sm'}" id="tt">00:00</div><div class="l" id="tl"></div></div></div>
       <div class="ctl" id="ctl"></div>
       <div class="tom" id="tom"></div>
-      <p class="hint">${pomo ? '집중 시간이 끝나면 자동으로 기록되고 휴식이 시작돼요.' : '끝내기를 누르면 공부 기록에 저장돼요.'} 앱을 닫아도 시간은 계속 흘러가요.</p>
+
     </div>
-    <div class="card t-side"><div class="ch"><b>오늘 공부</b><span style="font-weight:800;color:var(--acc)" id="tdSum"></span></div><div id="tdBy"></div><a class="btn" href="?tab=stats" id="toStats" style="width:100%;margin-top:14px">📊 공부 기록 보기</a></div></div>`;
+    <div class="card t-side"><div class="ch"><b>오늘 공부</b><span style="font-weight:800;color:var(--acc)" id="tdSum"></span></div><div id="tdBy"></div><a class="btn" href="?tab=stats" id="toStats" style="width:100%;margin-top:14px">기록 보기</a></div></div>`;
   bindPicker();
   $$('#pf [data-v]').forEach(b => b.onclick = () => { S.pomo.focus = +b.dataset.v; LS.set('qt_tm_pomo', S.pomo); drawTimer(); });
   $$('#pb [data-v]').forEach(b => b.onclick = () => { S.pomo.brk = +b.dataset.v; LS.set('qt_tm_pomo', S.pomo); drawTimer(); });
@@ -321,9 +326,10 @@ function drawStatParts() {
   const sumRange = (a, b) => S.stat.filter(s => s.day >= a && s.day <= b);
   const week = TM.sum(sumRange(w, t)), month = TM.sum(sumRange(t.slice(0, 8) + '01', t));
   let streak = 0, k = byDay[t] ? t : QT.shiftKey(t, -1); while (byDay[k] && streak < 400) { streak++; k = QT.shiftKey(k, -1); }
+  const wq = sumRange(w, t).filter(x => x.mode === 'solve' && x.q_total).reduce((a, x) => ({ t: a.t + (+x.q_total || 0), c: a.c + (+x.q_correct || 0) }), { t: 0, c: 0 });
   const days7 = [...Array(7)].map((_, i) => QT.shiftKey(t, i - 6)), avg7 = days7.reduce((a, d) => a + (byDay[d] || 0), 0) / 7;
-  $('#tiles').innerHTML = `<div class="tile hot"><small>오늘</small><b>${TM.dur(byDay[t] || 0)}</b></div><div class="tile"><small>이번 주</small><b>${TM.dur(week)}</b></div>
-    <div class="tile"><small>이번 달</small><b>${TM.dur(month)}</b><em>최근 7일 하루 평균 ${TM.dur(avg7)}</em></div><div class="tile ${streak ? 'hot' : ''}"><small>연속 공부</small><b>${streak}일 ${streak ? '🔥' : ''}</b><em>하루도 안 빠지고 공부한 날</em></div>`;
+  $('#tiles').innerHTML = `<div class="tile hot"><small>오늘</small><b>${TM.dur(byDay[t] || 0)}</b></div><div class="tile"><small>이번 주</small><b>${TM.dur(week)}</b><em>하루 평균 ${TM.dur(avg7)}</em></div>
+    <div class="tile"><small>이번 주 푼 문제</small><b>${wq.t}문제</b><em>${wq.t ? `정답률 ${Math.round(wq.c / wq.t * 100)}%` : '사이트에서 풀면 쌓여요'}</em></div><div class="tile ${streak ? 'hot' : ''}"><small>연속 공부</small><b>${streak}일 ${streak ? '🔥' : ''}</b><em>이번 달 ${TM.dur(month)}</em></div>`;
   // 달력
   const [y, m] = S.month.split('-').map(Number), first = new Date(y, m - 1, 1), lastD = new Date(y, m, 0).getDate(), pad = (first.getDay() + 6) % 7;
   $('#mL').textContent = `${y}. ${m}월`;
@@ -338,7 +344,7 @@ function drawStatParts() {
   $('#dT').textContent = `${pd.main}${pd.rel ? ' · ' + pd.rel : ''}`; $('#dS').textContent = TM.dur(TM.sum(sel));
   $('#dBy').innerHTML = subjectBars(TM.by(sel, 'subject_id'));
   const hm = iso => { const d = new Date(iso); return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`; };
-  $('#dL').innerHTML = sel.length ? sel.slice().reverse().map(s => { const su = subOf(s.subject_id); return `<li style="${cv(su.color)}"><span class="tg">${esc(su.name)}</span><span class="m"><span>${s.mode === 'pomodoro' ? '🍅 뽀모도로' : '⏱ 스톱워치'}</span><small>${hm(s.started_at)} 시작</small></span><b>${TM.dur(s.seconds)}</b><button class="del" data-x="${s.id}" aria-label="기록 지우기">✕</button></li>`; }).join('')
+  $('#dL').innerHTML = sel.length ? sel.slice().reverse().map(s => { const su = subOf(s.subject_id); return `<li style="${cv(su.color)}"><span class="tg">${esc(su.name)}</span><span class="m"><span>${s.mode === 'pomodoro' ? '뽀모도로' : s.mode === 'solve' ? `문제 풀기${s.q_total ? ` · ${Math.round(s.q_correct)}/${s.q_total}` : ''}` : '스톱워치'}</span><small>${hm(s.started_at)} 시작</small></span><b>${TM.dur(s.seconds)}</b><button class="del" data-x="${s.id}" aria-label="기록 지우기">✕</button></li>`; }).join('')
     : '<li class="empty2" style="display:block;border:0">이날은 기록이 없어요</li>';
   $$('#dL [data-x]').forEach(b => b.onclick = async () => { if (!confirm('이 기록을 지울까요?')) return; try { await TM.remove(b.dataset.x); S.stat = S.stat.filter(s => s.id !== b.dataset.x); S.today = S.today.filter(s => s.id !== b.dataset.x); drawStatParts(); } catch (e) { toast(TM.errMsg(e), 3500); } });
   // 최근 7일
@@ -360,7 +366,7 @@ function drawStatParts() {
   S.subs = CL.cache.get('subjects', []); S.tasks = CL.cache.get('day_' + QT.todayKey(), []);
   if (q.get('task')) { S.task = q.get('task'); const t = S.tasks.find(x => x.id === S.task); if (t) S.pick = t.subject_id; if (S.tab !== 'stats') S.tab = 'stopwatch'; }
   if (q.get('mode') === 'pomodoro') S.tab = 'pomodoro';
-  if (q.toString()) history.replaceState(null, '', location.pathname);
+  if (q.toString() && q.get('tab') !== 'stats') history.replaceState(null, '', location.pathname);
   shell(); draw();
   try {
     const t = QT.todayKey();

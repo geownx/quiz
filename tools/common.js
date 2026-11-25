@@ -81,7 +81,7 @@
 
   /* 위 메뉴 · 폰 아래 탭바는 nav.js (메인과 같이 씀) */
   function renderHeader(page, me) {
-    const active = page === 'hub' ? 'home' : page;
+    const active = page === 'hub' ? 'home' : page === 'checklist' || page === 'timer' ? 'study' : page;
     if (window.QTNAV) QTNAV.render({ active, tabs: !!me, right: me ? `<a class="qn-ib" href="/#/me" title="내 계정" aria-label="내 계정">${QTNAV.userIcon}</a>` : `<a class="qn-pill acc" href="/#/">로그인</a>` });
     const f = document.createElement('footer'); f.className = 'site';
     f.innerHTML = `© 2026 문제지메이커 · 제작자 <b>geownx</b>${me && me.email ? `<br><span style="font-size:12px">${esc(me.name || '')} ${esc(me.email)} 계정에 저장돼요</span>` : ''}`;
@@ -181,5 +181,11 @@
     });
   }
 
-  window.QT = { examPicker, api, dbErr, CONFIG, $, $$, esc, LS, toast, modal, sb, boot, todayKey, shiftKey, parseKey, prettyDate, isKey, registerSW, installCard, isStandalone };
+  /* '공부' 안에서 할 일 · 타이머 · 기록 전환 */
+  function studySwitch(el, on) {
+    if (!el) return;
+    el.innerHTML = `<nav class="ssw">${[['todo', '할 일', '/tools/checklist/'], ['timer', '타이머', '/tools/timer/'], ['stats', '기록', '/tools/timer/?tab=stats']].map(([k, l, h]) => `<a href="${h}" data-k="${k}" class="${k === on ? 'on' : ''}">${l}</a>`).join('')}</nav>`;
+  }
+
+  window.QT = { studySwitch, examPicker, api, dbErr, CONFIG, $, $$, esc, LS, toast, modal, sb, boot, todayKey, shiftKey, parseKey, prettyDate, isKey, registerSW, installCard, isStandalone };
 })();

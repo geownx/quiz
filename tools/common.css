@@ -50,10 +50,10 @@ input:focus,select:focus{border-color:var(--acc)}
 .err{color:var(--bad);font-size:13.5px}
 
 /* 명언판 */
-.quote{position:relative;margin:0 0 14px;padding:18px 18px 14px 50px;border-radius:16px;background:linear-gradient(135deg,var(--acc2),var(--card));border:1px solid var(--line);overflow:hidden;animation:qin .45s ease}
-.quote::before{content:"“";position:absolute;left:14px;top:2px;font-size:58px;line-height:1;font-family:Georgia,serif;color:var(--acc);opacity:.85}
-.quote blockquote{margin:0;font-size:16px;font-weight:700;line-height:1.6;letter-spacing:-.2px;word-break:keep-all;overflow-wrap:anywhere}
-.quote figcaption{margin-top:8px;text-align:right;font-size:13px;font-weight:700;color:var(--acc)}
+.quote{position:relative;margin:0 0 12px;padding:12px 14px 10px 42px;border-radius:16px;background:linear-gradient(135deg,var(--acc2),var(--card));border:1px solid var(--line);overflow:hidden;animation:qin .45s ease}
+.quote::before{content:"“";position:absolute;left:12px;top:0;font-size:44px;line-height:1;font-family:Georgia,serif;color:var(--acc);opacity:.85}
+.quote blockquote{margin:0;font-size:14.5px;font-weight:700;line-height:1.6;letter-spacing:-.2px;word-break:keep-all;overflow-wrap:anywhere}
+.quote figcaption{margin-top:4px;text-align:right;font-size:12px;font-weight:700;color:var(--acc)}
 .quote figcaption span{font-weight:500;color:var(--mute)}
 @keyframes qin{from{opacity:0;transform:translateY(6px)}}
 
@@ -123,3 +123,9 @@ footer.site b{color:var(--ink)}
 .epi b{display:block;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .epi span{font-size:12.5px;color:var(--mute)}
 .epb{display:flex;gap:6px;flex:0 0 auto}
+
+/* 공부 안 전환 */
+.ssw{display:flex;background:var(--soft2);border-radius:12px;padding:3px;gap:3px;margin:0 0 14px}
+.ssw a{flex:1;text-align:center;text-decoration:none;color:var(--mute);font-weight:700;font-size:14px;padding:9px 4px;border-radius:9px}
+.ssw a.on{background:var(--card);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+@media(min-width:700px){.ssw{max-width:420px}}

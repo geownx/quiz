@@ -11,13 +11,13 @@
 <meta property="og:title" content="문제지메이커 · 공부한 자료를 올리면 시험지가 나와요">
 <meta property="og:description" content="사진·PDF를 올리면 문제지, 풀기·채점, 오답 노트, 플래시카드, 요약 노트, 마인드맵까지.">
 <meta property="og:url" content="https://quizmaker.pro/">
-<meta property="og:image" content="https://quizmaker.pro/og.png">
+<meta property="og:image" content="https://quizmaker.pro/og.png?v=2">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="문제지메이커 — 공부한 자료를 올리면 시험지가 나와요">
 <meta property="og:locale" content="ko_KR">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://quizmaker.pro/og.png">
+<meta name="twitter:image" content="https://quizmaker.pro/og.png?v=2">
 <meta name="apple-mobile-web-app-title" content="문제지메이커">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
@@ -890,6 +890,15 @@ body.dark .stb.pending{background:#272b45;color:#a9b2ff}
 .tl4 p{margin:0;font-size:13.5px;color:var(--ink2);line-height:1.55;word-break:keep-all}
 @media(max-width:900px){.tl4{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:520px){.tl4{grid-template-columns:minmax(0,1fr)}.tl4>div{display:grid;grid-template-columns:44px 1fr;gap:0 14px;padding:14px}.tl4 .ti{grid-row:span 2;margin:0}}
+/* 문제지 만들기: 자세히 설정 접기 */
+details.adv{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:0 14px;margin-top:18px}
+details.adv>summary{cursor:pointer;list-style:none;padding:13px 0;font-weight:700;font-size:15px;display:flex;align-items:baseline;gap:8px}
+details.adv>summary::-webkit-details-marker{display:none}
+details.adv>summary small{font-weight:500;color:var(--mute);font-size:12.5px;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+details.adv>summary::after{content:"▾";color:var(--mute)}
+details.adv[open]>summary::after{content:"▴"}
+details.adv[open]{padding-bottom:14px}
+details.adv .sec-t:first-of-type{margin-top:4px}
 /* 약한 파트 → 할 일 */
 .weak{border:1px solid var(--acc);background:var(--acc2);border-radius:16px;padding:14px;margin-top:12px}
 .weak b{display:block;font-size:15px}
@@ -2136,6 +2145,7 @@ async function viewCreate(itemId, kind) {
         <div class="sec-t" style="margin-top:6px">문제 수</div>${seg('total', TOTALS.map(n => [n, n + '문제']), st.total)}
         <div class="sec-t">문제 유형 <small>여러 개 고를 수 있어요</small></div>
         <div class="chips">${TYPES.map(t => { const off = lite && !LITE_TYPES.includes(t.id); return `<button type="button" class="chip ${st.types.includes(t.id) ? 'on' : ''} ${off ? 'off' : ''}" data-t="${t.id}" ${off ? 'disabled' : ''}><b>${esc(t.label)}</b><span>${esc(t.desc)}</span></button>`; }).join('')}</div>
+        <details class="adv" ${LS.get('qm_adv_open', false) ? 'open' : ''}><summary>자세히 설정 <small id="advSum"></small></summary>
         <div class="sec-t">유형별 문항 수</div>${seg('typeMode', [['auto', '자동으로 고르게'], ['manual', '직접 정하기']], st.typeMode)}
         <div id="tc"></div>
         <div class="sec-t">난이도</div>${seg('difficulty', [['easy', '쉬움'], ['normal', '보통'], ['hard', '어려움'], ['mixed', '섞어서']], st.difficulty)}
@@ -2147,7 +2157,7 @@ async function viewCreate(itemId, kind) {
           <label class="lb" for="cTitle">시험지 제목 <small style="font-weight:400;color:var(--mute)">(비워 두면 자동)</small></label><input type="text" id="cTitle" maxlength="100" placeholder="${esc(it.title)} 확인 문제" value="${preset ? esc(preset.title) : ''}">` : ''}
         ${partBox()}
         <label class="lb" for="cExtra">추가 요청 <small style="font-weight:400;color:var(--mute)">(선택)</small></label>
-        <textarea id="cExtra" rows="2" maxlength="1000" placeholder="예: 그래프 해석 문제를 꼭 넣어 주세요.">${esc(st.extra || '')}</textarea>`;
+        <textarea id="cExtra" rows="2" maxlength="1000" placeholder="예: 그래프 해석 문제를 꼭 넣어 주세요.">${esc(st.extra || '')}</textarea></details>`;
       $$('.chip[data-t]', body).forEach(b => b.onclick = () => {
         const t = b.dataset.t; if (st.types.includes(t)) { if (st.types.length === 1) return toast('유형을 하나 이상 골라 주세요'); st.types = st.types.filter(x => x !== t); } else st.types.push(t);
         b.classList.toggle('on'); drawTC(); upd();
@@ -2158,8 +2168,9 @@ async function viewCreate(itemId, kind) {
     } else {
       body.innerHTML = `${kind === 'flash' ? `<div class="sec-t" style="margin-top:6px">카드 수</div>${seg('count', [[10, '10장'], [20, '20장'], [30, '30장']], st.count)}<p class="note" style="margin-top:8px;background:none;padding:0">10장에 ${price('flash', 10)}코인이에요.</p>` : ''}
         ${kind === 'note' ? `<div class="sec-t" style="margin-top:6px">정리 정도</div>${seg('detail', [['brief', `핵심만 짧게 · ${price('note', 1, { detail: 'brief' })}코인`], ['detail', `자세히 · ${price('note', 1, { detail: 'detail' })}코인`]], st.detail)}` : ''}
-        ${partBox()}`;
+        <details class="adv"><summary>범위 <small id="advSum"></small></summary>${partBox()}</details>`;
     }
+    const adv = $('details.adv', body); if (adv) adv.ontoggle = () => LS.set('qm_adv_open', adv.open);
     bindSeg(body, st, k => { if (k === 'typeMode' || k === 'total') drawTC(); upd(); });
     $$('[data-part]', body).forEach(c => c.onchange = () => { st.parts = $$('[data-part]', body).filter(x => x.checked).map(x => x.dataset.part); upd(); });
   };
@@ -2173,6 +2184,10 @@ async function viewCreate(itemId, kind) {
     sel.forEach(t => bindNum(box, 'tc_' + t, n => { st.typeCounts[t] = n; const s = sel.reduce((a, x) => a + (st.typeCounts[x] || 0), 0); $('#tcSum', box).innerHTML = `합계 <b>${s}</b> / ${st.total}문제 ${s !== st.total ? '<span class="err">· 문제 수와 맞춰 주세요</span>' : '✓'}`; upd(); }));
   };
   const upd = () => {
+    const sm = $('#advSum'); if (sm) {
+      const rng = st.parts.length === parts.length ? '전체 범위' : `파트 ${st.parts.length}개`;
+      sm.textContent = Q ? [{ easy: '쉬움', normal: '보통', hard: '어려움', mixed: '난이도 섞어서' }[st.difficulty], STYLE_L[st.style], `보기 ${st.choiceN}개`, st.explain === 'brief' ? '해설 간단히' : '해설 자세히', rng].join(' · ') : rng;
+    }
     const n = Q ? st.total : kind === 'flash' ? st.count : 1;
     const c = costHTML(kind, n, st), box = $('#cCost');
     const tcBad = Q && st.typeMode === 'manual' && st.types.reduce((a, t) => a + (st.typeCounts[t] || 0), 0) !== st.total;

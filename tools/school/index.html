@@ -11,7 +11,7 @@
 <meta property="og:title" content="학교생활 · 문제지메이커">
 <meta property="og:description" content="급식, 시간표, 학사일정과 시험 D-day를 한 화면에서.">
 <meta property="og:url" content="https://quizmaker.pro/tools/school/">
-<meta property="og:image" content="https://quizmaker.pro/og.png">
+<meta property="og:image" content="https://quizmaker.pro/og.png?v=2">
 <link rel="manifest" href="/tools/manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="192x192" href="/tools/icons/icon-192.png">
 <link rel="apple-touch-icon" href="/tools/icons/apple-touch-icon.png">
@@ -196,11 +196,10 @@ function shell() {
     <div class="top3"><div class="pbar"><span class="pi">🏫</span><div><b>${esc(p.school_name)}</b><span>${p.grade}학년 ${esc(p.class_nm)}${/^\d+$/.test(p.class_nm) ? '반' : ''} · ${esc(p.school_kind)}</span></div><button class="btn sm" id="pEdit">변경</button></div>
     <div class="dd" id="dd"></div></div>
     <div class="dnav"><button id="dP" aria-label="이전 날">‹</button><div class="dlab"><strong id="dM"></strong><span id="dR"></span></div><button id="dN" aria-label="다음 날">›</button></div>
-    <div class="scg"><div class="card s-tt"><div class="ch"><b>⏰ 시간표</b><div class="seg" id="ttSeg"><button data-m="day">하루</button><button data-m="week">이번 주</button></div></div><div id="tt"></div></div>
-    <div class="card s-meal"><div class="ch"><b>🍱 급식</b><button class="link" id="mAl">알레르기 설정</button></div><div id="meal"></div></div>
-    <div class="card s-sch"><div class="ch"><b>🗓️ 학사일정</b><div class="mnav"><button id="mP" aria-label="이전 달">‹</button><span id="mL"></span><button id="mN" aria-label="다음 달">›</button></div></div><ul class="sch" id="sch"></ul></div></div>
-    <p class="note" style="margin-top:4px">급식 · 시간표 · 학사일정은 학교가 나이스에 올린 자료예요. 학교가 아직 안 올렸으면 비어 있을 수 있어요.</p>
-    <div id="inst"></div>`;
+    <div class="scg"><div class="card s-tt"><div class="ch"><b>시간표</b><div class="seg" id="ttSeg"><button data-m="day">하루</button><button data-m="week">이번 주</button></div></div><div id="tt"></div></div>
+    <div class="card s-meal"><div class="ch"><b>급식</b><button class="link" id="mAl">알레르기</button></div><div id="meal"></div></div>
+    <div class="card s-sch"><div class="ch"><b>학사일정</b><div class="mnav"><button id="mP" aria-label="이전 달">‹</button><span id="mL"></span><button id="mN" aria-label="다음 달">›</button></div></div><ul class="sch" id="sch"></ul></div></div>
+`;
   $('#pEdit').onclick = () => setupView(false);
   $('#mAl').onclick = allergyModal;
   $('#dP').onclick = () => setDay(QT.shiftKey(V.day, -1));
@@ -208,7 +207,6 @@ function shell() {
   $('#dR').onclick = () => { if (V.day !== QT.todayKey()) setDay(QT.todayKey()); };
   $$('#ttSeg button').forEach(b => b.onclick = () => { V.ttMode = b.dataset.m; LS.set('qt_sc_ttmode', V.ttMode); drawTT(); });
   $('#mP').onclick = () => setMonth(-1); $('#mN').onclick = () => setMonth(1);
-  QT.installCard($('#inst'));
 }
 function drawDay() {
   const pd = QT.prettyDate(V.day), today = V.day === QT.todayKey();
@@ -254,7 +252,7 @@ function drawTT() {
   }
   const list = V.tt[V.day] || [];
   box.innerHTML = list.length ? `<ul class="tt">${list.map(x => { const c = subColor(x.s); return `<li><span class="pn">${x.p}교시</span><span class="sj" style="${c ? `--c:${c}` : ''}"><i></i>${esc(x.s)}</span></li>`; }).join('')}</ul>`
-    : `<p class="empty2">${V.ttLoading ? '불러오는 중…' : isWeekend(V.day) ? '주말이에요 🛋️' : (V.sch.find(e => e.day === V.day && e.off) || {}).name ? `${esc(V.sch.find(e => e.day === V.day && e.off).name)} · 수업이 없어요` : '이날 시간표가 없어요'}</p>`;
+    : `<p class="empty2">${V.ttLoading ? '불러오는 중…' : isWeekend(V.day) ? '주말이에요 🛋️' : (V.sch.find(e => e.day === V.day && e.off) || {}).name ? `${esc(V.sch.find(e => e.day === V.day && e.off).name)} · 수업이 없어요` : '시간표 없음'}</p>`;
 }
 function drawMeal() {
   const box = $('#meal');
@@ -262,7 +260,7 @@ function drawMeal() {
   const list = V.meals[V.day] || [], mine = new Set((V.p && V.p.allergies) || []);
   box.innerHTML = list.length ? list.map(m => `<div class="meal"><h4>${esc(m.type)} ${m.cal ? `<small>${esc(m.cal)}</small>` : ''}</h4><div class="dishes">${m.dishes.map(d => { const bad = d.al.filter(a => mine.has(a));
       return `<span class="dish ${bad.length ? 'warn' : ''}" title="${esc(d.al.map(a => SC.ALLERGY[a]).join(', '))}">${bad.length ? '⚠ ' : ''}${esc(d.name)}${bad.length ? `<sup>${bad.map(a => SC.ALLERGY[a]).join('·')}</sup>` : ''}</span>`; }).join('')}</div></div>`).join('')
-    : `<p class="empty2">${V.mealLoading ? '불러오는 중…' : isWeekend(V.day) ? '주말이라 급식이 없어요' : '이날 급식 정보가 없어요'}</p>`;
+    : `<p class="empty2">${V.mealLoading ? '불러오는 중…' : isWeekend(V.day) ? '주말이라 급식이 없어요' : '급식 정보 없음'}</p>`;
 }
 function drawSch() {
   const [y, m] = V.month.split('-').map(Number), t = QT.todayKey();
@@ -314,7 +312,7 @@ async function main() {
   QT.registerSW();
   const ctx = await QT.boot('school'); if (!ctx) return;
   SC.init(ctx.user.id); CL.init(ctx.user.id); V.subs = CL.cache.get('subjects', []);
-  $('#app').innerHTML = '<div class="wrap"><h1>🏫 학교생활</h1><div id="body"><div class="loadingdot"><div class="spin"></div>불러오는 중…</div></div></div>';
+  $('#app').innerHTML = '<div class="wrap"><div id="body"><div class="loadingdot"><div class="spin"></div>불러오는 중…</div></div></div>';
   V.p = SC.cache.get('profile');
   if (V.p) main();
   try {

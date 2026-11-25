@@ -6,7 +6,7 @@
   const IC = {
     home: S('<path d="M3 11l9-8 9 8"/><path d="M5 10v10h5v-6h4v6h5V10"/>'),
     maker: S('<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M9 15l2 2 4-4"/>'),
-    checklist: S('<path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>'),
+    study: S('<path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>'),
     timer: S('<circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2"/><path d="M9 2h6"/>'),
     school: S('<path d="M3 21h18"/><path d="M5 21V10l7-5 7 5v11"/><path d="M10 21v-5h4v5"/>'),
     user: S('<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>'),
@@ -15,9 +15,8 @@
   const TABS = [
     { k: 'home', l: '홈', href: '/tools/' },
     { k: 'maker', l: '문제지', href: '/#/lib' },
-    { k: 'checklist', l: '체크리스트', s: '체크', href: '/tools/checklist/' },
-    { k: 'timer', l: '타이머', href: '/tools/timer/' },
-    { k: 'school', l: '학교생활', s: '학교', href: '/tools/school/' },
+    { k: 'study', l: '공부', href: '/tools/checklist/' },
+    { k: 'school', l: '학교', href: '/tools/school/' },
   ];
   const ls = { get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }, set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} } };
 
