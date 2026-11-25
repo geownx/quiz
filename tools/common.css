@@ -15,7 +15,7 @@ body.dark{
 }
 *{box-sizing:border-box}
 html,body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);-webkit-text-size-adjust:100%;max-width:100%;transition:background .2s,color .2s}
-body{overflow-x:clip;min-height:100vh;padding:calc(20px + env(safe-area-inset-top)) 16px calc(40px + env(safe-area-inset-bottom))}
+body{overflow-x:clip;min-height:100vh;padding:0 0 env(safe-area-inset-bottom)}
 button,input,select,textarea{font:inherit;color:inherit}
 a{color:var(--acc)}
 
@@ -29,7 +29,7 @@ a{color:var(--acc)}
 .icon-btn{background:var(--card);border:1px solid var(--line);color:var(--ink);width:38px;height:38px;border-radius:12px;font-size:17px;cursor:pointer;display:grid;place-items:center;flex:0 0 auto}
 
 /* 기본 블록 */
-.wrap{max-width:520px;margin:0 auto}
+.wrap{max-width:552px;margin:0 auto;padding:18px 16px 10px}
 .k{display:none}
 h1,h2{font-size:22px;font-weight:800;letter-spacing:-.5px;margin:6px 0 16px;line-height:1.35;word-break:keep-all}
 .sub{color:var(--mute);margin:-8px 0 16px;font-size:14px;line-height:1.6;word-break:keep-all}
@@ -62,7 +62,7 @@ input:focus,select:focus{border-color:var(--acc)}
 .bar>i{display:block;height:100%;width:0;background:var(--acc);border-radius:99px;transition:width .35s}
 
 /* 알림 · 모달 */
-.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:99px;font-size:14px;z-index:70;max-width:90vw;text-align:center;animation:tin .25s ease}
+.toast{position:fixed;left:50%;bottom:calc(90px + env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:99px;font-size:14px;z-index:70;max-width:90vw;text-align:center;animation:tin .25s ease}
 @keyframes tin{from{transform:translateX(-50%) translateY(30px);opacity:0}}
 .modal{position:fixed;inset:0;z-index:50;background:rgba(15,17,25,.45);display:flex;align-items:flex-end;justify-content:center}
 .modal .box{background:var(--card);width:100%;max-width:520px;max-height:90vh;overflow:auto;border-radius:20px 20px 0 0;padding:20px 18px calc(20px + env(safe-area-inset-bottom))}
@@ -87,7 +87,7 @@ input:focus,select:focus{border-color:var(--acc)}
 .install .btn.ghost{background:transparent;border-color:transparent;color:var(--mute)}
 .ios-steps{margin:10px 0 0;padding-left:20px;line-height:1.9;font-size:14.5px}
 
-footer.site{max-width:520px;margin:30px auto 0;text-align:center;color:var(--mute);font-size:12px;line-height:1.7}
+footer.site{max-width:520px;margin:20px auto 0;padding:0 16px 24px;text-align:center;color:var(--mute);font-size:12px;line-height:1.7}
 footer.site b{color:var(--ink)}
 
 /* 공부 중 띠 (타이머가 돌아가는 동안 다른 화면 위에) */
@@ -102,14 +102,24 @@ footer.site b{color:var(--ink)}
 /* ===== 화면 크기별 기본 폭 =====
    휴대폰(~699px): 한 줄 · 패드(700~1023px): 넓은 한 줄 + 2칸 · 컴퓨터(1024px~): 여러 칸 */
 @media(min-width:700px){
-  body{padding-left:28px;padding-right:28px;padding-top:calc(28px + env(safe-area-inset-top))}
-  .topbar,.wrap,footer.site{max-width:820px}
+  .wrap{max-width:876px;padding:26px 28px 10px}
+  footer.site{max-width:820px}
   h1,h2{font-size:26px;margin-bottom:20px}
   .modal .box{max-width:560px}
 }
 @media(min-width:1024px){
-  body{padding-left:40px;padding-right:40px;padding-top:32px}
-  .topbar,.wrap,footer.site{max-width:1180px}
+  .wrap{max-width:1260px;padding:30px 40px 10px}
+  footer.site{max-width:1180px}
   h1,h2{font-size:28px}
   .back{font-size:15px}
 }
+
+@media(min-width:700px){.toast{bottom:calc(28px + env(safe-area-inset-bottom))}}
+
+/* 시험 대비 문제지 고르기 */
+.eplist{display:grid;gap:8px;max-height:56vh;overflow:auto}
+.epi{display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:14px;padding:10px 12px}
+.epi>div:first-child{flex:1;min-width:0}
+.epi b{display:block;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.epi span{font-size:12.5px;color:var(--mute)}
+.epb{display:flex;gap:6px;flex:0 0 auto}

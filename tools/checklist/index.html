@@ -21,6 +21,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <link rel="stylesheet" href="/tools/common.css">
+<link rel="stylesheet" href="/tools/nav.css">
 <style>
 .dnav{display:flex;align-items:center;justify-content:space-between;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:8px 10px;margin-bottom:12px}
 .dnav>button{background:none;border:0;font-size:22px;width:40px;height:40px;border-radius:10px;cursor:pointer;color:var(--ink)}
@@ -69,6 +70,11 @@ ul.tl{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:
 body.dark .tag{filter:brightness(1.35)}
 .ti.done{opacity:.8}
 .tm .stu{color:var(--acc);font-weight:700}
+.tm .ltag{font-size:12px;font-weight:700;color:var(--acc);text-decoration:none;background:var(--acc2);border-radius:6px;padding:2px 7px;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lnk{margin-top:8px}
+.lk{border:1.5px dashed var(--line2);background:none;border-radius:999px;padding:6px 12px;font-size:13px;font-weight:700;color:var(--mute);cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.lk.on{border-style:solid;border-color:var(--acc);background:var(--acc2);color:var(--acc)}
+.lk button{border:0;background:none;color:inherit;cursor:pointer;font-size:12px;padding:0 2px}
 /* ===== 화면 크기별 배치 ===== */
 .clg{display:grid;grid-template-columns:minmax(0,1fr);grid-template-areas:"run" "quote" "notice" "main" "inst"}
 .g-run{grid-area:run}.g-quote{grid-area:quote}.g-notice{grid-area:notice}.g-main{grid-area:main;min-width:0}.g-inst{grid-area:inst}
@@ -122,6 +128,7 @@ body.dark .tag{filter:brightness(1.35)}
 <body>
 <main id="app"></main>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="/tools/nav.js"></script>
 <script src="/tools/common.js"></script>
 <script src="/tools/checklist/data.js"></script>
 <script src="/tools/quotes.js"></script>
@@ -130,7 +137,7 @@ body.dark .tag{filter:brightness(1.35)}
 'use strict';
 const { $, $$, esc, toast, modal, CL, LS, TM } = QT;
 const NONE = { id: null, name: '과목 없음', color: '#8a8f9c' };
-const S = { subs: [], tasks: [], ses: [], day: QT.todayKey(), filter: 'all', pick: null, streak: 0, uid: null, loaded: false };
+const S = { link: null, items: null, subs: [], tasks: [], ses: [], day: QT.todayKey(), filter: 'all', pick: null, streak: 0, uid: null, loaded: false };
 { const d = new URLSearchParams(location.search).get('d'); if (QT.isKey(d)) S.day = d; }
 
 const rgba = (hex, a) => { const n = parseInt(String(hex).slice(1), 16); return `rgba(${n >> 16 & 255},${n >> 8 & 255},${n & 255},${a})`; };
@@ -155,6 +162,7 @@ function shell() {
         <div class="minw"><input type="number" id="aM" min="0" max="600" inputmode="numeric" placeholder="시간" aria-label="예상 시간(분)"><span>분</span></div>
         <button class="btn acc" type="submit" id="aGo">추가</button></div>
       <div class="spick" id="spick"></div>
+      <div class="lnk" id="lnk"></div>
     </form>
     <div class="filters" id="filters"></div>
     <ul class="tl" id="list"></ul>
@@ -202,6 +210,10 @@ function render() {
   $$('#spick [data-s]').forEach(b => b.onclick = () => { S.pick = S.pick === b.dataset.s ? null : b.dataset.s; LS.set('qt_cl_pick', S.pick); render(); });
   $('#sEdit').onclick = subjectManager;
 
+  $('#lnk').innerHTML = S.link ? `<span class="lk on">📝 ${esc(S.link.title)} <button type="button" id="lkX" aria-label="연결 해제">✕</button></span>` : `<button type="button" class="lk" id="lkGo">📝 문제지메이커 학습 연결</button>`;
+  const lg = $('#lkGo'); if (lg) lg.onclick = () => pickItem(it => { S.link = it; render(); $('#aT').focus(); });
+  const lx = $('#lkX'); if (lx) lx.onclick = () => { S.link = null; render(); };
+
   // 과목별 보기
   const used = [...new Set(all.map(t => t.subject_id || 'none'))];
   if (S.filter !== 'all' && !used.includes(S.filter)) S.filter = 'all';
@@ -219,11 +231,11 @@ function render() {
   const studiedBy = TM.by(S.ses, 'task_id');
   if (shown.length) L.innerHTML = shown.map(t => { const s = subOf(t.subject_id), st = studiedBy[t.id] || 0; return `<li class="ti ${t.done ? 'done' : ''}" data-id="${t.id}" style="${cvars(s.color)}">
       <button class="ck" aria-label="${t.done ? '완료 취소' : '완료'}">${t.done ? '✓' : ''}</button>
-      <div class="tb"><div class="tt">${esc(t.title)}</div><div class="tm"><span class="tag">${esc(s.name)}</span>${t.minutes ? `<span>목표 ${t.minutes}분</span>` : ''}${st ? `<span class="stu">공부 ${TM.dur(st)}</span>` : ''}</div></div>
+      <div class="tb"><div class="tt">${esc(t.title)}</div><div class="tm"><span class="tag">${esc(s.name)}</span>${t.minutes ? `<span>목표 ${t.minutes}분</span>` : ''}${st ? `<span class="stu">공부 ${TM.dur(st)}</span>` : ''}${t.link_item ? `<a class="ltag" href="/#/item/${esc(t.link_item)}" title="학습으로 가서 풀기">📝 ${esc(t.link_title || '학습')} →</a>` : ''}</div></div>
       ${t.done || S.day !== QT.todayKey() ? '' : `<a class="play" href="/tools/timer/?task=${t.id}" aria-label="이 할 일 타이머 시작" title="타이머 시작">▶</a>`}</li>`; }).join('');
   $$('#list .ti').forEach(li => {
     $('.ck', li).onclick = () => toggle(li.dataset.id);
-    $('.tb', li).onclick = () => editTask(li.dataset.id);
+    $('.tb', li).onclick = e => { if (e.target.closest('.ltag')) return; editTask(li.dataset.id); };
   });
 }
 
@@ -243,7 +255,8 @@ async function addTask() {
   if (!title) { t.focus(); return; }
   const b = $('#aGo'); b.disabled = true;
   try {
-    const row = await CL.addTask({ day: S.day, title, subject_id: S.pick, minutes: Math.max(0, Math.min(600, parseInt(m.value, 10) || 0)) });
+    const row = await CL.addTask({ day: S.day, title, subject_id: S.pick, minutes: Math.max(0, Math.min(600, parseInt(m.value, 10) || 0)), link_item: S.link && S.link.id, link_title: S.link && S.link.title });
+    S.link = null;
     S.tasks.push(row); CL.cache.set('day_' + S.day, S.tasks);
     t.value = ''; m.value = ''; t.focus(); render(); refreshStreak();
   } catch (e) { toast(CL.errMsg(e), 3500); }
@@ -265,13 +278,20 @@ function editTask(id) {
     <label class="lb">할 일</label><input type="text" id="eT" maxlength="100" value="${esc(t.title)}">
     <label class="lb">과목</label><div class="spick" id="eS" style="flex-wrap:wrap;padding-top:0"></div>
     <label class="lb">예상 시간 (분)</label><input type="number" id="eM" min="0" max="600" inputmode="numeric" value="${t.minutes || ''}">
+    <label class="lb">연결된 학습</label><div class="row" id="eL"></div>
     <div class="row" style="margin-top:18px"><button class="btn" id="eDel" style="color:var(--bad)">삭제</button>${t.done ? '' : '<button class="btn" id="eTmr">내일로 미루기</button>'}<span class="spacer"></span><button class="btn pri" id="eSave">저장</button></div>`);
   const drawS = () => { $('#eS', m).innerHTML = [NONE, ...S.subs].map(s => `<button type="button" class="sc ${pick === s.id ? 'on' : ''}" data-s="${s.id || ''}" style="${cvars(s.color)}"><i></i>${esc(s.name)}</button>`).join('');
     $$('#eS [data-s]', m).forEach(b => b.onclick = () => { pick = b.dataset.s || null; drawS(); }); };
   drawS();
+  let link = t.link_item ? { id: t.link_item, title: t.link_title } : null;
+  const drawL = () => { $('#eL', m).innerHTML = link ? `<a class="btn sm acc" href="/#/item/${esc(link.id)}">📝 ${esc(link.title || '학습')} 풀러 가기</a><button class="btn sm" id="eLx">연결 해제</button>` : '<button class="btn sm" id="eLg">📝 학습 연결하기</button>';
+    const x = $('#eLx', m); if (x) x.onclick = () => { link = null; drawL(); }; const g = $('#eLg', m); if (g) g.onclick = () => pickItem(it => { link = it; drawL(); }); };
+  drawL();
   $('#eSave', m).onclick = async () => {
     const title = $('#eT', m).value.trim(); if (!title) return toast('할 일을 써 주세요');
-    try { Object.assign(t, await CL.updateTask(id, { title: title.slice(0, 100), subject_id: pick, minutes: Math.max(0, Math.min(600, parseInt($('#eM', m).value, 10) || 0)) || null })); m.remove(); render(); }
+    const patch = { title: title.slice(0, 100), subject_id: pick, minutes: Math.max(0, Math.min(600, parseInt($('#eM', m).value, 10) || 0)) || null };
+    if (link || t.link_item) Object.assign(patch, { link_item: link ? link.id : null, link_title: link ? link.title : null });
+    try { Object.assign(t, await CL.updateTask(id, patch)); m.remove(); render(); }
     catch (e) { toast(CL.errMsg(e), 3500); }
   };
   $('#eDel', m).onclick = async () => {
@@ -301,6 +321,15 @@ async function clearDone() {
   if (!confirm(`완료한 ${n}개를 지울까요? 지우면 연속 달성 기록에서도 빠져요.`)) return;
   try { await CL.deleteDone(S.day); S.tasks = S.tasks.filter(t => !t.done); CL.cache.set('day_' + S.day, S.tasks); render(); refreshStreak(); toast(`${n}개 지웠어요`); }
   catch (e) { toast(CL.errMsg(e), 3500); }
+}
+
+/* ---------- 문제지메이커 학습 고르기 ---------- */
+async function pickItem(done) {
+  const m = modal(`<h3>📝 학습 연결</h3><p class="sub" style="margin:4px 0 10px">할 일을 누르면 이 학습으로 바로 가서 문제를 풀 수 있어요.</p><div id="piL"><div class="loadingdot" style="padding:30px 0"><div class="spin"></div></div></div>`);
+  try { if (!S.items) S.items = await QT.api('items'); } catch (e) { $('#piL', m).innerHTML = `<p class="err">${esc(e.message)}</p>`; return; }
+  $('#piL', m).innerHTML = S.items.length ? `<div class="eplist">${S.items.slice(0, 40).map(x => `<div class="epi" data-id="${esc(x.id)}" style="cursor:pointer"><div><b>${esc(x.title)}</b><span>${x.subject && x.subject !== x.title ? esc(x.subject) + ' · ' : ''}만든 것 ${x.outputs || 0}개</span></div><span style="color:var(--acc);font-weight:800">고르기</span></div>`).join('')}</div>`
+    : '<p class="note">아직 학습이 없어요. 문제지메이커에서 자료를 먼저 올려 주세요.</p>';
+  $$('.epi', m).forEach(r => r.onclick = () => { const x = S.items.find(i => i.id === r.dataset.id); m.remove(); done({ id: x.id, title: x.title }); });
 }
 
 /* ---------- 과목 관리 ---------- */

@@ -20,6 +20,7 @@
 <meta name="apple-mobile-web-app-title" content="공부도구">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <link rel="stylesheet" href="/tools/common.css">
+<link rel="stylesheet" href="/tools/nav.css">
 <style>
 .pbar{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px 14px;margin-bottom:12px}
 .pbar .pi{width:38px;height:38px;border-radius:12px;background:var(--acc2);display:grid;place-items:center;font-size:19px;flex:0 0 auto}
@@ -35,6 +36,7 @@
 .dc small{display:block;font-size:11.5px;color:var(--mute);margin-top:2px}
 .dc.auto{background:var(--acc2)}
 .dc.soon b{color:var(--bad)}
+.dc .exq{display:block;margin-top:8px;border:0;background:var(--acc);color:#fff;border-radius:8px;padding:5px 8px;font-size:11.5px;font-weight:800;cursor:pointer;width:100%}
 .dc.add{display:grid;place-items:center;color:var(--mute);font-weight:700;font-size:14px;border-style:dashed;cursor:pointer;min-width:90px}
 .dc .x{position:absolute;top:4px;right:4px;border:0;background:none;color:var(--mute);font-size:13px;cursor:pointer;width:24px;height:24px;border-radius:6px}
 /* 날짜 */
@@ -109,6 +111,7 @@ body.dark .al button.on{background:#3a1d24;color:#ff8b9b}
 <body>
 <main id="app"></main>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="/tools/nav.js"></script>
 <script src="/tools/common.js"></script>
 <script src="/tools/checklist/data.js"></script>
 <script src="/tools/school/school.js"></script>
@@ -216,9 +219,10 @@ function drawDD() {
   const t = QT.todayKey();
   const all = [...V.exams.filter(e => e.last >= t).map(e => ({ ...e })), ...V.ddays.map(d => ({ ...d }))].filter(x => (x.last || x.day) >= t).sort((a, b) => a.day < b.day ? -1 : 1);
   $('#dd').innerHTML = all.map(x => { const n = Math.round((QT.parseKey(x.day) - QT.parseKey(t)) / 86400e3);
-    return `<div class="dc ${x.auto ? 'auto' : ''} ${n <= 7 ? 'soon' : ''}">${x.auto ? '' : `<button class="x" data-del="${x.id}" aria-label="삭제">✕</button>`}<b>${n < 0 && x.last >= t ? '진행 중' : SC.dLabel(x.day)}</b><span>${esc(x.title)}</span><small>${x.day.slice(5).replace('-', '/')}${x.auto ? ' · 학교 일정' : ''}</small></div>`; }).join('')
+    return `<div class="dc ${x.auto ? 'auto' : ''} ${n <= 7 ? 'soon' : ''}">${x.auto ? '' : `<button class="x" data-del="${x.id}" aria-label="삭제">✕</button>`}<b>${n < 0 && x.last >= t ? '진행 중' : SC.dLabel(x.day)}</b><span>${esc(x.title)}</span><small>${x.day.slice(5).replace('-', '/')}${x.auto ? ' · 학교 일정' : ''}</small>${x.auto || /고사|시험|모의|수능|평가/.test(x.title) ? `<button class="exq" data-ex="${esc(x.title)}">📝 대비 문제지</button>` : ''}</div>`; }).join('')
     + `<button class="dc add" id="ddAdd">＋ D-day</button>`;
   $('#ddAdd').onclick = addDday;
+  $$('#dd [data-ex]').forEach(b => b.onclick = () => QT.examPicker(b.dataset.ex));
   $$('#dd [data-del]').forEach(b => b.onclick = async () => { if (!confirm('이 D-day를 지울까요?')) return; try { await SC.deleteDday(b.dataset.del); V.ddays = V.ddays.filter(d => d.id !== b.dataset.del); drawDD(); } catch (e) { toast(SC.errMsg(e), 3500); } });
 }
 function addDday() {

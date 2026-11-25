@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#f6f4ef">
+<meta name="theme-color" content="#f6f7fb">
 <meta name="description" content="교과서·필기 사진이나 강의 PDF를 올리면 문제지 PDF, 사이트에서 풀기, 플래시카드, 요약 노트, 마인드맵까지 만들어 드려요.">
 <!-- 카톡·인스타·문자로 공유할 때 보이는 미리보기 (og.png 를 index.html 과 같은 곳에 올려 두세요) -->
 <meta property="og:type" content="website">
@@ -20,8 +20,9 @@
 <meta name="twitter:image" content="https://quizmaker.pro/og.png">
 <meta name="apple-mobile-web-app-title" content="문제지메이커">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+CiAgPHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiByeD0iMTYiIGZpbGw9IiNFMjY4M0MiLz4KICA8ZyB0cmFuc2Zvcm09InJvdGF0ZSgtOCAzMCAzNCkiPgogICAgPHJlY3QgeD0iMTUiIHk9IjEzIiB3aWR0aD0iMjgiIGhlaWdodD0iMzYiIHJ4PSI0IiBmaWxsPSIjZmZmIiBvcGFjaXR5PSIuNDUiLz4KICA8L2c+CiAgPHBhdGggZD0iTTIxIDEyaDE3bDggOHYyOWEzIDMgMCAwIDEtMyAzSDIxYTMgMyAwIDAgMS0zLTNWMTVhMyAzIDAgMCAxIDMtM3oiIGZpbGw9IiNmZmYiLz4KICA8cGF0aCBkPSJNMzggMTJ2NmEyIDIgMCAwIDAgMiAyaDZ6IiBmaWxsPSIjRjNCOUExIi8+CiAgPHJlY3QgeD0iMjMiIHk9IjI0IiB3aWR0aD0iMTUiIGhlaWdodD0iMyIgcng9IjEuNSIgZmlsbD0iIzFGMkE0NCIvPgogIDxyZWN0IHg9IjIzIiB5PSIzMSIgd2lkdGg9IjE4IiBoZWlnaHQ9IjIuNiIgcng9IjEuMyIgZmlsbD0iIzFGMkE0NCIgb3BhY2l0eT0iLjI4Ii8+CiAgPHJlY3QgeD0iMjMiIHk9IjM3IiB3aWR0aD0iMTIiIGhlaWdodD0iMi42IiByeD0iMS4zIiBmaWxsPSIjMUYyQTQ0IiBvcGFjaXR5PSIuMjgiLz4KICA8Y2lyY2xlIGN4PSI0NC41IiBjeT0iNDUuNSIgcj0iMTAuNSIgZmlsbD0iIzFGMkE0NCIgc3Ryb2tlPSIjRTI2ODNDIiBzdHJva2Utd2lkdGg9IjMiLz4KICA8cGF0aCBkPSJNMzkuNiA0NS42bDMuMyAzLjMgNi40LTYuNiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjMuMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+Cjwvc3ZnPg==">
-<link rel="apple-touch-icon" href="data:image/png;base64,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">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" href="/tools/icons/apple-touch-icon.png">
+<link rel="manifest" href="/tools/manifest.webmanifest">
 <title>문제지메이커</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
@@ -30,6 +31,7 @@
 <script defer src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.13/dist/html-to-image.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<link rel="stylesheet" href="/tools/nav.css">
 <style>
 :root{
   --ink:#1f2a44; --ink2:#46506a; --mute:#7a8296; --line:#e3e1db; --bg:#f6f4ef; --card:#fff; --soft:#f1efea; --soft2:#ebe8e1; --sel:#eef0f5; --okbg:#eef6f1; --line2:#cfcac0;
@@ -237,7 +239,7 @@ header.site{position:sticky;top:0;z-index:30;background:var(--glass);backdrop-fi
 header.site .in,footer.site .in{max-width:1120px;margin:0 auto;padding:0 20px;display:flex;align-items:center;gap:12px}
 header.site .in{height:62px}
 .logo{display:flex;align-items:center;gap:9px;text-decoration:none;color:var(--ink);font-weight:800;font-size:18px;letter-spacing:-.6px;flex:1;min-width:0}
-.logo svg{width:34px;height:34px;flex:0 0 auto;filter:drop-shadow(0 2px 4px rgba(226,104,60,.25))}
+.logo svg{width:34px;height:34px;flex:0 0 auto;filter:drop-shadow(0 2px 4px rgba(91,108,255,.25))}
 .logo b{color:var(--acc);font-weight:800}
 .logo.sm{font-size:15px;flex:0 0 auto}.logo.sm svg{width:26px;height:26px;filter:none}
 header.site nav{display:flex;align-items:center;gap:4px}
@@ -254,7 +256,7 @@ body.on-home footer.site{padding-bottom:calc(30px + env(safe-area-inset-bottom))
 
 /* hero */
 .hero{position:relative;overflow:hidden}
-.hero::before{content:"";position:absolute;inset:0;background:radial-gradient(600px 340px at 85% 10%,rgba(226,104,60,.16),transparent 70%),radial-gradient(500px 300px at 0% 100%,rgba(31,42,68,.07),transparent 70%);pointer-events:none}
+.hero::before{content:"";position:absolute;inset:0;background:radial-gradient(600px 340px at 85% 10%,rgba(91,108,255,.16),transparent 70%),radial-gradient(500px 300px at 0% 100%,rgba(31,42,68,.07),transparent 70%);pointer-events:none}
 .hero::after{content:"";position:absolute;inset:0;background-image:radial-gradient(rgba(31,42,68,.09) 1px,transparent 1px);background-size:22px 22px;-webkit-mask-image:linear-gradient(180deg,#000,transparent 85%);mask-image:linear-gradient(180deg,#000,transparent 85%);pointer-events:none}
 .hero .in{position:relative;z-index:1;max-width:1120px;margin:0 auto;padding:44px 20px 40px;display:grid;grid-template-columns:1.05fr 1fr;gap:48px;align-items:start}
 .eyebrow{display:inline-flex;align-items:center;gap:7px;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:6px 12px 6px 8px;font-size:12.5px;font-weight:700;color:var(--ink2)}
@@ -299,7 +301,7 @@ body.on-home footer.site{padding-bottom:calc(30px + env(safe-area-inset-bottom))
 .step4 p{margin:0;font-size:14px;line-height:1.6;color:var(--ink2);word-break:keep-all}
 .typecloud{display:flex;flex-wrap:wrap;gap:8px}
 .typecloud span{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:9px 14px;font-weight:600;font-size:14px}
-.typecloud span:nth-child(3n+1){border-color:#f0c5b3;background:var(--acc2)}
+.typecloud span:nth-child(3n+1){border-color:#c9cfff;background:var(--acc2)}
 .recent{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
 .rc{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;cursor:pointer;text-align:left;transition:transform .15s,box-shadow .15s}
 .rc:hover{transform:translateY(-2px);box-shadow:0 10px 24px -14px rgba(31,42,68,.35)}
@@ -366,7 +368,7 @@ a.nl{text-decoration:none}
 .chips2 button b{color:var(--ink);margin-left:2px}
 .chips2 button.on{background:var(--solid);border-color:var(--solid);color:var(--solid-fg)}.chips2 button.on b{color:#fff}
 .ucard{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:10px}
-.ucard.pending{border-color:#f0c5b3;box-shadow:0 0 0 3px var(--acc2)}
+.ucard.pending{border-color:#c9cfff;box-shadow:0 0 0 3px var(--acc2)}
 .uh{display:flex;align-items:center;gap:10px}
 .av{width:38px;height:38px;border-radius:12px;background:var(--sel);display:grid;place-items:center;font-weight:800;color:var(--ink)}
 .un{flex:1;min-width:0}.un b{display:block;font-size:15.5px}.un span{font-size:12.5px;color:var(--mute)}
@@ -416,7 +418,7 @@ body.dark .free .btn{background:var(--solid);color:var(--solid-fg)}
 body.dark .free p{color:var(--ink2)}
 body.dark .warn{background:#2c1e12;border-color:#5a3a1e;color:#f3c49b}
 body.dark .failbox{border-color:#5a2a24}
-body.dark .stb.pending{background:#3a2217;color:#ff9a6b}
+body.dark .stb.pending{background:#3a2217;color:#a9b2ff}
 body.dark .stb.approved{background:#14291f;color:#5fd398}
 body.dark .stb.blocked,body.dark .stb.rejected{background:#33191a;color:#ff8a7d}
 body.dark .log.bad,body.dark .exp.bad{border-color:#5a2a24}
@@ -428,7 +430,7 @@ body.dark .qcard .qx .aline,body.dark .qcard .qx .aline.lbl i,body.dark .qcard .
 body.dark .qcard .qx table.tb td{border-color:var(--line2)}
 body.dark .modal{background:rgba(0,0,0,.6)}
 body.dark .toast{box-shadow:0 6px 24px rgba(0,0,0,.5)}
-body.dark ::selection{background:#ff7c4766}
+body.dark ::selection{background:#7d8bff66}
 body.dark .seg{background:var(--soft);border:1px solid var(--line)}
 body.dark .seg button.on{background:var(--acc);color:#1a0f08;-webkit-text-fill-color:#1a0f08;box-shadow:none}
 body.dark .totalbox{background:var(--card);color:var(--ink);border:1px solid var(--line2)}
@@ -821,7 +823,7 @@ body.dark .tg.old{background:#33290f}
 .page-foot .pf-brand{display:inline-flex;align-items:center;gap:5px;color:#555}
 .page-foot .pf-brand svg{width:15px;height:15px;flex:0 0 auto}
 .page-foot .pf-brand b{font-weight:800;color:#1F2A44;font-size:11px}
-.page-foot .pf-brand b em{font-style:normal;color:#E2683C}
+.page-foot .pf-brand b em{font-style:normal;color:#5B6CFF}
 .page-foot .pf-brand small{font-size:10px;color:#888}
 /* 오류 신고 */
 .rpt{font-size:12.5px;font-weight:700;color:var(--mute);align-self:center;padding:0 4px;white-space:nowrap}
@@ -861,19 +863,49 @@ body.dark .tg.old{background:#33290f}
 body.dark .tg.nl.brief{background:#16263a;color:#7fb2ec}body.dark .tg.nl.detail{background:#221d3d;color:#a99bf3}
 .ndoc .nlv{display:inline-block;font-size:12px;font-weight:800;border-radius:6px;padding:3px 8px;margin-bottom:8px}
 .ndoc .nlv.brief{background:#e7f1fb;color:#2563a8}.ndoc .nlv.detail{background:#efedff;color:#5b45c9}
+
+/* ===== 새 테마: 공부도구와 같은 남보라 (위의 색 정의를 덮어써요) ===== */
+:root{
+  --ink:#1d1f27; --ink2:#4a4f60; --mute:#8a8fa3; --line:#e7e9f0; --line2:#d3d6e0; --bg:#f6f7fb; --card:#fff; --soft:#f0f1f6; --soft2:#e9ebf2; --sel:#eceeff; --okbg:#eaf7f0;
+  --solid:#1d1f27; --solid-fg:#fff; --glass:rgba(246,247,251,.9); --veil:rgba(246,247,251,.96);
+  --acc:#5b6cff; --acc2:#eceeff; --ok:#2f9e6b; --bad:#e0445a;
+}
+body.dark{
+  --bg:#14151b; --card:#1e2029; --soft:#262833; --soft2:#2c2f3b; --sel:#272b45; --okbg:#16302a; --line:#2c2f3b; --line2:#3a3e4d;
+  --ink:#eef0f6; --ink2:#b4b9ca; --mute:#8d92a6; --acc:#7d8bff; --acc2:#272b45;
+  --solid:#eef0f6; --solid-fg:#14151b; --glass:rgba(20,21,27,.86); --veil:rgba(20,21,27,.94); --ok:#4cc488; --bad:#ff6b7c;
+}
+body.dark .stb.pending{background:#272b45;color:#a9b2ff}
+.btn.acc,.panel .go{box-shadow:0 6px 16px -8px rgba(91,108,255,.6)}
+.hero h1 em::after{background:var(--acc2)}
+.wrap{padding-top:22px}
+/* 사진 찍기 버튼으로 왔을 때 올리기 칸 강조 */
+@keyframes qmPulse{0%,100%{box-shadow:0 0 0 0 rgba(91,108,255,.0)}50%{box-shadow:0 0 0 8px rgba(91,108,255,.25)}}
+.panel.pulse{animation:qmPulse 1.2s ease 3;border-color:var(--acc)}
+/* 로그인 전 첫 화면: 무료 공부도구 소개 */
+.tl4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.tl4>div{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px}
+.tl4 .ti{width:44px;height:44px;border-radius:13px;display:grid;place-items:center;font-size:22px;background:var(--acc2);margin-bottom:12px}
+.tl4 b{display:block;font-size:16px;margin-bottom:6px;letter-spacing:-.3px}
+.tl4 p{margin:0;font-size:13.5px;color:var(--ink2);line-height:1.55;word-break:keep-all}
+@media(max-width:900px){.tl4{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:520px){.tl4{grid-template-columns:minmax(0,1fr)}.tl4>div{display:grid;grid-template-columns:44px 1fr;gap:0 14px;padding:14px}.tl4 .ti{grid-row:span 2;margin:0}}
+/* 약한 파트 → 할 일 */
+.weak{border:1px solid var(--acc);background:var(--acc2);border-radius:16px;padding:14px;margin-top:12px}
+.weak b{display:block;font-size:15px}
+.weak p{margin:4px 0 10px;font-size:13px;color:var(--ink2)}
+.weak label{display:flex;gap:10px;align-items:center;background:var(--card);border-radius:10px;padding:9px 11px;margin-bottom:6px;font-size:14px;cursor:pointer}
+.weak label input{width:18px;height:18px;accent-color:var(--acc)}
+.weak label em{margin-left:auto;font-style:normal;font-size:12.5px;font-weight:800;color:var(--bad)}
+.preset{display:flex;gap:10px;align-items:center;background:var(--acc2);border:1px solid var(--acc);border-radius:14px;padding:11px 14px;margin:10px 0 4px;font-size:14px}
 </style>
 </head>
 <body>
-<header class="site">
-  <div class="in">
-    <a class="logo" id="brand" href="#/" aria-label="문제지메이커 홈"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"> <rect width="64" height="64" rx="16" fill="#E2683C"/> <g transform="rotate(-8 30 34)"> <rect x="15" y="13" width="28" height="36" rx="4" fill="#fff" opacity=".45"/> </g> <path d="M21 12h17l8 8v29a3 3 0 0 1-3 3H21a3 3 0 0 1-3-3V15a3 3 0 0 1 3-3z" fill="#fff"/> <path d="M38 12v6a2 2 0 0 0 2 2h6z" fill="#F3B9A1"/> <rect x="23" y="24" width="15" height="3" rx="1.5" fill="#1F2A44"/> <rect x="23" y="31" width="18" height="2.6" rx="1.3" fill="#1F2A44" opacity=".28"/> <rect x="23" y="37" width="12" height="2.6" rx="1.3" fill="#1F2A44" opacity=".28"/> <circle cx="44.5" cy="45.5" r="10.5" fill="#1F2A44" stroke="#E2683C" stroke-width="3"/> <path d="M39.6 45.6l3.3 3.3 6.4-6.6" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/> </svg><span class="wm">문제지<b>메이커</b></span></a>
-    <nav id="navR"></nav>
-  </div>
-</header>
+<div id="brand" hidden><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"> <rect width="64" height="64" rx="16" fill="#5B6CFF"/> <g transform="rotate(-8 30 34)"> <rect x="15" y="13" width="28" height="36" rx="4" fill="#fff" opacity=".45"/> </g> <path d="M21 12h17l8 8v29a3 3 0 0 1-3 3H21a3 3 0 0 1-3-3V15a3 3 0 0 1 3-3z" fill="#fff"/> <path d="M38 12v6a2 2 0 0 0 2 2h6z" fill="#C9CFFF"/> <rect x="23" y="24" width="15" height="3" rx="1.5" fill="#1F2A44"/> <rect x="23" y="31" width="18" height="2.6" rx="1.3" fill="#1F2A44" opacity=".28"/> <rect x="23" y="37" width="12" height="2.6" rx="1.3" fill="#1F2A44" opacity=".28"/> <circle cx="44.5" cy="45.5" r="10.5" fill="#1F2A44" stroke="#5B6CFF" stroke-width="3"/> <path d="M39.6 45.6l3.3 3.3 6.4-6.6" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/> </svg></div>
 <main id="app"></main>
 <footer class="site" id="foot">
   <div class="in">
-    <div class="logo sm"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"> <rect width="64" height="64" rx="16" fill="#E2683C"/> <g transform="rotate(-8 30 34)"> <rect x="15" y="13" width="28" height="36" rx="4" fill="#fff" opacity=".45"/> </g> <path d="M21 12h17l8 8v29a3 3 0 0 1-3 3H21a3 3 0 0 1-3-3V15a3 3 0 0 1 3-3z" fill="#fff"/> <path d="M38 12v6a2 2 0 0 0 2 2h6z" fill="#F3B9A1"/> <rect x="23" y="24" width="15" height="3" rx="1.5" fill="#1F2A44"/> <rect x="23" y="31" width="18" height="2.6" rx="1.3" fill="#1F2A44" opacity=".28"/> <rect x="23" y="37" width="12" height="2.6" rx="1.3" fill="#1F2A44" opacity=".28"/> <circle cx="44.5" cy="45.5" r="10.5" fill="#1F2A44" stroke="#E2683C" stroke-width="3"/> <path d="M39.6 45.6l3.3 3.3 6.4-6.6" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/> </svg><span>문제지<b>메이커</b></span></div>
+    <div class="logo sm"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"> <rect width="64" height="64" rx="16" fill="#5B6CFF"/> <g transform="rotate(-8 30 34)"> <rect x="15" y="13" width="28" height="36" rx="4" fill="#fff" opacity=".45"/> </g> <path d="M21 12h17l8 8v29a3 3 0 0 1-3 3H21a3 3 0 0 1-3-3V15a3 3 0 0 1 3-3z" fill="#fff"/> <path d="M38 12v6a2 2 0 0 0 2 2h6z" fill="#C9CFFF"/> <rect x="23" y="24" width="15" height="3" rx="1.5" fill="#1F2A44"/> <rect x="23" y="31" width="18" height="2.6" rx="1.3" fill="#1F2A44" opacity=".28"/> <rect x="23" y="37" width="12" height="2.6" rx="1.3" fill="#1F2A44" opacity=".28"/> <circle cx="44.5" cy="45.5" r="10.5" fill="#1F2A44" stroke="#5B6CFF" stroke-width="3"/> <path d="M39.6 45.6l3.3 3.3 6.4-6.6" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/> </svg><span>문제지<b>메이커</b></span></div>
     <p id="footTxt">사진이나 PDF를 올리면 문제지, 풀기·채점, 플래시카드, 요약 노트, 마인드맵을 만들어 드려요.<span id="footAsk"></span></p>
     <div class="credit"><span>© 2026 문제지메이커 · 제작자 <b>geownx</b></span></div>
   </div>
@@ -881,6 +913,7 @@ body.dark .tg.nl.brief{background:#16263a;color:#7fb2ec}body.dark .tg.nl.detail{
 <div class="navbar" id="navbar" style="display:none"><div class="in" id="navin"></div></div>
 <div id="pageRender"></div>
 <div id="printRoot"></div>
+<script src="/tools/nav.js"></script>
 <script>
 'use strict';
 /* ★★★★★ 설치할 때 이 두 줄만 바꾸세요 (설치 안내서 참고) ★★★★★ */
@@ -934,7 +967,6 @@ const IC = {
   diag: SVG('<path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/>'),
   user: SVG('<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>', 18),
   back: SVG('<path d="M15 18l-6-6 6-6"/>', 18),
-  tools: SVG('<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M14.5 17.5l2 2 4-4.5"/>', 18),
 };
 const KIND_L = { pdf: 'PDF 문제지', solve: '사이트 풀기', similar: '오답 복습', flash: '플래시카드', note: '요약 노트', mindmap: '마인드맵', analyze: '자료 분석' };
 const KIND_S = { pdf: 'PDF', solve: '풀기', similar: '오답 복습', flash: '플래시카드', note: '노트', mindmap: '마인드맵' };
@@ -1078,7 +1110,7 @@ function route() {
   if (/access_token=|error_description=|type=recovery/.test(h)) return; // 로그인 링크 처리 중
   ROUTE = h.replace(/^#\/?/, '').split('/').filter(Boolean).map(decodeURIComponent);
   const [r, a, b] = ROUTE;
-  nav(''); closeModals(); hideLoading(); stopViewTimers();
+  nav(''); closeModals(); hideLoading(); stopViewTimers(); SOLVE_T = null;
   document.body.classList.toggle('on-home', !r);
   window.scrollTo(0, 0);
   if (!CONFIGURED) return viewLanding();
@@ -1096,8 +1128,9 @@ function route() {
     case 'map': return viewMap(a);
     case 'review': return viewReview(a);
     case 'me': return viewAccount();
-    case 'admin': return isAdmin() ? viewAdmin(a) : go('#/');
-    default: return viewLibrary();
+    case 'admin': return isAdmin() ? viewAdmin(a) : go('#/lib');
+    case 'lib': return viewLibrary(a);
+    default: if (!r) { location.replace('/tools/'); return; } return go('#/lib');
   }
 }
 let VIEW_TIMERS = [];
@@ -1105,21 +1138,18 @@ function viewTimer(fn, ms) { const t = setInterval(fn, ms); VIEW_TIMERS.push(t);
 function stopViewTimers() { VIEW_TIMERS.forEach(clearInterval); VIEW_TIMERS = []; }
 function closeModals() { $$('.modal').forEach(m => m.remove()); }
 function renderNav() {
-  const N = $('#navR'); if (!N) return;
+  if (!window.QTNAV) return;
   const adm = isAdmin();
-  document.body.classList.toggle('dark', adm);
-  const tc = document.querySelector('meta[name=theme-color]'); if (tc) tc.content = adm ? '#0d121c' : '#f6f4ef';
-  const lg = $('#brand'); if (lg && !$('.admtag', lg)) lg.insertAdjacentHTML('beforeend', '<span class="admtag">ADMIN</span>');
-  const toolsLink = `<a class="nl tools" href="/tools/" title="공부도구 (체크리스트 등)" aria-label="공부도구">${IC.tools}<span class="hide-s">공부도구</span></a>`;
-  if (!ME) { N.innerHTML = CONFIGURED ? `${toolsLink}<button class="nl set" id="btnLogin">${IC.user}<span>로그인</span></button>` : ''; const b = $('#btnLogin'); if (b) b.onclick = () => { go('#/'); setTimeout(() => { const p = $('#authPanel'); if (p) p.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 60); }; return; }
-  const ok = ME.status === 'approved';
-  N.innerHTML = `${ok ? '<button class="nl" id="btnLib">학습 목록</button>' : ''}
-    ${ok && !adm ? `<button class="nl bal ${hasSub() ? '' : (+ME.coins || 0) < 3 ? 'low' : ''}" id="btnCoin" title="내 코인">${hasSub() ? '<b>정액제</b>' : `코인 <b>${nfmt(ME.coins)}</b>`}</button>` : ''}
-    ${adm ? `<button class="nl adm" id="btnAdmin">관리자${(+ME.pending || 0) + (+ME.reports || 0) ? `<i class="cnt">${(+ME.pending || 0) + (+ME.reports || 0)}</i>` : ''}</button>` : ''}
-    ${ok ? toolsLink : ''}
-    <button class="nl set" id="btnAcct" aria-label="내 계정">${IC.user}<span class="hide-s">${esc(ME.name || (ME.email || '').split('@')[0] || '내 계정')}</span></button>`;
+  if (!ME) {
+    QTNAV.render({ active: 'maker', tabs: false, right: CONFIGURED ? `<button class="qn-pill acc" id="btnLogin">로그인</button>` : '' });
+    const b = $('#btnLogin'); if (b) b.onclick = () => { go('#/'); setTimeout(() => { const p = $('#authPanel'); if (p) p.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 60); };
+    return;
+  }
+  const ok = ME.status === 'approved', cnt = (+ME.pending || 0) + (+ME.reports || 0);
+  QTNAV.render({ active: 'maker', tabs: ok, right: `${ok && !adm ? `<button class="qn-pill ${hasSub() ? '' : (+ME.coins || 0) < 3 ? 'low' : ''}" id="btnCoin" title="내 코인">${hasSub() ? '<b>정액제</b>' : `코인 <b>${nfmt(ME.coins)}</b>`}</button>` : ''}
+    ${adm ? `<button class="qn-pill adm" id="btnAdmin">관리자${cnt ? ` <i class="cnt">${cnt}</i>` : ''}</button>` : ''}
+    <button class="qn-ib" id="btnAcct" title="내 계정" aria-label="내 계정">${IC.user}</button>` });
   const on = (id, fn) => { const b = $('#' + id); if (b) b.onclick = fn; };
-  on('btnLib', () => go('#/'));
   on('btnCoin', () => go('#/me'));
   on('btnAdmin', () => go('#/admin'));
   on('btnAcct', () => go('#/me'));
@@ -1547,12 +1577,19 @@ function viewLanding(mode) {
       <div class="step4"><span class="no">STEP 3</span><div class="si">${IC.diag}</div><b>오답 노트 · 진단</b><p>틀린 문제마다 비슷한 문제를 원하는 만큼 만들고, 파트별로 약한 곳과 잘하는 곳을 보여 줘요.</p></div>
       <div class="step4"><span class="no">STEP 4</span><div class="si">${IC.flash}</div><b>복습</b><p>플래시카드로 외우고, 여러 장의 자료를 요약 노트와 마인드맵으로 한눈에 정리해요.</p></div>
     </div></section>
+  <section class="sec"><div class="sec-head"><span class="k">FREE STUDY TOOLS</span><h3>매일 쓰는 공부도구도 무료예요</h3></div>
+    <div class="tl4">
+      <div><span class="ti">✅</span><b>공부 체크리스트</b><p>과목별로 오늘 할 공부를 적고 체크해요. 할 일에서 바로 문제지로 가서 풀 수 있어요.</p></div>
+      <div><span class="ti">⏱️</span><b>공부 타이머</b><p>과목별 스톱워치와 뽀모도로. 공부할수록 진해지는 달력과 주간 리포트.</p></div>
+      <div><span class="ti">🏫</span><b>학교생활</b><p>우리 반 시간표, 오늘 급식, 학사일정. 시험 D-day에서 바로 대비 문제지까지.</p></div>
+      <div><span class="ti">📱</span><b>앱처럼 쓰기</b><p>폰 홈 화면에 추가하면 앱처럼 열려요. 계정에 저장돼서 폰과 PC가 이어져요.</p></div>
+    </div></section>
   <section class="sec"><div class="sec-head"><span class="k">QUESTION TYPES</span><h3>원하는 유형을 섞어서 만들 수 있어요</h3></div>
     <div class="typecloud">${TYPES.map(t => `<span>${esc(t.label)}</span>`).join('')}</div></section>
   <section class="sec"><div class="free">
     <div class="fr-main"><span class="k">GET STARTED</span><h4>가입하고 바로 시작해요</h4>
       <p id="freeTxt">가입하면 체험 코인을 드려요. 코인이 더 필요하면 문의해 주세요.</p>
-      <div class="fr-chips"><span id="frTrial">체험 코인 제공</span><span>자료 분석 무료</span><span>구글 · 카카오 로그인</span></div></div>
+      <div class="fr-chips"><span id="frTrial">체험 코인 제공</span><span>자료 분석 무료</span><span>공부도구 무료</span><span>구글 · 카카오 로그인</span></div></div>
     <div class="fr-side"><button class="btn" id="btnStart">시작하기</button></div>
   </div></section>`;
   $('#btnStart').onclick = () => { renderAuth('signup'); $('#authPanel').scrollIntoView({ behavior: 'smooth', block: 'center' }); };
@@ -1734,7 +1771,7 @@ function viewWaiting() {
 
 /* =============== 학습 목록 =============== */
 const UP = { files: [] };
-async function viewLibrary() {
+async function viewLibrary(how) {
   APP().innerHTML = `<div class="wrap">
     ${pageHead(`<span class="k">MY LIBRARY</span><h2>내 학습</h2>`, '과목·주제 하나를 한 칸에 담아요. 자료는 나중에 더 추가할 수 있어요.', null,
       isAdmin() ? '' : `<button class="coinpill ${hasSub() ? 'sub' : ''}" id="lCoin"><i>C</i>${hasSub() ? '정액제 이용 중' : nfmt(ME.coins) + '코인'}</button>`)}
@@ -1744,9 +1781,13 @@ async function viewLibrary() {
     <div class="lib" id="lib"><div class="note">불러오는 중…</div></div></div>`;
   const lc = $('#lCoin'); if (lc) lc.onclick = () => go('#/me');
   renderUpPanel($('#upPanel'));
+  if (how === 'cam' || how === 'file') setTimeout(() => {
+    const P = $('#upPanel'); if (!P) return; P.scrollIntoView({ behavior: 'smooth', block: 'center' }); P.classList.add('pulse');
+    const b = $(how === 'cam' ? '#btnCam' : '#btnPick', P); if (b) { b.focus(); try { b.click(); } catch (e) {} }
+  }, 150);
   try {
     const list = await api('items');
-    if (ROUTE[0]) return;
+    if (ROUTE[0] !== 'lib') return;
     $('#libCnt').textContent = list.length ? `${list.length}개` : '';
     $('#lib').innerHTML = list.length ? list.map(x => `<button class="icard" data-id="${x.id}">
         <span class="t">${esc(x.title)}</span>
@@ -1904,9 +1945,9 @@ function jobCardHTML(j, title) {
     <div class="jn">화면을 나가거나 앱을 닫아도 서버에서 계속 만들어요. 다 되면 여기에 저장돼요.${j.notice === 'lite' ? '<br><b>간단 모드</b>로 만들고 있어요.' : ''}</div></div>`;
 }
 async function viewItem(id) {
-  if (!id) return go('#/');
+  if (!id) return go('#/lib');
   APP().innerHTML = `<div class="wrap"><div class="note">불러오는 중…</div></div>`;
-  let d; try { d = await api('itemGet', { itemId: id }); } catch (e) { APP().innerHTML = `<div class="wrap"><p class="err">${esc(e.message)}</p><button class="btn" onclick="go('#/')">학습 목록으로</button></div>`; return; }
+  let d; try { d = await api('itemGet', { itemId: id }); } catch (e) { APP().innerHTML = `<div class="wrap"><p class="err">${esc(e.message)}</p><button class="btn" onclick="go('#/lib')">학습 목록으로</button></div>`; return; }
   if (ROUTE[0] !== 'item' || ROUTE[1] !== id) return;
   CUR.item = d; const it = d.item, a = it.analysis || {}, parts = a.parts || [], ready = it.status === 'ready' && parts.length, foreign = d.foreign;
   const analyzing = d.jobs.find(j => j.kind === 'analyze');
@@ -1915,7 +1956,7 @@ async function viewItem(id) {
   const cp = k => isAdmin() ? '' : k === 'pdf' ? `${price('pdf', 10)}코인~` : k === 'solve' ? (hasSub() ? '정액제 무료' : `${price('solve', 10)}코인~`) : k === 'flash' ? (hasSub() ? '정액제 무료' : `10장당 ${price('flash', 10)}코인`) : k === 'note' ? `${price('note', 1, { detail: 'brief' })}코인~` : `${price(k)}코인`;
   const anAt = a.at ? new Date(a.at).getTime() : 0;
   APP().innerHTML = `<div class="wrap">
-    ${pageHead(`<span class="k">${esc(it.subject || '학습')}</span><h2 id="iTitle">${esc(it.title)}</h2>`, a.overview ? esc(a.overview) : '', ['#/', '학습 목록'],
+    ${pageHead(`<span class="k">${esc(it.subject || '학습')}</span><h2 id="iTitle">${esc(it.title)}</h2>`, a.overview ? esc(a.overview) : '', ['#/lib', '학습 목록'],
       foreign ? '' : `<button class="btn sm" id="iMenu">⋯</button>`)}
     ${foreign ? '<div class="warn"><b>다른 회원의 학습이에요 (관리자 열람).</b></div>' : ''}
     ${liteMode() ? `<div class="warn">${liteText()}</div>` : ''}
@@ -1967,7 +2008,7 @@ async function viewItem(id) {
       <label class="lb">참고할 내용 <small style="font-weight:400;color:var(--mute)">(분석·문제 만들 때 참고해요)</small></label><textarea id="mM" rows="3">${esc(it.memo || '')}</textarea>
       <div class="row" style="margin-top:14px"><button class="btn" id="mDel" style="color:var(--bad)">학습 지우기</button><span class="spacer"></span><button class="btn" data-close>닫기</button><button class="btn pri" id="mSave">저장</button></div>`);
     $('#mSave', m).onclick = async () => { try { await api('itemUpdate', { itemId: id, title: $('#mT', m).value, memo: $('#mM', m).value }); m.remove(); toast('저장했어요'); viewItem(id); } catch (e) { handleErr(e); } };
-    $('#mDel', m).onclick = async () => { if (!confirm('이 학습과 만든 것을 모두 지울까요?')) return; try { await api('itemDelete', { itemId: id }); m.remove(); toast('지웠어요'); go('#/'); } catch (e) { handleErr(e); } };
+    $('#mDel', m).onclick = async () => { if (!confirm('이 학습과 만든 것을 모두 지울까요?')) return; try { await api('itemDelete', { itemId: id }); m.remove(); toast('지웠어요'); go('#/lib'); } catch (e) { handleErr(e); } };
   };
   // 진행 중인 작업
   const jobsBox = $('#jobs');
@@ -2070,12 +2111,16 @@ async function viewCreate(itemId, kind) {
   const st = Q ? defSettings() : { count: 30, detail: 'detail' };
   if (Q && !TOTALS.includes(st.total)) st.total = 20;
   st.parts = parts.map(p => p.id);
+  // 공부도구의 시험 D-day에서 왔으면 '시험 대비' 설정으로 (10분 안에만)
+  let preset = LS.get('qm_preset', null); if (preset && Date.now() - (+preset.at || 0) > 10 * 60e3) preset = null; LS.del('qm_preset');
+  if (preset && Q) Object.assign(st, { total: TOTALS.includes(+preset.total) ? +preset.total : 30, difficulty: preset.difficulty || 'mixed', style: preset.style || 'school', typeMode: 'auto' });
   if (Q && liteMode()) st.types = st.types.filter(t => LITE_TYPES.includes(t)).concat(st.types.some(t => LITE_TYPES.includes(t)) ? [] : ['mc']);
   const title = { pdf: 'PDF 문제지 만들기', solve: '사이트에서 풀 문제 만들기', flash: '플래시카드 만들기', note: '요약 노트 만들기', mindmap: '마인드맵 만들기' }[kind];
   const sub = { pdf: '문제 수와 유형을 고르면 서버가 만들어요. 인쇄용 PDF와 정답·해설이 함께 나와요.', solve: '만든 문제를 이 사이트에서 바로 풀고 자동으로 채점해요.', flash: '앞면(질문·용어)과 뒷면(답·설명) 카드를 만들어요.', note: '올린 자료 여러 장을 시험에 꼭 필요한 내용만 한 장으로 정리해요.', mindmap: '자료 내용을 펼치고 접을 수 있는 지도로 정리해요.' }[kind];
   APP().innerHTML = `<div class="wrap">
     ${pageHead(`<span class="k">${esc(it.title)}</span><h2>${title}</h2>`, sub, ['#/item/' + itemId, '학습으로'])}
     ${Q && liteMode() ? `<div class="warn">${liteText()}</div>` : ''}
+    ${preset && Q ? `<div class="preset">🎯 <span><b>${esc(preset.title)}</b> 설정으로 준비했어요 · ${st.total}문제 · 난이도 섞어서 · 학교 내신</span></div>` : ''}
     <div id="cBody"></div>
     <div class="costline" id="cCost"></div>
     <div class="est" id="cEst"></div>
@@ -2099,7 +2144,7 @@ async function viewCreate(itemId, kind) {
         <div class="sec-t">해설</div>${seg('explain', [['detail', '자세히'], ['brief', '간단히']], st.explain)}
         ${kind === 'pdf' ? `<div class="sec-t">시험지 모양</div>${seg('layout', [['2', '2단 (시험지처럼)'], ['1', '1단 (크게)']], st.layout)}
           <label class="toggle card" style="margin-top:10px"><input type="checkbox" id="cName" ${st.showName ? 'checked' : ''}> 이름·날짜·점수 칸 넣기</label>
-          <label class="lb" for="cTitle">시험지 제목 <small style="font-weight:400;color:var(--mute)">(비워 두면 자동)</small></label><input type="text" id="cTitle" maxlength="100" placeholder="${esc(it.title)} 확인 문제">` : ''}
+          <label class="lb" for="cTitle">시험지 제목 <small style="font-weight:400;color:var(--mute)">(비워 두면 자동)</small></label><input type="text" id="cTitle" maxlength="100" placeholder="${esc(it.title)} 확인 문제" value="${preset ? esc(preset.title) : ''}">` : ''}
         ${partBox()}
         <label class="lb" for="cExtra">추가 요청 <small style="font-weight:400;color:var(--mute)">(선택)</small></label>
         <textarea id="cExtra" rows="2" maxlength="1000" placeholder="예: 그래프 해석 문제를 꼭 넣어 주세요.">${esc(st.extra || '')}</textarea>`;
@@ -2145,7 +2190,7 @@ async function viewCreate(itemId, kind) {
         LS.set('qm_lastSettings', { types: st.types, typeMode: st.typeMode, typeCounts: st.typeCounts, difficulty: st.difficulty, style: st.style, choiceN: st.choiceN, explain: st.explain, total: st.total, showName: st.showName });
         settings = { ...st, parts: st.parts.length === parts.length ? null : st.parts };
       } else settings = { count: st.count, detail: st.detail, parts: st.parts.length === parts.length ? null : st.parts };
-      const t = kind === 'pdf' ? (($('#cTitle') || {}).value || '').trim() : '';
+      const t = (kind === 'pdf' ? (($('#cTitle') || {}).value || '').trim() : '') || (preset && Q ? preset.title : '');
       const r = await api('create', { itemId, kind, settings, title: t });
       watchJob(r.id); refreshMe();
       toast(r.sub ? '정액제로 만들기 시작했어요' : r.cost ? `${r.cost}코인을 쓰고 만들기 시작했어요` : '만들기 시작했어요', 3000);
@@ -2421,6 +2466,49 @@ async function printPages() {
   window.addEventListener('afterprint', done); setTimeout(() => window.print(), 50);
 }
 
+/* =============== 공부도구 연결 (체크리스트 · 공부 기록) =============== */
+let SOLVE_T = null; // 문제 푸는 화면을 실제로 보고 있던 시간
+document.addEventListener('visibilitychange', () => { const t = SOLVE_T; if (!t) return; if (document.hidden) { if (t.seg) { t.acc += Date.now() - t.seg; t.seg = null; } } else if (!t.seg) t.seg = Date.now(); });
+const TOOLS = {
+  dayKey(d = new Date()) { return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; },
+  db() { return !FAKE && authClient(); },
+  /* 학습 과목 이름과 체크리스트 과목을 맞춰요 (예: '생명과학 Ⅰ' ↔ '과학') */
+  async subjectFor(names) {
+    try {
+      const { data } = await TOOLS.db().from('tools_subjects').select('id,name'); const ns = names.filter(Boolean).map(x => String(x).replace(/\s/g, ''));
+      const m = (data || []).sort((a, b) => b.name.length - a.name.length).find(x => { const k = x.name.replace(/\s/g, ''); return ns.some(n => n.includes(k) || k.includes(n)); });
+      return m ? m.id : null;
+    } catch (e) { return null; }
+  },
+  async logSolve(o, total, correct) {
+    const t = SOLVE_T; if (!t || !TOOLS.db() || o.foreign) return;
+    const secs = (t.acc + (t.seg ? Date.now() - t.seg : 0)) / 1000; SOLVE_T = { acc: 0, seg: document.hidden ? null : Date.now(), t0: Date.now() };
+    if (secs < 30) return;
+    try {
+      const sid = await TOOLS.subjectFor([o.item.subject, o.item.title]);
+      const { error } = await TOOLS.db().from('tools_sessions').insert({ day: TOOLS.dayKey(new Date(t.t0)), subject_id: sid, mode: 'solve', seconds: Math.min(43200, Math.round(secs)),
+        started_at: new Date(t.t0).toISOString(), ended_at: new Date().toISOString(), q_total: total, q_correct: correct, ref: o.id, ref_title: String(o.title || '').slice(0, 100) });
+      if (!error) toast(`⏱ 푼 시간 ${Math.max(1, Math.round(secs / 60))}분을 공부 기록에 넣었어요`, 2600);
+    } catch (e) {}
+  },
+  /* 약한 파트 → 체크리스트 할 일 */
+  weakBox(box, rows, item) {
+    if (!box || !rows.length || !TOOLS.db()) return;
+    rows = rows.sort((a, b) => a.r - b.r).slice(0, 3);
+    box.innerHTML = `<div class="weak"><b>📌 약한 파트를 할 일로 넣을까요?</b><p>체크리스트에 '복습' 할 일로 들어가요. 할 일을 누르면 이 학습으로 바로 와요.</p>
+      ${rows.map((x, i) => `<label><input type="checkbox" data-i="${i}" checked> ${esc(x.title)} 복습<em>${Math.round(x.r * 100)}%</em></label>`).join('')}
+      <div class="row" style="margin-top:8px"><button class="btn acc" data-d="1">내일 할 일에 넣기</button><button class="btn" data-d="0">오늘 할 일에 넣기</button></div></div>`;
+    $$('[data-d]', box).forEach(b => b.onclick = async () => {
+      const pick = $$('input[data-i]', box).filter(x => x.checked).map(x => rows[+x.dataset.i]); if (!pick.length) return toast('넣을 파트를 골라 주세요');
+      const d = new Date(); if (b.dataset.d === '1') d.setDate(d.getDate() + 1); const day = TOOLS.dayKey(d);
+      $$('[data-d]', box).forEach(x => x.disabled = true);
+      const sid = await TOOLS.subjectFor([item.subject, item.title]);
+      const { error } = await TOOLS.db().from('tools_tasks').insert(pick.map(x => ({ day, title: `${x.title} 복습`.slice(0, 100), subject_id: sid, minutes: 30, link_item: item.id, link_title: String(item.title || '').slice(0, 100) })));
+      if (error) { $$('[data-d]', box).forEach(x => x.disabled = false); return toast(/column|schema|relation|find the table/i.test(error.message || '') ? '공부도구 서버 설정(SQL)이 아직 안 돼 있어요' : (error.message || '넣지 못했어요'), 4000); }
+      box.innerHTML = `<div class="weak"><b>✅ ${pick.length}개를 ${b.dataset.d === '1' ? '내일' : '오늘'} 할 일에 넣었어요</b><p style="margin-bottom:0"><a href="/tools/checklist/${b.dataset.d === '1' ? `?d=${day}` : ''}" style="font-weight:800">체크리스트에서 보기 →</a></p></div>`;
+    });
+  },
+};
 /* =============== 사이트에서 풀기 · 채점 =============== */
 const NORM = s => String(s || '').toLowerCase().replace(/\$/g, '').replace(/[\s.,·'"‘’“”()\[\]{}<>!?~:;]/g, '').replace(/(입니다|이다|다)$/, '');
 const nums = s => [...String(s || '').matchAll(/[①-⑩]|(?<!\d)(10|[1-9])(?!\d)/g)].map(m => m[1] ? +m[1] : m[0].charCodeAt(0) - 0x245F);
@@ -2498,6 +2586,7 @@ async function viewSolve(id) {
   try { await loadOut(id); } catch (e) { return APP().innerHTML = `<div class="wrap"><p class="err">${esc(e.message)}</p></div>`; }
   if (ROUTE[1] !== id) return;
   const qs = allQ(); if (!qs.length) { APP().innerHTML = `<div class="wrap"><p class="note">문제가 없어요.</p></div>`; return; }
+  SOLVE_T = { acc: 0, seg: document.hidden ? null : Date.now(), t0: Date.now() };
   const LK = 'qm_ans_' + id;
   let A = Object.assign({}, (O.progress && O.progress.answers) || {}, LS.get(LK, {}));
   let res = null, saved = false, picked = new Set(); // res: {qid: mark}
@@ -2621,6 +2710,7 @@ async function viewSolve(id) {
     try {
       if (!O.foreign) await api('attemptSave', { outputId: O.id, answers: A, results, perPart: per, total: cq.length, correct: score() });
       saved = true; LS.del(LK); if (!O.foreign) api('outputSave', { outputId: O.id, progress: { answers: {} } }).catch(() => {});
+      TOOLS.logSolve(O, cq.length, score());
       draw(); setTimeout(() => $('#after') && $('#after').scrollIntoView({ behavior: 'smooth' }), 80);
     } catch (e) { handleErr(e); b.disabled = false; b.textContent = '결과 저장하고 진단 보기'; }
   };
@@ -2628,9 +2718,10 @@ async function viewSolve(id) {
     const per = {}; counted().forEach(q => { const p = per[q.partId] || (per[q.partId] = { n: 0, c: 0 }); p.n++; p.c += res[q.id] === 'right' ? 1 : res[q.id] === 'partial' ? 0.5 : 0; });
     const wrong = qs.filter(q => res[q.id] !== 'right' && res[q.id] !== 'hold').map(q => ({ q: { ...q, mine: mineText(q, A[q.id]), partTitle: (O.parts.find(p => p.id === q.partId) || {}).title || '' }, n: 1 }));
     const box = $('#after');
-    box.innerHTML = `<div class="sec-t">이번 진단 <small>파트별 맞힌 비율</small></div>${partBars(O.parts, per)}
+    box.innerHTML = `<div class="sec-t">이번 진단 <small>파트별 맞힌 비율</small></div>${partBars(O.parts, per)}<div id="weakBox"></div>
       ${wrong.length ? `<div class="sec-t">틀린 문제로 비슷한 문제 만들기 <small>문제마다 개수를 정해요</small></div><div id="simBox"></div>` : '<p class="note" style="margin-top:14px">모두 맞았어요! 🎉</p>'}`;
     if (wrong.length) similarPicker($('#simBox'), wrong, O.item.id, O.id);
+    if (!O.foreign) TOOLS.weakBox($('#weakBox'), O.parts.filter(p => per[p.id] && per[p.id].n).map(p => ({ title: p.title, r: per[p.id].c / per[p.id].n })).filter(x => x.r < 0.6), O.item);
   };
   /* 시작: 정해 둔 방식이 없으면 물어봐요 */
   const ask = () => {
@@ -2702,7 +2793,7 @@ async function viewReview(itemId) {
     ${pageHead(`<span class="k">${esc(it.item.title)}</span><h2>진단 · 오답 노트</h2>`, '지금까지 푼 기록을 모아서 파트별로 보여 줘요.', ['#/item/' + itemId, '학습으로'])}
     ${d.attempts.length ? `<div class="scorecard"><div><span style="font-size:13px;opacity:.75">전체 정답률</span><div class="big">${tot ? Math.round(cor / tot * 100) : 0}<small>%</small></div></div>
       <div class="rt">푼 문제 <b>${nfmt(tot)}</b>개<br>푼 횟수 <b>${d.attempts.length}</b>번</div></div>
-      <div class="sec-t">파트별 진단</div>${partBars(parts, per)}
+      <div class="sec-t">파트별 진단</div>${partBars(parts, per)}<div id="weakBox"></div>
       <div class="sec-t">오답 노트 <small>${wrong.length ? `아직 해결 못 한 ${wrong.length}문제` : ''}</small></div>
       ${heldN ? `<p class="note" style="margin-bottom:10px">⚑ 오류 신고 후 확인 중인 ${heldN}문제는 잠시 빠져 있어요.</p>` : ''}
       ${wrong.length ? '<div id="simBox"></div>' : '<p class="note">남은 오답이 없어요. 비슷한 문제를 맞히면 오답 노트에서 빠져요.</p>'}
@@ -2713,6 +2804,7 @@ async function viewReview(itemId) {
   bindBack(APP());
   $$('.orow2[data-o]').forEach(r => r.onclick = () => go('#/solve/' + r.dataset.o));
   if (wrong.length && !it.foreign) similarPicker($('#simBox'), wrong, itemId, null);
+  if (!it.foreign) TOOLS.weakBox($('#weakBox'), parts.filter(p => per[p.id] && per[p.id].n).map(p => ({ title: p.title.replace(/ \(이전 자료\)$/, ''), r: per[p.id].c / per[p.id].n })).filter(x => x.r < 0.6), it.item);
 }
 
 /* =============== 플래시카드 =============== */
@@ -2900,7 +2992,7 @@ async function viewAccount() {
   ME = Object.assign(ME || {}, d.me); renderNav();
   const p = (PUBCFG && PUBCFG.prices) || {}, sub = hasSub(), email = ME.provider === 'email';
   APP().innerHTML = `<div class="wrap" style="max-width:720px">
-    ${pageHead(`<span class="k">MY</span><h2>내 계정</h2>`, `${esc(ME.email || '')}${ME.provider && ME.provider !== 'email' ? ` · ${ME.provider === 'google' ? '구글' : ME.provider === 'kakao' ? '카카오' : esc(ME.provider)} 로그인` : ''}`, ['#/', '학습 목록'])}
+    ${pageHead(`<span class="k">MY</span><h2>내 계정</h2>`, `${esc(ME.email || '')}${ME.provider && ME.provider !== 'email' ? ` · ${ME.provider === 'google' ? '구글' : ME.provider === 'kakao' ? '카카오' : esc(ME.provider)} 로그인` : ''}`, ['#/lib', '학습 목록'])}
     ${isAdmin() ? '<div class="note">관리자 계정은 코인 없이 모두 쓸 수 있어요.</div>' : `
     <div class="coinbig"><div><span>남은 코인</span><b>${nfmt(ME.coins)}</b></div>
       <div class="rt">사이트 풀기 10문제 <b>${p.solve ? p.solve['10'] : 3}코인</b><br>PDF 10문제 <b>${p.pdf ? p.pdf['10'] : 5}코인</b></div></div>
@@ -3155,7 +3247,7 @@ function drawStats() {
 /* =============== 시작 =============== */
 window.addEventListener('hashchange', route);
 window.addEventListener('resize', () => { if (ROUTE[0] === 'pdf' && O && O.pages) showPreview(); if (ROUTE[0] === 'admin') { clearTimeout(window.__rc); window.__rc = setTimeout(() => $$('.card.chart').forEach(c => drawChartSvg(c)), 150); } });
-$('#brand').onclick = e => { e.preventDefault(); go('#/'); };
+
 async function boot() {
   const wasRecovery = /type=recovery/.test(location.hash);
   APP().innerHTML = `<div style="text-align:center;padding:80px 0"><div class="spin"></div></div>`;

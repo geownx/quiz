@@ -67,25 +67,22 @@
     return j || {};
   }
 
+  /* 문제지메이커 서버 API (학습 목록 · 문제지 등) */
+  async function api(action, data = {}) {
+    const s = await session(); if (!s) { const e = new Error('로그인이 필요해요'); e.code = 'QM_AUTH'; throw e; }
+    let res; try { res = await fetch(FN_URL, { method: 'POST', headers: { 'Content-Type': 'application/json', apikey: CONFIG.SUPABASE_KEY, Authorization: 'Bearer ' + s.access_token }, body: JSON.stringify({ action, ...data }) }); }
+    catch (e) { throw new Error('인터넷 연결을 확인해 주세요.'); }
+    let j = null; try { j = await res.json(); } catch (e) {}
+    if (!res.ok || (j && j.error)) { const e = new Error((j && j.error && j.error.message) || `서버 오류 (${res.status})`); e.code = j && j.error && j.error.code; throw e; }
+    return j;
+  }
+
   /* ---------- 헤더 · 푸터 ---------- */
 
-  /* 다크모드: 직접 고른 값이 있으면 그걸, 없으면 기기 설정을 따라요 */
-  function applyTheme(dark) {
-    document.body.classList.toggle('dark', dark);
-    const tc = $('meta[name=theme-color]'); if (tc) tc.content = dark ? '#14151b' : '#f6f7fb';
-    const b = $('#qtTheme'); if (b) b.textContent = dark ? '☀️' : '🌙';
-  }
-  const savedTheme = LS.get('qt_theme', null);
-  applyTheme(savedTheme != null ? savedTheme === 1 : matchMedia('(prefers-color-scheme: dark)').matches);
-
+  /* 위 메뉴 · 폰 아래 탭바는 nav.js (메인과 같이 씀) */
   function renderHeader(page, me) {
-    const h = document.createElement('div'); h.className = 'topbar';
-    h.innerHTML = `${page !== 'hub' ? `<a class="back" href="/tools/">← 공부도구</a><span class="sep">·</span>` : ''}
-      <a class="back" href="/#/"><span>${page === 'hub' ? '← ' : ''}문제지<b>메이커</b></span></a>
-      <span class="spacer"></span>
-      <button class="icon-btn" id="qtTheme" title="다크모드">${document.body.classList.contains('dark') ? '☀️' : '🌙'}</button>`;
-    document.body.prepend(h);
-    $('#qtTheme').onclick = () => { const d = !document.body.classList.contains('dark'); applyTheme(d); LS.set('qt_theme', d ? 1 : 0); };
+    const active = page === 'hub' ? 'home' : page;
+    if (window.QTNAV) QTNAV.render({ active, tabs: !!me, right: me ? `<a class="qn-ib" href="/#/me" title="내 계정" aria-label="내 계정">${QTNAV.userIcon}</a>` : `<a class="qn-pill acc" href="/#/">로그인</a>` });
     const f = document.createElement('footer'); f.className = 'site';
     f.innerHTML = `© 2026 문제지메이커 · 제작자 <b>geownx</b>${me && me.email ? `<br><span style="font-size:12px">${esc(me.name || '')} ${esc(me.email)} 계정에 저장돼요</span>` : ''}`;
     document.body.append(f);
@@ -170,5 +167,19 @@
     return m || '잠시 후 다시 시도해 주세요.';
   }
 
-  window.QT = { dbErr, CONFIG, $, $$, esc, LS, toast, modal, sb, boot, todayKey, shiftKey, parseKey, prettyDate, isKey, registerSW, installCard, isStandalone };
+  /* 시험 D-day → 내 학습 고르기 → '시험 대비' 설정으로 문제지 만들기 화면 */
+  async function examPicker(examTitle) {
+    const m = modal(`<h3>📝 ${esc(examTitle)} 대비 문제지</h3><p class="sub" style="margin:4px 0 10px">어떤 학습으로 만들까요? 고르면 30문제 · 난이도 섞어서 · 학교 내신 스타일로 준비돼요.</p><div id="epL"><div class="loadingdot" style="padding:30px 0"><div class="spin"></div></div></div>`);
+    let list = [];
+    try { list = (await api('items')).filter(x => x.status === 'ready'); } catch (e) { $('#epL', m).innerHTML = `<p class="err">${esc(e.message)}</p>`; return; }
+    if (!list.length) { $('#epL', m).innerHTML = `<p class="note">분석이 끝난 학습이 아직 없어요. 시험 범위 자료를 먼저 올려 주세요.</p><a class="btn acc" href="/#/lib/cam" style="width:100%;margin-top:12px">📷 자료 올리러 가기</a>`; return; }
+    $('#epL', m).innerHTML = `<div class="eplist">${list.slice(0, 30).map(x => `<div class="epi" data-id="${esc(x.id)}"><div><b>${esc(x.title)}</b><span>${x.subject && x.subject !== x.title ? esc(x.subject) + ' · ' : ''}파트 ${x.parts || 0}개</span></div>
+      <div class="epb"><button class="btn sm" data-k="solve">사이트에서 풀기</button><button class="btn sm acc" data-k="pdf">PDF</button></div></div>`).join('')}</div>`;
+    $$('.epi [data-k]', m).forEach(b => b.onclick = () => {
+      LS.set('qm_preset', { total: 30, difficulty: 'mixed', style: 'school', title: `${examTitle} 대비`, at: Date.now() });
+      location.href = `/#/new/${b.closest('.epi').dataset.id}/${b.dataset.k}`;
+    });
+  }
+
+  window.QT = { examPicker, api, dbErr, CONFIG, $, $$, esc, LS, toast, modal, sb, boot, todayKey, shiftKey, parseKey, prettyDate, isKey, registerSW, installCard, isStandalone };
 })();

@@ -3,13 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>공부도구 · 문제지메이커</title>
-<meta name="description" content="문제지메이커 공부도구: 공부 체크리스트와 학교생활 도구를 한곳에서.">
+<title>홈 · 문제지메이커</title>
+<meta name="description" content="문제지메이커: 사진으로 문제지 만들기, 공부 체크리스트, 공부 타이머, 급식·시간표까지 한곳에서.">
 <meta name="theme-color" content="#f6f7fb">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="문제지메이커">
-<meta property="og:title" content="공부도구 · 문제지메이커">
-<meta property="og:description" content="공부 체크리스트와 학교생활 도구를 한곳에서.">
+<meta property="og:title" content="문제지메이커">
+<meta property="og:description" content="사진으로 문제지 만들기, 체크리스트, 공부 타이머, 급식·시간표까지 한곳에서.">
 <meta property="og:url" content="https://quizmaker.pro/tools/">
 <meta property="og:image" content="https://quizmaker.pro/og.png">
 <link rel="manifest" href="/tools/manifest.webmanifest">
@@ -17,10 +17,39 @@
 <link rel="apple-touch-icon" href="/tools/icons/apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="공부도구">
+<meta name="apple-mobile-web-app-title" content="문제지메이커">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <link rel="stylesheet" href="/tools/common.css">
+<link rel="stylesheet" href="/tools/nav.css">
 <style>
+.hi{font-size:15px;color:var(--mute);font-weight:600;margin:0 0 4px}
+.hi b{color:var(--ink)}
+/* 문제지 만들기 (가장 크게) */
+.mk{position:relative;overflow:hidden;border-radius:20px;padding:20px 18px;margin-bottom:14px;color:#fff;background:linear-gradient(135deg,#5b6cff 0%,#7b5bff 60%,#9a6bff 100%)}
+.mk::after{content:"";position:absolute;right:-30px;top:-30px;width:160px;height:160px;border-radius:50%;background:rgba(255,255,255,.12)}
+.mk .k2{font-size:12px;font-weight:800;letter-spacing:.5px;opacity:.85}
+.mk h2{color:#fff;font-size:21px;margin:6px 0 4px;letter-spacing:-.5px}
+.mk p{margin:0 0 14px;font-size:13.5px;line-height:1.55;opacity:.92;max-width:430px;word-break:keep-all}
+.mk .row{gap:8px;position:relative;z-index:1}
+.mk .btn{border:0;font-weight:800;padding:12px 16px;border-radius:13px}
+.mk .b1{background:#fff;color:#4b54d8}
+.mk .b2{background:rgba(255,255,255,.18);color:#fff}
+.mk .chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:14px;position:relative;z-index:1}
+.mk .chips span{font-size:11.5px;font-weight:700;background:rgba(255,255,255,.16);border-radius:999px;padding:4px 9px}
+/* 이어서 · 최근 학습 */
+.rc{display:flex;gap:8px;overflow-x:auto;padding:2px 0 4px;margin-bottom:12px;scrollbar-width:none}
+.rc::-webkit-scrollbar{display:none}
+.rci{flex:0 0 auto;width:200px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:13px 14px;text-decoration:none;color:var(--ink);display:flex;flex-direction:column;gap:4px}
+.rci .tg{align-self:flex-start;font-size:11px;font-weight:800;border-radius:6px;padding:2px 7px;background:var(--soft);color:var(--ink2)}
+.rci .tg.go{background:var(--acc2);color:var(--acc)}
+.rci .tg.run{background:#fff3d9;color:#a46a00}
+body.dark .rci .tg.run{background:#3a2e12;color:#ffc85a}
+.rci b{font-size:14.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rci small{font-size:12px;color:var(--mute)}
+.rci .pb{height:5px;border-radius:9px;background:var(--line);overflow:hidden;margin-top:4px}
+.rci .pb i{display:block;height:100%;background:var(--acc)}
+.rci.more{width:110px;align-items:center;justify-content:center;font-weight:800;color:var(--acc);border-style:dashed}
+/* 오늘 할 일 */
 .today{padding:16px 16px 10px}
 .today .th{display:flex;align-items:baseline;gap:8px;margin-bottom:10px}
 .today .th b{font-size:16px}
@@ -34,78 +63,153 @@
 .mini .t{flex:1;min-width:0;font-size:14.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .mini li.done .t{text-decoration:line-through;color:var(--mute)}
 .mini .dot{width:8px;height:8px;border-radius:50%;background:var(--c);flex:0 0 auto}
-.more{display:block;text-align:center;padding:12px 0 4px;font-weight:700;font-size:14px;color:var(--ink);text-decoration:none;border-top:1px solid var(--line)}
-.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-.tool{display:flex;flex-direction:column;gap:4px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;text-decoration:none;color:var(--ink);min-width:0;transition:transform .15s,box-shadow .15s}
-a.tool:hover{transform:translateY(-2px);box-shadow:0 10px 24px -14px rgba(31,42,68,.35)}
-.tool .ti{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;font-size:21px;margin-bottom:8px}
-.tool b{font-size:16px}
-.tool span{font-size:12.5px;color:var(--mute);line-height:1.45}
-.tool.soon{opacity:.6;border-style:dashed}
-.tool .badge{align-self:flex-start;font-size:11px;font-weight:800;border-radius:6px;padding:2px 7px;background:var(--soft2);color:var(--ink2);margin-top:4px}
-.sct{display:block;text-decoration:none;color:var(--ink)}
+.more2{display:block;text-align:center;padding:12px 0 4px;font-weight:700;font-size:14px;color:var(--ink);text-decoration:none;border-top:1px solid var(--line)}
+/* 오늘 학교 */
 .sct .row1{display:flex;align-items:center;gap:8px;margin-bottom:8px}
 .sct .row1 b{font-size:16px;flex:1}
-.sct .row1 em{font-style:normal;font-weight:800;color:var(--acc);font-size:14px}
 .sct .ln{font-size:13.5px;color:var(--ink2);line-height:1.6;margin-top:4px}
 .sct .ln span{color:var(--mute);font-weight:700;margin-right:6px}
-.t1 .ti{background:var(--acc2)}.t4 .ti{background:#e6f6ee}body.dark .t4 .ti{background:#16302a}.t2 .ti{background:#fdf3d8}.t3 .ti{background:#e6f1fb}
-@media(min-width:700px){.grid{grid-template-columns:repeat(3,minmax(0,1fr))}.hubg .h-left{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;align-items:start}.hubg .h-left>*{margin:0}}
-@media(min-width:1024px){.hubg{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:24px;align-items:start}.hubg .h-left{grid-template-columns:minmax(0,1fr)}.hubg .h-right .sec-t{margin-top:0}.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
-body.dark .t2 .ti{background:#33290f}body.dark .t3 .ti{background:#17283d}
+.sct a.al{text-decoration:none;color:inherit}
+.ddx{display:flex;align-items:center;gap:10px;background:var(--acc2);border-radius:12px;padding:10px 12px;margin-top:10px}
+.ddx div{flex:1;min-width:0}
+.ddx b{display:block;color:var(--acc);font-size:15px}
+.ddx span{font-size:13px;font-weight:600}
+/* 주간 리포트 */
+.wr .wt{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.wr .wt div{background:var(--soft);border-radius:12px;padding:10px 12px}
+.wr .wt small{display:block;font-size:11.5px;color:var(--mute);font-weight:700}
+.wr .wt b{display:block;font-size:19px;letter-spacing:-.4px;margin-top:2px;font-variant-numeric:tabular-nums}
+.wr .wt em{font-style:normal;font-size:11.5px;font-weight:700}
+.up{color:var(--ok)}.dn{color:var(--bad)}
+.wr .wd{display:flex;gap:5px;margin-top:12px}
+.wr .wd div{flex:1;text-align:center}
+.wr .wd i{display:block;height:46px;border-radius:8px;background:var(--soft);position:relative;overflow:hidden}
+.wr .wd i u{position:absolute;left:0;right:0;bottom:0;background:var(--acc);border-radius:8px}
+.wr .wd span{font-size:11px;color:var(--mute);font-weight:700}
+.wr .wd div.today span{color:var(--acc)}
+.wr .msg{margin:12px 0 0;font-size:13.5px;line-height:1.55;color:var(--ink2);background:var(--acc2);border-radius:12px;padding:10px 12px}
+/* 배치 */
+.hg{display:grid;grid-template-columns:minmax(0,1fr);gap:0}
+.hg>*{min-width:0}
+@media(min-width:700px){
+  .mk{padding:26px 26px}.mk h2{font-size:24px}
+  .hg{grid-template-columns:repeat(2,minmax(0,1fr));column-gap:12px;align-items:start}
+}
+@media(min-width:1024px){
+  .top2{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:16px;align-items:stretch;margin-bottom:14px}
+  .top2 .mk{margin:0;display:flex;flex-direction:column;justify-content:center}
+  .top2 .wr{margin:0}
+  .hg{grid-template-columns:repeat(2,minmax(0,1fr));column-gap:16px}
+}
 </style>
 </head>
 <body>
 <main id="app"></main>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="/tools/nav.js"></script>
 <script src="/tools/common.js"></script>
 <script src="/tools/checklist/data.js"></script>
 <script src="/tools/school/school.js"></script>
 <script src="/tools/timer/timer.js"></script>
 <script>
 'use strict';
-const { $, $$, esc, toast, CL, SC, TM } = QT;
+const { $, $$, esc, toast, CL, SC, TM, LS } = QT;
 const H = { subs: [], tasks: [], ses: [], loaded: false };
 const subColor = id => (H.subs.find(s => s.id === id) || { color: '#8a8f9c' }).color;
+const CAM = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>';
 
 function shell(me) {
   const hour = new Date().getHours(), hi = hour < 6 ? '늦은 밤이에요' : hour < 12 ? '좋은 아침이에요' : hour < 18 ? '오늘도 화이팅' : '오늘 하루 마무리해요';
   $('#app').innerHTML = `<div class="wrap">
-    <h1>🧰 공부도구</h1><p class="sub">${esc(me.name ? `${me.name}님, ${hi}` : hi)} ✏️ 문제지메이커 계정에 저장돼서 폰과 PC에서 이어져요.</p>
+    <p class="hi">${me.name ? `<b>${esc(me.name)}</b>님, ` : ''}${hi} ✏️</p>
     <div id="runbar"></div>
-    <div class="hubg"><div class="h-left"><div class="card today" id="today"></div>
-    <div id="school"></div></div>
-    <div class="h-right"><div class="sec-t">도구</div>
-    <div class="grid">
-      <a class="tool t1" href="/tools/checklist/"><span class="ti">✅</span><b>공부 체크리스트</b><span>과목별로 할 일을 정리하고 연속 달성 기록 쌓기</span></a>
-      <a class="tool t4" href="/tools/timer/"><span class="ti">⏱️</span><b>공부 타이머</b><span>과목별 스톱워치 · 뽀모도로 · 공부 기록 달력</span></a>
-      <a class="tool t2" href="/tools/school/"><span class="ti">🏫</span><b>학교생활</b><span>급식 · 시간표 · 학사일정 · 시험 D-day</span></a>
-      <a class="tool t3" href="/#/"><span class="ti">📝</span><b>문제지 만들기</b><span>자료를 올려서 문제지·플래시카드 만들기</span></a>
+    <div class="top2">
+      <div class="mk"><span class="k2">문제지메이커</span><h2>사진 찍으면 바로 문제지</h2>
+        <p>교과서·필기 사진이나 PDF를 올리면 문제지, 사이트에서 풀기, 플래시카드, 요약 노트까지 만들어 줘요.</p>
+        <div class="row"><a class="btn b1" href="/#/lib/cam">${CAM} 사진 찍기</a><a class="btn b2" href="/#/lib/file">📄 파일 올리기</a></div>
+        <div class="chips"><span>문제지 PDF</span><span>풀기·채점</span><span>오답 노트</span><span>플래시카드</span><span>마인드맵</span></div></div>
+      <div class="card wr" id="wr"></div>
     </div>
-    <div id="inst"></div></div></div>
+    <div class="sec-t" id="rcT" style="margin-top:4px">이어서 하기 <small>문제지메이커</small></div>
+    <div class="rc" id="rc"><div class="rci"><small>불러오는 중…</small></div></div>
+    <div class="hg"><div class="card today" id="today"></div><div id="school"></div></div>
+    <div id="inst"></div>
   </div>`;
   QT.installCard($('#inst'));
   QT.timerBanner($('#runbar'));
 }
+
+/* ---------- 오늘 할 일 ---------- */
 function drawToday() {
   const all = H.tasks, done = all.filter(t => t.done).length, pct = all.length ? Math.round(done / all.length * 100) : 0;
   const shown = all.slice().sort((a, b) => a.done - b.done).slice(0, 6);
-  $('#today').innerHTML = `<div class="th"><b>오늘 할 일</b><span>${QT.prettyDate(QT.todayKey()).main}${H.ses.length ? ` · 공부 ${TM.dur(TM.sum(H.ses))}` : ''}</span><em>${all.length ? `${done}/${all.length}` : ''}</em></div>
+  $('#today').innerHTML = `<div class="th"><b>✅ 오늘 할 일</b><span>${QT.prettyDate(QT.todayKey()).main}</span><em>${all.length ? `${done}/${all.length}` : ''}</em></div>
     ${all.length ? `<div class="bar"><i style="width:${pct}%"></i></div>` : ''}
     ${!H.loaded && !all.length ? '<p class="note" style="margin:0 0 10px">불러오는 중…</p>'
-      : all.length ? `<ul class="mini">${shown.map(t => `<li class="${t.done ? 'done' : ''}" data-id="${t.id}" style="--c:${subColor(t.subject_id)}"><button class="ck" aria-label="완료">${t.done ? '✓' : ''}</button><span class="t">${esc(t.title)}</span><span class="dot"></span></li>`).join('')}</ul>`
+      : all.length ? `<ul class="mini">${shown.map(t => `<li class="${t.done ? 'done' : ''}" data-id="${t.id}" style="--c:${subColor(t.subject_id)}"><button class="ck" aria-label="완료">${t.done ? '✓' : ''}</button><span class="t">${t.link_item ? '📝 ' : ''}${esc(t.title)}</span><span class="dot"></span></li>`).join('')}</ul>`
       : '<p class="note" style="margin:0 0 10px">아직 오늘 할 일이 없어요. 체크리스트에서 추가해 보세요.</p>'}
-    <a class="more" href="/tools/checklist/">${all.length > shown.length ? `+${all.length - shown.length}개 더 · ` : ''}체크리스트 열기 →</a>`;
+    <a class="more2" href="/tools/checklist/">${all.length > shown.length ? `+${all.length - shown.length}개 더 · ` : ''}체크리스트 열기 →</a>`;
   $$('#today .mini li').forEach(li => $('.ck', li).onclick = async () => {
     const t = H.tasks.find(x => x.id === li.dataset.id); if (!t) return;
-    t.done = !t.done; drawToday();
+    t.done = !t.done; drawToday(); drawReport();
     try { await CL.setDone(t.id, t.done); CL.cache.set('day_' + QT.todayKey(), H.tasks); if (t.done && H.tasks.every(x => x.done)) toast('🎉 오늘 할 일 전부 완료!'); }
     catch (e) { t.done = !t.done; drawToday(); toast(CL.errMsg(e), 3500); }
   });
 }
-/* 오늘 학교: 시간표 · 점심 · 가까운 D-day (학교를 정한 사람만) */
+
+/* ---------- 이번 주 리포트 ---------- */
+const W = { ses: null, prev: null, tasks: null };
+function drawReport() {
+  const box = $('#wr'); if (!box) return;
+  const t = QT.todayKey(), wk = SC.weekRange(t), days = [...Array(7)].map((_, i) => QT.shiftKey(wk.mon, i));
+  if (!W.ses) { box.innerHTML = '<div class="ch" style="display:flex"><b style="font-size:16px">📊 이번 주 리포트</b></div><p class="note" style="margin:10px 0 0">불러오는 중…</p>'; return; }
+  const sec = TM.sum(W.ses), prev = TM.sum(W.prev || []), solve = W.ses.filter(s => s.mode === 'solve' && s.q_total);
+  const qT = solve.reduce((a, s) => a + (+s.q_total || 0), 0), qC = solve.reduce((a, s) => a + (+s.q_correct || 0), 0);
+  const tk = (W.tasks || []).concat(H.tasks.map(x => ({ day: t, done: x.done })));
+  const tDone = tk.filter(x => x.done).length, byDay = {}; W.ses.forEach(s => { byDay[s.day] = (byDay[s.day] || 0) + (+s.seconds || 0); });
+  const mx = Math.max(1, ...days.map(d => byDay[d] || 0)), diff = sec - prev;
+  const best = days.filter(d => byDay[d]).sort((a, b) => byDay[b] - byDay[a])[0];
+  const msg = !sec ? '이번 주 첫 공부를 시작해 볼까요? 타이머를 켜거나 문제를 풀면 여기에 쌓여요.'
+    : `${diff >= 0 ? `지난주보다 ${TM.dur(diff)} 더 공부했어요 👏` : `지난주보다 ${TM.dur(-diff)} 적어요. 남은 날 조금만 더!`}${best ? ` 가장 많이 한 날은 ${'일월화수목금토'[QT.parseKey(best).getDay()]}요일(${TM.dur(byDay[best])})이에요.` : ''}`;
+  box.innerHTML = `<div style="display:flex;align-items:center;margin-bottom:10px"><b style="font-size:16px;flex:1">📊 이번 주 리포트</b><a href="/tools/timer/?tab=stats" style="font-size:13px;font-weight:700;text-decoration:none">자세히 →</a></div>
+    <div class="wt"><div><small>공부 시간</small><b>${TM.dur(sec)}</b>${prev || sec ? `<em class="${diff >= 0 ? 'up' : 'dn'}">지난주 ${diff >= 0 ? '+' : '−'}${TM.dur(Math.abs(diff))}</em>` : ''}</div>
+      <div><small>할 일 달성</small><b>${tk.length ? Math.round(tDone / tk.length * 100) : 0}%</b><em style="color:var(--mute)">${tDone}/${tk.length}개</em></div>
+      <div><small>푼 문제</small><b>${qT}문제</b></div><div><small>정답률</small><b>${qT ? Math.round(qC / qT * 100) + '%' : '-'}</b></div></div>
+    <div class="wd">${days.map(d => `<div class="${d === t ? 'today' : ''}"><i><u style="height:${(byDay[d] || 0) / mx * 100}%"></u></i><span>${'일월화수목금토'[QT.parseKey(d).getDay()]}</span></div>`).join('')}</div>
+    <p class="msg">${msg}</p>`;
+}
+async function loadReport() {
+  const t = QT.todayKey(), wk = SC.weekRange(t), pm = QT.shiftKey(wk.mon, -7);
+  try {
+    const [cur, prev, tasks] = await Promise.all([TM.sessions(wk.mon, t), TM.sessions(pm, QT.shiftKey(pm, (QT.parseKey(t).getDay() + 6) % 7)), CL.tasksRange(wk.mon, QT.shiftKey(t, -1))]);
+    Object.assign(W, { ses: cur, prev, tasks }); H.ses = cur.filter(s => s.day === t);
+  } catch (e) { W.ses = []; W.prev = []; W.tasks = []; }
+  drawReport();
+}
+
+/* ---------- 이어서 풀기 · 최근 학습 (문제지메이커) ---------- */
+async function loadRecent() {
+  const box = $('#rc'), cards = [];
+  // 풀다 만 문제지: 이 기기에 남아 있는 답안
+  const ids = [];
+  try { Object.keys(localStorage).forEach(k => { const m = k.match(/^qm_(ans|one)_([a-z0-9-]{3,})$/i); if (!m || ids.includes(m[2])) return; const v = LS.get(k, null); if (v && (m[1] === 'one' || Object.keys(v).length)) ids.push(m[2]); }); } catch (e) {}
+  const outs = await Promise.all(ids.slice(0, 3).map(id => QT.api('outputGet', { outputId: id }).then(o => ({ o, id })).catch(() => null)));
+  outs.filter(Boolean).forEach(({ o, id }) => {
+    const total = Object.values((o.data && o.data.qByPart) || {}).reduce((a, l) => a + (Array.isArray(l) ? l.length : 0), 0);
+    const ans = Object.keys(LS.get('qm_ans_' + id, {}) || {}).length, one = LS.get('qm_one_' + id, null), done = one ? Math.max(ans, (one.idx || 0)) : ans;
+    cards.push(`<a class="rci" href="/#/solve/${esc(id)}"><span class="tg go">▶ 이어서 풀기</span><b>${esc(o.title || '문제지')}</b><small>${esc((o.item && o.item.title) || '')} · ${done}/${total || '?'} 답함</small><span class="pb"><i style="width:${total ? Math.min(100, done / total * 100) : 0}%"></i></span></a>`);
+  });
+  let items = [];
+  try { items = await QT.api('items'); } catch (e) { if (!cards.length) { box.innerHTML = `<div class="rci"><small>${esc(e.message)}</small></div>`; return; } }
+  items.slice(0, 4).forEach(x => cards.push(`<a class="rci" href="/#/item/${esc(x.id)}"><span class="tg ${x.status === 'analyzing' || x.running ? 'run' : ''}">${x.status === 'analyzing' ? '분석 중' : x.running ? '만드는 중' : '📚 학습'}</span><b>${esc(x.title)}</b><small>${x.subject && x.subject !== x.title ? esc(x.subject) + ' · ' : ''}만든 것 ${x.outputs || 0}개</small></a>`));
+  box.innerHTML = cards.length ? cards.join('') + `<a class="rci more" href="/#/lib">전체 보기 →</a>`
+    : `<a class="rci" href="/#/lib/cam" style="width:100%"><span class="tg go">처음이라면</span><b>첫 학습을 만들어 보세요</b><small>사진 한 장이면 문제지가 나와요</small></a>`;
+}
+
+/* ---------- 오늘 학교 + 가까운 시험 ---------- */
 async function drawSchool() {
-  const box = $('#school'), p = SC.cache.get('profile'); if (!p || !p.school_code) { box.innerHTML = ''; return; }
+  const box = $('#school'), p = SC.cache.get('profile');
+  if (!p || !p.school_code) { box.innerHTML = `<a class="card sct" href="/tools/school/" style="display:block;text-decoration:none;color:var(--ink)"><div class="row1"><b>🏫 오늘 학교</b></div><div class="ln">학교와 반을 고르면 급식 · 시간표 · 시험 D-day가 여기 나와요 →</div></a>`; return; }
   const t = QT.todayKey(), w = SC.weekRange(t);
   let tt = {}, meals = {}, dd = [], ex = [];
   await Promise.all([
@@ -114,25 +218,29 @@ async function drawSchool() {
     SC.ddays().then(r => dd = r).catch(() => {}),
     SC.schedule(p, t, QT.shiftKey(t, 200)).then(r => ex = SC.exams(r)).catch(() => {}),
   ]);
-  const next = [...ex.filter(e => e.day >= t), ...dd.filter(d => d.day >= t)].sort((a, b) => a.day < b.day ? -1 : 1)[0];
+  const exam = ex.filter(e => e.last >= t)[0], next = [...ex.filter(e => e.day >= t), ...dd.filter(d => d.day >= t)].sort((a, b) => a.day < b.day ? -1 : 1)[0];
   const lunch = (meals[t] || []).find(m => m.type === '중식') || (meals[t] || [])[0];
   const cls = (tt[t] || []).map(x => x.s);
-  box.innerHTML = `<a class="card sct" href="/tools/school/"><div class="row1"><b>🏫 오늘 학교</b>${next ? `<em>${esc(next.title)} ${SC.dLabel(next.day)}</em>` : ''}</div>
+  box.innerHTML = `<div class="card sct"><a class="al" href="/tools/school/"><div class="row1"><b>🏫 오늘 학교</b><span style="font-size:13px;color:var(--mute);font-weight:700">${esc(p.school_name)} →</span></div>
     <div class="ln"><span>시간표</span>${cls.length ? cls.map(esc).join(' · ') : '수업 없음'}</div>
-    <div class="ln"><span>${lunch ? esc(lunch.type) : '급식'}</span>${lunch ? lunch.dishes.slice(0, 6).map(d => esc(d.name)).join(', ') : '정보 없음'}</div></a>`;
+    <div class="ln"><span>${lunch ? esc(lunch.type) : '급식'}</span>${lunch ? lunch.dishes.slice(0, 6).map(d => esc(d.name)).join(', ') : '정보 없음'}</div></a>
+    ${next ? `<div class="ddx"><div><b>${esc(next.title)} ${SC.dLabel(next.day)}</b><span>${next.day.slice(5).replace('-', '/')}${next.auto ? ' · 학교 시험' : ''}</span></div>${(next.auto || /고사|시험|모의|수능|평가/.test(next.title)) ? '<button class="btn sm acc" id="exBtn">📝 대비 문제지</button>' : ''}</div>` : ''}</div>`;
+  const b = $('#exBtn'); if (b) b.onclick = () => QT.examPicker(next.title);
 }
+
 async function load() {
   const t = QT.todayKey();
-  try { [H.subs, H.tasks, H.ses] = await Promise.all([CL.subjects(), CL.tasks(t), TM.sessions(t, t).catch(() => [])]); H.loaded = true; drawToday(); }
+  try { [H.subs, H.tasks] = await Promise.all([CL.subjects(), CL.tasks(t)]); H.loaded = true; drawToday(); }
   catch (e) { H.loaded = true; drawToday(); toast(CL.errMsg(e), 4000); }
+  loadReport();
 }
 (async () => {
   QT.registerSW();
   const ctx = await QT.boot('hub'); if (!ctx) return;
-  CL.init(ctx.user.id);
+  CL.init(ctx.user.id); SC.init(ctx.user.id); TM.init(ctx.user.id);
   H.subs = CL.cache.get('subjects', []); H.tasks = CL.cache.get('day_' + QT.todayKey(), []);
-  SC.init(ctx.user.id); TM.init(ctx.user.id);
-  shell(ctx.me); drawToday(); load(); drawSchool();
+  shell(ctx.me); drawToday(); drawReport(); drawSchool();
+  load(); loadRecent();
   SC.profile().then(p => { if (p) drawSchool(); }).catch(() => {});
   document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') load(); });
 })();

@@ -20,6 +20,7 @@
   };
 
   const CL = {
+    COLS: 'id,day,title,subject_id,minutes,done,created_at,link_item,link_title',
     PALETTE, errMsg,
     init(uid) { UID = uid; },
     cache: { get: (k, d) => LS.get(ck(k), d), set: (k, v) => LS.set(ck(k), v) },
@@ -58,19 +59,24 @@
 
     /* ----- 할 일 ----- */
     async tasks(day) {
-      const list = must(await sb().from('tools_tasks').select('id,day,title,subject_id,minutes,done,created_at').eq('day', day).order('created_at'));
+      let r = await sb().from('tools_tasks').select(CL.COLS).eq('day', day).order('created_at');
+      if (r.error && /column/i.test(r.error.message || '')) { CL.COLS = 'id,day,title,subject_id,minutes,done,created_at'; r = await sb().from('tools_tasks').select(CL.COLS).eq('day', day).order('created_at'); }
+      const list = must(r);
       CL.cache.set('day_' + day, list);
       return list;
     },
     async addTask(t) {
-      return must(await sb().from('tools_tasks').insert({ day: t.day, title: String(t.title).trim().slice(0, 100), subject_id: t.subject_id || null, minutes: t.minutes || null }).select('id,day,title,subject_id,minutes,done,created_at').single());
+      const row = { day: t.day, title: String(t.title).trim().slice(0, 100), subject_id: t.subject_id || null, minutes: t.minutes || null };
+      if (t.link_item) Object.assign(row, { link_item: t.link_item, link_title: String(t.link_title || '').slice(0, 100) });
+      return must(await sb().from('tools_tasks').insert(row).select(CL.COLS).single());
     },
+    async tasksRange(from, to) { return must(await sb().from('tools_tasks').select('day,done').gte('day', from).lte('day', to).limit(5000)); },
     async addTasks(rows) {
       if (!rows.length) return [];
-      return must(await sb().from('tools_tasks').insert(rows).select('id,day,title,subject_id,minutes,done,created_at'));
+      return must(await sb().from('tools_tasks').insert(rows).select(CL.COLS));
     },
     async setDone(id, done) { must(await sb().from('tools_tasks').update({ done, done_at: done ? new Date().toISOString() : null }).eq('id', id)); },
-    async updateTask(id, patch) { return must(await sb().from('tools_tasks').update(patch).eq('id', id).select('id,day,title,subject_id,minutes,done,created_at').single()); },
+    async updateTask(id, patch) { return must(await sb().from('tools_tasks').update(patch).eq('id', id).select(CL.COLS).single()); },
     async deleteTask(id) { must(await sb().from('tools_tasks').delete().eq('id', id)); },
     async deleteDone(day) { must(await sb().from('tools_tasks').delete().eq('day', day).eq('done', true)); },
 

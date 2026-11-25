@@ -43,7 +43,10 @@
       try { if (mine.length) must(await sb().from('tools_sessions').insert(mine.map(x => x.row))); LS.set(QUEUE, rest); } catch (e) {}
     },
     async sessions(from, to) {
-      return must(await sb().from('tools_sessions').select('id,day,subject_id,task_id,mode,seconds,started_at').gte('day', from).lte('day', to).order('started_at').limit(5000));
+      const q = cols => sb().from('tools_sessions').select(cols).gte('day', from).lte('day', to).order('started_at').limit(5000);
+      let r = await q('id,day,subject_id,task_id,mode,seconds,started_at,q_total,q_correct,ref_title');
+      if (r.error && /column/i.test(r.error.message || '')) r = await q('id,day,subject_id,task_id,mode,seconds,started_at');
+      return must(r);
     },
     async remove(id) { must(await sb().from('tools_sessions').delete().eq('id', id)); },
     sum: list => list.reduce((a, s) => a + (+s.seconds || 0), 0),

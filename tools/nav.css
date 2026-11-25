@@ -1,0 +1,44 @@
+/* ===== 문제지메이커 공용 메뉴 (메인 · 공부도구 같이 씀) =====
+   폰: 위에 로고줄 + 아래 탭바 / 패드 · 컴퓨터: 위 한 줄에 메뉴 */
+.qn{position:sticky;top:0;z-index:40;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:saturate(1.4) blur(12px);-webkit-backdrop-filter:saturate(1.4) blur(12px);border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top)}
+@supports not (background:color-mix(in srgb,red,blue)){.qn{background:var(--bg)}}
+.qn .in{max-width:1180px;margin:0 auto;padding:0 16px;height:58px;display:flex;align-items:center;gap:10px}
+.qn-logo{display:flex;align-items:center;gap:8px;text-decoration:none;color:var(--ink);font-weight:800;font-size:17px;letter-spacing:-.5px;flex:0 1 auto;min-width:0}
+.qn-logo svg{width:32px;height:32px;flex:0 0 auto}
+.qn-logo span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.qn-logo b{color:var(--acc);font-weight:800}
+.qn-tabs{display:none;align-items:center;gap:2px;margin-left:14px}
+.qn-tabs a{display:inline-flex;align-items:center;gap:6px;text-decoration:none;color:var(--ink2);font-weight:700;font-size:14.5px;padding:8px 12px;border-radius:10px;white-space:nowrap}
+.qn-tabs a svg{width:18px;height:18px}
+.qn-tabs a:hover{background:var(--soft);color:var(--ink)}
+.qn-tabs a.on{background:var(--acc2);color:var(--acc)}
+.qn-tabs a.maker{color:var(--acc)}
+.qn-right{margin-left:auto;display:flex;align-items:center;gap:6px;flex:0 0 auto}
+.qn-ib{width:38px;height:38px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--ink);display:grid;place-items:center;cursor:pointer;text-decoration:none;font-size:16px;padding:0;flex:0 0 auto}
+.qn-ib svg{width:19px;height:19px}
+.qn-pill{display:inline-flex;align-items:center;gap:6px;height:38px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:0 12px;font-weight:700;font-size:13.5px;cursor:pointer;text-decoration:none;white-space:nowrap}
+.qn-pill b{color:var(--acc)}
+.qn-pill.low b{color:var(--bad)}
+.qn-pill.acc{background:var(--acc);border-color:var(--acc);color:#fff}
+.qn-pill.adm{color:var(--acc);border-color:var(--acc)}
+.qn-pill .cnt{display:inline-grid;place-items:center;min-width:19px;height:19px;border-radius:10px;background:var(--acc);color:#fff;font-size:11px;font-style:normal;font-weight:800;padding:0 5px}
+/* 폰 아래 탭바 */
+.qn-bar{position:fixed;left:0;right:0;bottom:0;z-index:35;background:var(--card);border-top:1px solid var(--line);display:flex;padding:6px 4px calc(6px + env(safe-area-inset-bottom));box-shadow:0 -6px 18px rgba(20,24,40,.06)}
+.qn-bar a{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;text-decoration:none;color:var(--mute);font-size:11px;font-weight:700;padding:4px 0;border-radius:10px;min-width:0}
+.qn-bar a svg{width:23px;height:23px}
+.qn-bar a.on{color:var(--acc)}
+.qn-bar a.maker .ic{background:var(--acc);color:#fff;width:46px;height:34px;border-radius:12px;display:grid;place-items:center;margin-top:-2px}
+.qn-bar a.maker .ic svg{width:21px;height:21px}
+body.qn-has-bar{padding-bottom:calc(76px + env(safe-area-inset-bottom))!important}
+body.has-nav .qn-bar{display:none}
+body.has-nav.qn-has-bar{padding-bottom:0!important}
+@media(max-width:380px){.qn-logo span{display:none}}
+@media(min-width:700px){
+  .qn .in{padding:0 28px;height:64px}
+  .qn-tabs{display:flex}
+  .qn-bar{display:none}
+  body.qn-has-bar{padding-bottom:0!important}
+  .qn-tabs a .lbl-s{display:none}
+}
+@media(min-width:700px) and (max-width:960px){.qn-tabs a{padding:8px 9px;font-size:13.5px}.qn-tabs a svg{display:none}.qn-logo span{display:none}}
+@media(min-width:1024px){.qn .in{padding:0 40px}}
