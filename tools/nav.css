@@ -42,3 +42,23 @@ body.has-nav.qn-has-bar{padding-bottom:0!important}
 }
 @media(min-width:700px) and (max-width:960px){.qn-tabs a{padding:8px 9px;font-size:13.5px}.qn-tabs a svg{display:none}.qn-logo span{display:none}}
 @media(min-width:1024px){.qn .in{padding:0 40px}}
+
+/* ===== 앱 설치 안내 ===== */
+.qi{display:flex;align-items:center;gap:12px;background:var(--card);border:1.5px solid var(--acc);border-radius:16px;padding:12px 12px 12px 14px;margin:14px 0}
+.qi-ic{width:42px;height:42px;border-radius:12px;background:var(--acc);color:#fff;display:grid;place-items:center;flex:0 0 auto}
+.qi-tx{flex:1;min-width:0;line-height:1.45}
+.qi-tx b{display:block;font-size:15px;color:var(--ink)}
+.qi-tx span{font-size:13px;color:var(--mute)}
+.qi-btn{border:0;background:var(--acc);color:#fff;font:inherit;font-weight:800;font-size:14px;border-radius:11px;padding:10px 16px;cursor:pointer;white-space:nowrap}
+.qi-btn.ghost{background:var(--soft);color:var(--ink)}
+.qi-x{border:0;background:none;color:var(--mute);font-size:15px;cursor:pointer;width:30px;height:30px;border-radius:8px;flex:0 0 auto}
+.qi-modal{position:fixed;inset:0;z-index:80;background:rgba(15,17,25,.5);display:flex;align-items:flex-end;justify-content:center}
+.qi-box{background:var(--card);color:var(--ink);width:100%;max-width:480px;border-radius:20px 20px 0 0;padding:22px 20px calc(20px + env(safe-area-inset-bottom))}
+@media(min-width:640px){.qi-modal{align-items:center}.qi-box{border-radius:20px}}
+.qi-box h3{margin:0 0 10px;font-size:19px}
+.qi-box ol{margin:0;padding-left:22px;line-height:1.9;font-size:15px}
+.qi-box .qi-k{display:inline-block;border:1px solid var(--line2);border-radius:6px;padding:0 5px;font-size:12px}
+.qi-n{font-size:13px;color:var(--mute);line-height:1.55;margin:10px 0 12px}
+.qi-box>.qi-btn{width:100%;margin-bottom:8px}
+.qi-row{display:flex;gap:8px}.qi-row .qi-btn{flex:1}
+@media(max-width:380px){.qi-tx span{display:none}}

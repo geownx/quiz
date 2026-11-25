@@ -122,36 +122,27 @@
         me.status === 'pending' ? '문제지메이커에서 가입 확인이 끝나면 바로 쓸 수 있어요.' : '지금은 이 계정으로 이용할 수 없어요.', '문제지메이커로 가기', () => { location.href = '/#/'; });
       return null;
     }
+    linkAccount();
     // 다른 탭에서 로그아웃하면 이 화면도 로그인 안내로 바꿔요
     sb().auth.onAuthStateChange(ev => { if (ev === 'SIGNED_OUT') location.reload(); });
     return { user: s.user, me };
   }
 
-  /* ---------- 홈 화면 앱 (PWA) ---------- */
-  let deferredPrompt = null;
-  window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); deferredPrompt = e; document.dispatchEvent(new Event('qt-installable')); });
-  const isStandalone = () => matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
-  const isIOS = () => /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  /* ---------- 앱으로 설치 (PWA): 안내 · 감지는 nav.js (메인과 같이 씀) ---------- */
+  const DEV = (window.QTNAV && QTNAV.DEV) || { kind: 'desktop' };
+  const isStandalone = () => !!(window.QTNAV && QTNAV.isStandalone());
   function registerSW() {
-    if ('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('/tools/sw.js', { scope: '/tools/' }).catch(() => {});
+    if ('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('/sw.js', { scope: '/' }).catch(() => {});
   }
-  /* 설치 안내 카드 (이미 앱으로 열었거나 '닫기'를 누르면 안 보여요) */
-  function installCard(box) {
-    if (!box || isStandalone() || LS.get('qt_install_hide', 0) > Date.now()) return;
-    const draw = () => {
-      const can = !!deferredPrompt, ios = isIOS();
-      if (!can && !ios) { box.innerHTML = ''; return; }
-      box.innerHTML = `<div class="install"><span class="ii">📌</span><div><b>홈 화면에 추가하기</b>앱처럼 바로 열어서 오늘 할 일을 체크할 수 있어요.</div>
-        <button class="btn sm" id="qtInst">${can ? '설치' : '방법 보기'}</button><button class="btn sm ghost" id="qtInstX" aria-label="닫기" style="color:inherit">✕</button></div>`;
-      $('#qtInstX', box).onclick = () => { LS.set('qt_install_hide', Date.now() + 14 * 86400e3); box.innerHTML = ''; };
-      $('#qtInst', box).onclick = async () => {
-        if (deferredPrompt) { deferredPrompt.prompt(); try { const r = await deferredPrompt.userChoice; if (r.outcome === 'accepted') box.innerHTML = ''; } catch (e) {} deferredPrompt = null; return; }
-        modal(`<h3>아이폰 홈 화면에 추가</h3><p class="sub" style="margin:4px 0 0">Safari에서 해 주세요. (카카오톡 안에서 열었다면 오른쪽 아래 ⋯ → 'Safari로 열기')</p>
-          <ol class="ios-steps"><li>아래쪽 <b>공유 버튼</b> (□↑) 누르기</li><li><b>홈 화면에 추가</b> 고르기</li><li>오른쪽 위 <b>추가</b> 누르기</li></ol>
-          <button class="btn pri" data-close style="width:100%;margin-top:14px">알겠어요</button>`);
-      };
-    };
-    draw(); document.addEventListener('qt-installable', draw);
+  function installCard(box) { if (window.QTNAV) QTNAV.installCard(box); }
+  const howModal = () => window.QTNAV && QTNAV.howModal();
+  /* 로그인한 계정에 '이 종류 기기에서 앱으로 열었음'을 기록 · 확인 (아이폰은 Safari와 앱 저장 공간이 따로라서) */
+  function linkAccount() {
+    if (!window.QTNAV) return;
+    QTNAV.setAccount({
+      get: async () => { const { data } = await sb().auth.getUser(); return (data && data.user && data.user.user_metadata && data.user.user_metadata.qm_app) || {}; },
+      mark: async kind => { const { data } = await sb().auth.getUser(); const u = data && data.user; if (!u) return; const cur = (u.user_metadata && u.user_metadata.qm_app) || {}; if (cur[kind]) return; await sb().auth.updateUser({ data: { qm_app: Object.assign({}, cur, { [kind]: new Date().toISOString() }) } }); },
+    });
   }
 
   /* Supabase 오류를 사람이 읽을 수 있게 + 원래 오류도 짧게 붙여요 */
@@ -187,5 +178,5 @@
     el.innerHTML = `<nav class="ssw">${[['todo', '할 일', '/tools/checklist/'], ['timer', '타이머', '/tools/timer/'], ['stats', '기록', '/tools/timer/?tab=stats']].map(([k, l, h]) => `<a href="${h}" data-k="${k}" class="${k === on ? 'on' : ''}">${l}</a>`).join('')}</nav>`;
   }
 
-  window.QT = { studySwitch, examPicker, api, dbErr, CONFIG, $, $$, esc, LS, toast, modal, sb, boot, todayKey, shiftKey, parseKey, prettyDate, isKey, registerSW, installCard, isStandalone };
+  window.QT = { studySwitch, examPicker, api, dbErr, CONFIG, $, $$, esc, LS, toast, modal, sb, boot, todayKey, shiftKey, parseKey, prettyDate, isKey, registerSW, installCard, isStandalone, installHow: howModal, DEV };
 })();
