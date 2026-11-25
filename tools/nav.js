@@ -87,7 +87,7 @@
   }
   if (isStandalone()) ls.set(INST, String(Date.now()));
   window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); bip = e; redraw(); });
-  window.addEventListener('appinstalled', () => { bip = null; markInstalled(); redraw(); if (window.QTLOG) QTLOG.add('app', 'do', 'appinstalled', '앱 설치 완료'); });
+  window.addEventListener('appinstalled', () => { bip = null; markInstalled(); redraw(); if (window.QTLOG) QTLOG.add('login', 'login', 'appinstalled', '앱 설치함', null, true, { dedupe: 'inst' }); });
   async function installedSomewhere() {
     if (isStandalone()) { markInstalled(); return true; }
     if (ls.get(INST)) return true;
@@ -146,7 +146,7 @@
       <button class="qi-btn" data-a="go">${bip ? '설치' : DEV.inapp ? '열기 방법' : '방법 보기'}</button><button class="qi-x" data-a="x" aria-label="닫기" title="30일 동안 안 보기">✕</button></div>`;
     box.querySelector('[data-a=x]').onclick = () => { ls.set(HIDE, String(Date.now() + 30 * 86400e3)); redraw(); };
     box.querySelector('[data-a=go]').onclick = async () => {
-      if (bip) { const ev = bip; bip = null; ev.prompt(); try { const r = await ev.userChoice; if (window.QTLOG) QTLOG.add('app', 'do', 'install_prompt', r.outcome === 'accepted' ? '설치 창에서 설치함' : '설치 창 닫음'); if (r.outcome === 'accepted') markInstalled(); } catch (e) {} redraw(); return; }
+      if (bip) { const ev = bip; bip = null; ev.prompt(); try { const r = await ev.userChoice; if (window.QTLOG) if (r.outcome === 'accepted') QTLOG.add('login', 'login', 'install_prompt', '앱 설치함', null, true, { dedupe: 'inst' }); if (r.outcome === 'accepted') markInstalled(); } catch (e) {} redraw(); return; }
       howModal();
     };
   }
@@ -158,10 +158,9 @@
      인터넷이 끊기거나 창을 닫아도 다음에 열 때 이어서 보내요. 비밀번호 · 파일 내용은 남기지 않아요. */
   const QTLOG = (() => {
     const QK = 'qt_log_q', LK = 'qt_log_lock', PK = 'qt_log_login', MAXQ = 400;
-    const PARTS = [['login', '로그인 · 접속'], ['home', '공부도구 홈'], ['maker', '문제지'], ['checklist', '체크리스트'], ['timer', '타이머'], ['school', '학교생활'], ['app', '앱 설치'], ['admin', '관리자']];
+    const PARTS = [['login', '로그인 · 접속'], ['maker', '문제지'], ['checklist', '체크리스트'], ['timer', '타이머'], ['school', '학교생활']];
     let client = null, user = null, timer = null, busy = false, off = false, pre = [];
-    const T0 = Date.now();
-    const ss = { get: k => { try { return sessionStorage.getItem(k); } catch (e) { return null; } }, set: (k, v) => { try { sessionStorage.setItem(k, v); } catch (e) {} } };
+        const ss = { get: k => { try { return sessionStorage.getItem(k); } catch (e) { return null; } }, set: (k, v) => { try { sessionStorage.setItem(k, v); } catch (e) {} } };
     let sid = ss.get('qt_log_sid'); if (!sid) { sid = Math.random().toString(36).slice(2, 10); ss.set('qt_log_sid', sid); }
     const browser = DEV.kakao ? '카카오톡' : DEV.inapp ? '앱 안 브라우저' : DEV.samsung ? '삼성 인터넷' : DEV.edge ? 'Edge' : DEV.whale ? '웨일' : DEV.firefox ? 'Firefox' : (DEV.crios || /Chrome/.test(UA)) ? 'Chrome' : /Safari/.test(UA) ? 'Safari' : '기타 브라우저';
     const device = `${DEV.ipad ? '아이패드' : DEV.ios ? '아이폰' : DEV.android ? (/Mobile/.test(UA) ? '안드로이드' : '안드로이드 태블릿') : /Mac/.test(UA) ? 'Mac' : /Windows/.test(UA) ? 'Windows' : /CrOS/.test(UA) ? '크롬북' : 'PC'} · ${browser}`;
@@ -211,50 +210,64 @@
         else { drop(); if (load().some(x => (uid && x.uid === uid))) schedule(500); }
       } catch (e) {} finally { busy = false; ls.del(LK); }
     }
-    /* supabase 클라이언트: 공부도구 테이블에 쓰는 일(추가 · 수정 · 삭제)을 자동으로 기록해요 */
+    /* supabase 클라이언트: 공부도구 테이블에 쓰는 일(추가 · 완료 · 수정 · 삭제)을 자동으로 기록해요.
+       완료 · 삭제처럼 id만 오가는 일도 무엇을 했는지 보이게, 불러온 할 일 · 과목 · D-day 이름을 기억해 둬요. */
     const TBL = { tools_tasks: 'checklist', tools_subjects: 'checklist', tools_sessions: 'timer', tools_profile: 'school', tools_ddays: 'school' };
+    const NAMES = { tools_tasks: {}, tools_subjects: {}, tools_ddays: {} };
+    const remember = (t, data) => { const m = NAMES[t]; if (!m || !data) return; (Array.isArray(data) ? data : [data]).forEach(r => { if (r && r.id) m[r.id] = Object.assign(m[r.id] || {}, r); }); };
+    const idOf = b => { try { const v = b && b.url && b.url.searchParams && b.url.searchParams.get('id'); return v ? v.replace(/^eq\./, '') : null; } catch (e) { return null; } };
     const mm = s => s >= 3600 ? `${Math.floor(s / 3600)}시간 ${Math.round(s % 3600 / 60)}분` : `${Math.max(1, Math.round(s / 60))}분`;
+    const subj = id => (id && NAMES.tools_subjects[id] && NAMES.tools_subjects[id].name) || '';
     function dbLabel(t, op, v, b) {
       const arr = Array.isArray(v), one = (arr ? v[0] : v) || {}, n = arr ? v.length : 1, keys = Object.keys(one);
+      const id = idOf(b), old = (id && NAMES[t] && NAMES[t][id]) || {};
+      const sj = x => subj(x.subject_id) ? `[${subj(x.subject_id)}] ` : '';
       if (t === 'tools_tasks') {
-        if (op === 'insert') return n > 1 ? `할 일 ${n}개 추가` : `할 일 추가: ${one.title || ''}${one.minutes ? ` (${one.minutes}분)` : ''}${one.link_title ? ` · 학습 연결 ${one.link_title}` : ''}`;
-        if (op === 'update') return 'done' in one ? (one.done ? '할 일 완료 체크' : '할 일 완료 취소') : `할 일 수정${one.title ? ': ' + one.title : ''}${one.minutes ? ` (${one.minutes}분)` : ''}`;
-        if (op === 'delete') return /done=eq\.true/.test(String(b && b.url || '')) ? '완료한 할 일 지우기' : '할 일 삭제';
+        if (op === 'insert') return n > 1 ? `할 일 ${n}개 추가 · ${v.map(x => x.title).slice(0, 3).join(', ')}${n > 3 ? ' 외' : ''}` : `할 일 추가 · ${sj(one)}${one.title || ''}${one.minutes ? ` (${one.minutes}분)` : ''}`;
+        if (op === 'update') {
+          const nm = old.title || one.title || '(이름 모름)';
+          if ('done' in one) return `${one.done ? '할 일 완료' : '완료 취소'} · ${sj(old)}${nm}`;
+          return `할 일 수정 · ${old.title && one.title && old.title !== one.title ? `${old.title} → ${one.title}` : nm}${one.minutes ? ` (${one.minutes}분)` : ''}`;
+        }
+        if (op === 'delete') return /done=eq\.true/.test(String(b && b.url || '')) ? '완료한 할 일 모두 지우기' : `할 일 삭제 · ${old.title || '(이름 모름)'}`;
       }
       if (t === 'tools_subjects') {
-        if (op === 'insert') return n > 1 ? `기본 과목 ${n}개 만들기 (${v.map(x => x.name).join(', ')})` : `과목 추가: ${one.name || ''}`;
-        if (op === 'update') return keys.length === 1 && keys[0] === 'sort' ? '과목 순서 바꾸기' : `과목 수정${one.name ? ': ' + one.name : ''}${one.color ? ' · 색 바꿈' : ''}`;
-        if (op === 'delete') return '과목 삭제';
+        if (op === 'insert') return n > 1 ? null : `과목 추가 · ${one.name || ''}`; // 처음 기본 과목은 자동이라 안 남겨요
+        if (op === 'update') return keys.length === 1 && keys[0] === 'sort' ? '과목 순서 바꿈' : old.name && one.name && old.name !== one.name ? `과목 이름 바꿈 · ${old.name} → ${one.name}` : `과목 ${one.color ? '색 바꿈' : '수정'} · ${one.name || old.name || ''}`;
+        if (op === 'delete') return `과목 삭제 · ${old.name || ''}`;
       }
       if (t === 'tools_sessions') {
-        if (op === 'insert') return n > 1 ? `공부 기록 ${n}개 저장 (오프라인에 모아 둔 것)` : one.mode === 'solve' ? `문제 풀이 시간 ${mm(one.seconds || 0)}${one.q_total ? ` · ${one.q_correct || 0}/${one.q_total} 정답` : ''}${one.ref_title ? ' · ' + one.ref_title : ''}` : `${one.mode === 'pomodoro' ? '뽀모도로' : '스톱워치'} ${mm(one.seconds || 0)} 공부 기록`;
+        if (op === 'insert') {
+          if (n > 1) return `공부 기록 ${n}개 저장 (인터넷 끊겼을 때 것)`;
+          if (one.mode === 'solve') return `문제 풀이 · ${one.ref_title || ''} · ${mm(one.seconds || 0)}${one.q_total ? ` · ${one.q_correct || 0}/${one.q_total} 정답` : ''}`;
+          return `공부 시간 · ${subj(one.subject_id) || '과목 없음'} ${mm(one.seconds || 0)} (${one.mode === 'pomodoro' ? '뽀모도로' : '스톱워치'})`;
+        }
         if (op === 'delete') return '공부 기록 삭제';
       }
-      if (t === 'tools_profile') return `학교 · 반 설정${one.school_name ? ': ' + one.school_name : ''}${one.grade ? ` ${one.grade}학년` : ''}${one.class_nm ? ` ${one.class_nm}반` : ''}`;
-      if (t === 'tools_ddays') { if (op === 'insert') return `D-day 추가: ${one.title || ''} (${one.day || ''})`; if (op === 'delete') return 'D-day 삭제'; }
+      if (t === 'tools_profile') return `학교 · 반 설정 · ${one.school_name || ''}${one.grade ? ` ${one.grade}학년` : ''}${one.class_nm ? ` ${one.class_nm}반` : ''}`;
+      if (t === 'tools_ddays') { if (op === 'insert') return `D-day 추가 · ${one.title || ''} (${one.day || ''})`; if (op === 'delete') return `D-day 삭제 · ${old.title || ''}`; }
       return `${t} ${op}`;
     }
+    const hook = (b, fn) => { if (!b || typeof b.then !== 'function') return b; const th = b.then.bind(b); b.then = (res, rej) => th(r => { try { fn(r); } catch (e) {} return res ? res(r) : r; }, rej); return b; };
     function wrap(c) {
       if (!c || c.__qtlog || typeof c.from !== 'function') return c;
       c.__qtlog = true; const orig = c.from.bind(c);
       c.from = t => {
         const qb = orig(t); if (!TBL[t]) return qb;
+        const sel = qb.select; if (typeof sel === 'function') qb.select = function (...a) { return hook(sel.apply(qb, a), r => remember(t, r && r.data)); };
         ['insert', 'update', 'upsert', 'delete'].forEach(op => {
           const f = qb[op]; if (typeof f !== 'function') return;
           qb[op] = function (...args) {
-            const b = f.apply(qb, args); if (!b || typeof b.then !== 'function') return b;
-            const th = b.then.bind(b), v = args[0];
-            b.then = (res, rej) => th(r => {
-              try {
-                const one = (Array.isArray(v) ? v[0] : v) || {};
-                const part = t === 'tools_sessions' && one.mode === 'solve' ? 'maker' : TBL[t];
-                const lb = dbLabel(t, op, op === 'delete' ? null : v, b);
-                add(part, 'do', `${t}.${op}`, (r && r.error ? '실패 · ' : '') + lb, Object.assign({}, op === 'delete' ? {} : { values: v }, r && r.error ? { error: r.error.message || String(r.error) } : {}), !(r && r.error),
-                  op === 'update' && Object.keys(one).length === 1 && 'sort' in one ? { dedupe: t + 'sort', gap: 4000 } : {});
-              } catch (e) {}
-              return res ? res(r) : r;
-            }, rej);
-            return b;
+            const b = f.apply(qb, args), v = args[0];
+            return hook(b, r => {
+              const one = (Array.isArray(v) ? v[0] : v) || {};
+              if (op === 'update' && Object.keys(one).length === 1 && 'sort' in one) return; // 순서 바꾸기는 남기지 않아요
+              const part = t === 'tools_sessions' && one.mode === 'solve' ? 'maker' : TBL[t];
+              const lb = dbLabel(t, op, op === 'delete' ? null : v, b), id = idOf(b);
+              if (lb === null) return;
+              add(part, 'do', `${t}.${op}`, (r && r.error ? '실패 · ' : '') + lb, Object.assign({}, op === 'delete' ? {} : { values: v }, r && r.error ? { error: r.error.message || String(r.error) } : {}), !(r && r.error));
+              if (r && !r.error) { if (r.data) remember(t, r.data); if (id && op === 'update' && NAMES[t] && NAMES[t][id]) Object.assign(NAMES[t][id], one); }
+            });
           };
         });
         return qb;
@@ -281,20 +294,9 @@
     }
     const pending = (what, how) => ls.set(PK, JSON.stringify({ what, how, at: Date.now() }));
     const fail = (email, msg, what) => add('login', 'auth_fail', what === 'signup' ? 'signup_fail' : 'login_fail', `${what === 'signup' ? '가입' : '로그인'} 실패: ${msg}`, { email }, false, { anon: true, email, now: true });
-    let viewName = '', viewAt = Date.now();
-    function view(label, detail) { viewName = label; viewAt = Date.now(); add(null, 'view', 'view', label, detail, true, { dedupe: 'v' + page(), gap: 2500 }); }
-    /* 누른 버튼 · 링크 */
-    document.addEventListener('click', e => {
-      const el = e.target && e.target.closest && e.target.closest('button,a,[role=button],summary,label,.srow,[data-a],[data-k],[data-t],[data-d],[data-c]');
-      if (!el || el.closest('[data-nolog]')) return;
-      let txt = (el.getAttribute('aria-label') || el.getAttribute('title') || el.innerText || el.textContent || '').replace(/\s+/g, ' ').trim();
-      if (!txt) return; txt = txt.slice(0, 60);
-      const href = el.getAttribute && el.getAttribute('href');
-      add(null, 'click', el.tagName.toLowerCase(), txt, href ? { href: href.slice(0, 120) } : null, true, { dedupe: 'c' + txt + page(), gap: 250 });
-    }, true);
-    window.addEventListener('error', e => add(null, 'error', 'js', `화면 오류: ${e.message || '알 수 없음'}`, { src: String(e.filename || '').slice(-80), line: e.lineno }, false, { dedupe: 'e' + e.message, gap: 30000 }));
-    window.addEventListener('unhandledrejection', e => { const m = e.reason && (e.reason.message || String(e.reason)); if (!m || /AbortError/.test(m)) return; add(null, 'error', 'promise', `처리 안 된 오류: ${m}`, null, false, { dedupe: 'p' + m, gap: 30000 }); });
-    window.addEventListener('pagehide', () => { const s = Math.round((Date.now() - T0) / 1000); if (s >= 5) add(null, 'view', 'leave', `나감 · ${s >= 60 ? mm(s) : s + '초'} 머묾`, { last: viewName }); });
+    const view = () => {}; // 화면 이동 · 누른 버튼은 남기지 않아요 (한 일만 간단히)
+    window.addEventListener('error', e => add(null, 'error', 'js', `화면 오류 · ${e.message || '알 수 없음'}`, { src: String(e.filename || '').slice(-80), line: e.lineno }, false, { dedupe: 'e' + e.message, gap: 30000 }));
+    window.addEventListener('unhandledrejection', e => { const m = e.reason && (e.reason.message || String(e.reason)); if (!m || /AbortError/.test(m)) return; add(null, 'error', 'promise', `화면 오류 · ${m}`, null, false, { dedupe: 'p' + m, gap: 30000 }); });
     document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') flush(); });
     window.addEventListener('online', () => schedule(500));
     return { add, flush, view, setClient, setUser, pending, fail, wrap, PARTS, device, slim };
