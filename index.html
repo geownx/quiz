@@ -355,6 +355,8 @@ h2{font-size:26px;letter-spacing:-.8px}
 .free .by{margin-top:10px!important;font-size:13px!important}
 .free .by b{color:#fff}
 .nl.adm{color:var(--acc);font-weight:700}
+a.nl{text-decoration:none}
+.nl.tools svg{color:var(--acc)}
 .cnt{display:inline-grid;place-items:center;min-width:19px;height:19px;border-radius:10px;background:var(--acc);color:#fff;font-size:11px;font-style:normal;font-weight:800;padding:0 5px;margin-left:4px}
 .adm-head{display:flex;align-items:flex-start;gap:12px}
 .adm-head>div{flex:1}
@@ -932,6 +934,7 @@ const IC = {
   diag: SVG('<path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/>'),
   user: SVG('<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>', 18),
   back: SVG('<path d="M15 18l-6-6 6-6"/>', 18),
+  tools: SVG('<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M14.5 17.5l2 2 4-4.5"/>', 18),
 };
 const KIND_L = { pdf: 'PDF 문제지', solve: '사이트 풀기', similar: '오답 복습', flash: '플래시카드', note: '요약 노트', mindmap: '마인드맵', analyze: '자료 분석' };
 const KIND_S = { pdf: 'PDF', solve: '풀기', similar: '오답 복습', flash: '플래시카드', note: '노트', mindmap: '마인드맵' };
@@ -1107,11 +1110,13 @@ function renderNav() {
   document.body.classList.toggle('dark', adm);
   const tc = document.querySelector('meta[name=theme-color]'); if (tc) tc.content = adm ? '#0d121c' : '#f6f4ef';
   const lg = $('#brand'); if (lg && !$('.admtag', lg)) lg.insertAdjacentHTML('beforeend', '<span class="admtag">ADMIN</span>');
-  if (!ME) { N.innerHTML = CONFIGURED ? `<button class="nl set" id="btnLogin">${IC.user}<span>로그인</span></button>` : ''; const b = $('#btnLogin'); if (b) b.onclick = () => { go('#/'); setTimeout(() => { const p = $('#authPanel'); if (p) p.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 60); }; return; }
+  const toolsLink = `<a class="nl tools" href="/tools/" title="공부도구 (체크리스트 등)" aria-label="공부도구">${IC.tools}<span class="hide-s">공부도구</span></a>`;
+  if (!ME) { N.innerHTML = CONFIGURED ? `${toolsLink}<button class="nl set" id="btnLogin">${IC.user}<span>로그인</span></button>` : ''; const b = $('#btnLogin'); if (b) b.onclick = () => { go('#/'); setTimeout(() => { const p = $('#authPanel'); if (p) p.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 60); }; return; }
   const ok = ME.status === 'approved';
   N.innerHTML = `${ok ? '<button class="nl" id="btnLib">학습 목록</button>' : ''}
     ${ok && !adm ? `<button class="nl bal ${hasSub() ? '' : (+ME.coins || 0) < 3 ? 'low' : ''}" id="btnCoin" title="내 코인">${hasSub() ? '<b>정액제</b>' : `코인 <b>${nfmt(ME.coins)}</b>`}</button>` : ''}
     ${adm ? `<button class="nl adm" id="btnAdmin">관리자${(+ME.pending || 0) + (+ME.reports || 0) ? `<i class="cnt">${(+ME.pending || 0) + (+ME.reports || 0)}</i>` : ''}</button>` : ''}
+    ${ok ? toolsLink : ''}
     <button class="nl set" id="btnAcct" aria-label="내 계정">${IC.user}<span class="hide-s">${esc(ME.name || (ME.email || '').split('@')[0] || '내 계정')}</span></button>`;
   const on = (id, fn) => { const b = $('#' + id); if (b) b.onclick = fn; };
   on('btnLib', () => go('#/'));
@@ -1686,9 +1691,18 @@ function renderAuthMail(P, mode, email) {
     } catch (x) { er.textContent = authMsg(x); b.disabled = false; }
   };
 }
+/* 공부도구(/tools/)에서 로그인하러 왔으면 로그인 뒤 그 화면으로 돌려보내요 (30분 안에만) */
+function backToTools() {
+  const r = LS.get('qm_after_login', null);
+  if (!r || !ME || ME.status !== 'approved') return false;
+  LS.del('qm_after_login');
+  if (Date.now() - (+r.at || 0) > 30 * 60e3 || !/^\/tools\/[\w\-/]*(\?[\w=&\-]*)?$/.test(String(r.to || ''))) return false;
+  location.replace(r.to); return true;
+}
 async function afterLogin(name) {
   await syncMe(name);
   if (ME) { if (ME.new && ME.coins) toast(`가입을 환영해요! 체험 ${ME.coins}코인을 드렸어요`, 3500); }
+  if (backToTools()) return;
   route(); resumeWatch();
 }
 function viewReset() {
@@ -3156,7 +3170,7 @@ async function boot() {
     c.auth.onAuthStateChange((ev, session) => {
       setTimeout(async () => {
         if (ev === 'PASSWORD_RECOVERY') { history.replaceState(null, '', siteUrl() + '#/reset'); return route(); }
-        if (ev === 'SIGNED_IN' && session && (!ME || ME.id !== session.user.id)) { await syncMe(); if (/access_token=/.test(location.hash) || !location.hash) history.replaceState(null, '', siteUrl() + '#/'); route(); resumeWatch(); }
+        if (ev === 'SIGNED_IN' && session && (!ME || ME.id !== session.user.id)) { await syncMe(); if (/access_token=/.test(location.hash) || !location.hash) history.replaceState(null, '', siteUrl() + '#/'); if (backToTools()) return; route(); resumeWatch(); }
         if (ev === 'SIGNED_OUT' && ME) { ME = null; renderNav(); route(); }
       }, 0);
     });
@@ -3170,6 +3184,7 @@ async function boot() {
       setTimeout(() => /Database error|saving new user/i.test(em) ? signupHelp('계정을 만드는 중에 문제가 생겼어요.') : toast(authMsg(em), 5000), 300);
     }
   }
+  if (backToTools()) return;
   route(); resumeWatch();
   try { const w = document.createElement('span'); w.style.cssText = 'position:fixed;left:-9999px'; w.textContent = '$x^2$'; document.body.append(w); renderMath(w); setTimeout(() => w.remove(), 3000); } catch (e) {}
 }
