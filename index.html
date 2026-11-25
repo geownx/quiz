@@ -989,8 +989,26 @@ body.dark .lgp{filter:brightness(.85) saturate(1.2)}
   .lgr{grid-template-columns:54px minmax(0,1fr);gap:4px 8px}
   .lgr .lgp{grid-column:2;justify-self:start}.lgr .lgm{grid-column:1/-1}
   .lg-meta{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .lg-who{grid-template-columns:40px 1fr}.lg-who #lgAll{grid-column:1/-1}
+  .lg-who{grid-template-columns:40px minmax(0,1fr) auto;padding:14px}.lg-who .un span{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 }
+.lg-views{margin:0 0 14px}
+.lg-who{margin-bottom:10px}
+.lg-subs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px}
+.lgs{display:inline-block;font-size:11.5px;font-weight:800;border-radius:7px;padding:2px 8px;white-space:nowrap;color:var(--c);background:color-mix(in srgb,var(--c) 14%,transparent)}
+.lgt{display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:5px;flex-wrap:wrap}
+.lgt>i{width:20px;height:20px;border-radius:6px;border:2px solid var(--line2);display:grid;place-items:center;font-style:normal;font-size:12px;font-weight:900;color:#fff;flex:0 0 auto}
+.lgt.on>i{background:var(--ok);border-color:var(--ok)}.lgt.on b{color:var(--mute);text-decoration:line-through}
+.lgt b{font-size:14.5px;font-weight:600;flex:1 1 140px;min-width:0;word-break:break-all}
+.lgt small{font-size:12.5px;color:var(--mute);white-space:nowrap}
+.lgtm{font-size:12.5px;color:var(--mute);font-variant-numeric:tabular-nums}
+.lgdd{font-size:12px;font-weight:800;color:var(--acc);background:var(--acc2);border-radius:7px;padding:2px 8px}
+.lg-day h5 small{font-weight:600;margin-left:6px;color:var(--acc)}
+.lg-meta3{grid-template-columns:repeat(3,minmax(0,1fr))!important;display:grid;gap:8px;margin-bottom:12px}
+.lg-bars{padding:14px 16px;display:grid;gap:8px;margin-bottom:6px}
+.lgb{display:grid;grid-template-columns:90px 1fr 74px;gap:10px;align-items:center;font-size:13px}
+.lgb span{font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.lgb b{text-align:right;font-size:13px}
+.lgb i{height:10px;border-radius:99px;background:var(--soft);overflow:hidden}.lgb em{display:block;height:100%;border-radius:99px}
+.lg-sch{padding:16px;display:grid;gap:4px;margin-bottom:6px}.lg-sch b{font-size:17px}.lg-sch span{color:var(--ink2);font-size:14px}
 /* 약한 파트 → 할 일 */
 .weak{border:1px solid var(--acc);background:var(--acc2);border-radius:16px;padding:14px;margin-top:12px}
 .weak b{display:block;font-size:15px}
@@ -3214,11 +3232,12 @@ function lgErrBox(e) {
     return `<div class="card lg-setup"><b>활동 기록 테이블이 아직 없어요</b><p>Supabase SQL Editor에서 <code>supabase_logs.sql</code>을 실행해 주세요. 맨 위의 관리자 이메일을 이 계정 이메일(<b>${esc(ME.email || '')}</b>)로 바꾸고 실행하면 돼요.</p><p class="note">오류: ${esc(m.trim())}</p></div>`;
   return `<p class="err">${esc((e && e.message) || String(e))}</p>`;
 }
+const LG_VIEWS = [['log', '활동 기록'], ['maker', '문제지'], ['todo', '체크리스트'], ['time', '공부 시간'], ['school', '학교생활']];
 async function adminLogs(uid) {
   const my = ++AD.seq, c = authClient(), box0 = adBox(my);
   if (!box0) return;
   if (!c) { box0.innerHTML = '<p class="note">이 화면에서는 기록을 불러올 수 없어요.</p>'; return; }
-  if (LG.uid !== (uid || null)) { LG.uid = uid || null; LG.part = 'all'; LG.date = ''; LG.open = new Set(); }
+  if (LG.uid !== (uid || null)) { LG.uid = uid || null; LG.part = 'all'; LG.date = ''; LG.open = new Set(); LG.view = 'log'; LG.tools = null; LG.days = 30; if (!uid) LG.who = null; }
   const today = new Date(); today.setHours(0, 0, 0, 0);
   let ok, sum;
   try {
@@ -3230,31 +3249,87 @@ async function adminLogs(uid) {
   LG.sum = {}; LG.dev = [];
   sum.forEach(r => { if (r.k[0] === '@') LG.dev.push(r); else LG.sum[r.k] = r; });
   const cnt = k => nfmt((LG.sum[k] && LG.sum[k].n) || 0);
-  const first = LG.sum.__first, all = LG.sum.__all;
-  const name = LG.uid ? (LG.rows.find(r => r.user_id === LG.uid) || {}) : null;
+  const all = LG.sum.__all;
+  if (LG.uid && !LG.who) { const r = LG.rows.find(x => x.user_id === LG.uid && (x.name || x.email)); if (r) LG.who = { name: r.name, email: r.email }; }
+  const who = LG.who || {}, logView = !LG.uid || LG.view === 'log';
   box.innerHTML = `<div class="lg" data-nolog>
-    ${LG.uid ? `<div class="card lg-who"><div class="av">${esc(((name && (name.name || name.email)) || '?').slice(0, 1))}</div>
-        <div class="un"><b id="lgName">${esc((name && name.name) || '회원')}</b><span id="lgMail">${esc((name && name.email) || '')}</span></div>
-        <button class="btn sm ghost" id="lgAll">← 전체 기록</button>
-        <div class="lg-meta"><div><span>처음 기록</span><b>${first && first.last_at ? fmtDT(first.last_at) : '-'}</b></div><div><span>마지막 활동</span><b>${all && all.last_at ? lgAgo(all.last_at) : '-'}</b></div><div><span>전체 기록</span><b>${cnt('__all')}건</b></div></div>
-        ${LG.dev.length ? `<div class="lg-dev"><span>쓴 기기</span>${LG.dev.sort((x, y) => y.n - x.n).map(d => `<i>${esc(d.k.slice(1))} <small>${nfmt(d.n)}</small></i>`).join('')}</div>` : ''}</div>`
-      : ''}
-    <div class="lg-parts">${[['all', '전체', '__all']].concat(LG_PARTS().map(([k, l]) => [k, l, k]), [['fail', '오류', '__fail']]).map(([k, l, sk]) =>
+    ${LG.uid ? `<div class="card lg-who"><div class="av" id="lgAv">${esc((who.name || who.email || '?').slice(0, 1))}</div>
+        <div class="un"><b id="lgName">${esc(who.name || '회원')}</b><span id="lgMail">${esc(who.email || '')}${all && all.last_at ? ` · 마지막 활동 ${lgAgo(all.last_at)}` : ''}</span></div>
+        <button class="btn sm ghost" id="lgAll">← 전체</button>
+        ${LG.dev.length ? `<div class="lg-dev">${LG.dev.sort((x, y) => y.n - x.n).map(d => `<i>${esc(d.k.slice(1))}</i>`).join('')}</div>` : ''}</div>
+      <div class="seg tabs lg-views">${LG_VIEWS.map(([k, l]) => `<button data-v="${k}" class="${LG.view === k ? 'on' : ''}">${l}</button>`).join('')}</div>` : ''}
+    ${logView ? `<div class="lg-parts">${[['all', '전체', '__all']].concat(LG_PARTS().map(([k, l]) => [k, l, k]), [['fail', '오류', '__fail']]).map(([k, l, sk]) =>
       `<button data-p="${k}" class="${LG.part === k ? 'on' : ''} ${k === 'fail' ? 'f' : ''}"><span>${esc(l)}</span><b>${cnt(sk)}</b></button>`).join('')}</div>
-    <p class="lg-hint">${LG.uid ? '숫자는 이 회원의 전체 기록 수' : '숫자는 오늘 기록 수 · 이름을 누르면 그 회원 기록만 보여요'}</p>
+    <p class="lg-hint">${LG.uid ? '숫자는 이 회원의 전체 기록 수' : '숫자는 오늘 기록 수 · 이름을 누르면 그 회원이 한 것을 다 볼 수 있어요'}</p>
     <div class="lg-tools">
       ${LG.uid ? '' : `<input type="text" id="lgQ" placeholder="이름 · 이메일 검색" value="${esc(LG.q)}">`}
       <input type="date" id="lgD" value="${esc(LG.date)}" title="이 날짜까지의 기록">
       <button class="btn sm" id="lgGo">새로고침</button>
     </div>
-    <div id="lgList"><div class="note">불러오는 중…</div></div>
+    <div id="lgList"><div class="note">불러오는 중…</div></div>` : '<div id="lgBody"><div class="note">불러오는 중…</div></div>'}
   </div>`;
-  $$('.lg-parts button', box).forEach(b => b.onclick = () => { LG.part = b.dataset.p; $$('.lg-parts button', box).forEach(x => x.classList.toggle('on', x === b)); lgLoad(my); });
   const all2 = $('#lgAll', box); if (all2) all2.onclick = () => go('#/admin/logs');
+  $$('.lg-views button', box).forEach(b => b.onclick = () => { LG.view = b.dataset.v; adminLogs(LG.uid); });
+  { const tv = $('.lg-views', box), on = $('.lg-views .on', box); if (tv && on) tv.scrollLeft = on.offsetLeft - 24; }
+  if (!logView) return lgView(my);
+  $$('.lg-parts button', box).forEach(b => b.onclick = () => { LG.part = b.dataset.p; $$('.lg-parts button', box).forEach(x => x.classList.toggle('on', x === b)); lgLoad(my); });
   const qi = $('#lgQ', box); if (qi) qi.onkeydown = e => { if (e.key === 'Enter') { LG.q = qi.value.trim(); lgLoad(my); } };
   $('#lgD', box).onchange = e => { LG.date = e.target.value; lgLoad(my); };
   $('#lgGo', box).onclick = () => { if (qi) LG.q = qi.value.trim(); adminLogs(LG.uid); };
   lgLoad(my);
+}
+/* 회원별: 문제지 · 체크리스트 · 공부 시간 · 학교생활 (그 회원이 실제로 만든 내용) */
+const lgHM = s => { s = Math.round(s || 0); const h = Math.floor(s / 3600), m = Math.round(s % 3600 / 60); return h ? `${h}시간${m ? ` ${m}분` : ''}` : `${Math.max(s ? 1 : 0, m)}분`; };
+const lgDayK = k => LG_DAY(new Date(k + 'T00:00:00'));
+const lgHHMM = iso => { const d = new Date(iso); return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`; };
+async function lgView(my) {
+  const B = () => my === AD.seq && $('#lgBody');
+  try {
+    if (LG.view === 'maker') {
+      if (!LG.who || !LG.who.email) { B().innerHTML = '<p class="note">이 회원의 이메일을 몰라서 찾을 수 없어요. 회원 탭에서 [활동 기록]으로 들어와 주세요.</p>'; return; }
+      const list = (await api('adminItems', { q: LG.who.email })).filter(x => !x.email || x.email === LG.who.email);
+      if (!B()) return;
+      B().innerHTML = list.length ? `<p class="lg-hint">학습 ${list.length}개 · 누르면 올린 자료, 만든 문제지, 푼 기록이 보여요</p><div class="slist">${list.map(x => `<button class="srow" data-id="${x.id}">
+        <div class="st"><b>${esc(x.title)}</b>${x.deleted ? '<span class="tg bad">지운 학습</span>' : ''}</div>
+        <div class="sm2"><span>${fmtDT(x.updated_at)}</span><span>자료 ${x.materials} · 만든 것 ${x.outputs} · 풀기 ${x.attempts} · PDF ${x.exports}</span></div></button>`).join('')}</div>` : '<p class="note">만든 학습이 없어요.</p>';
+      $$('.srow', B()).forEach(b => b.onclick = () => adminItemDetail(b.dataset.id));
+      return;
+    }
+    if (!LG.tools || LG.tools.days !== LG.days) {
+      const { data, error } = await authClient().rpc('qm_admin_tools', { p_user: LG.uid, p_days: LG.days });
+      if (error) throw error; if (!data) throw new Error('볼 수 있는 권한이 없어요.');
+      LG.tools = Object.assign(data, { days: LG.days });
+    }
+    const box = B(); if (!box) return;
+    const T = LG.tools, SJ = {}; (T.subjects || []).forEach(x => SJ[x.id] = x);
+    const chip = id => SJ[id] ? `<span class="lgs" style="--c:${esc(SJ[id].color)}">${esc(SJ[id].name)}</span>` : '';
+    const more = LG.days < 365 ? `<button class="btn lg-more" id="lgOlder">더 이전 기록 보기 (최근 ${LG.days < 90 ? 90 : 365}일)</button>` : '';
+    const byDay = rows => { const m = new Map(); rows.forEach(r => { if (!m.has(r.day)) m.set(r.day, []); m.get(r.day).push(r); }); return [...m.entries()].sort((a, b) => a[0] < b[0] ? 1 : -1); };
+    if (LG.view === 'todo') {
+      const days = byDay(T.tasks || []);
+      box.innerHTML = `${(T.subjects || []).length ? `<div class="lg-subs">${T.subjects.map(x => chip(x.id)).join('')}</div>` : ''}
+        ${days.length ? days.map(([d, ts]) => `<div class="lg-day"><h5>${lgDayK(d)} <small>${ts.filter(t => t.done).length}/${ts.length} 완료</small></h5>
+          ${ts.map(t => `<div class="lgt ${t.done ? 'on' : ''}"><i>${t.done ? '✓' : ''}</i>${chip(t.subject_id)}<b>${esc(t.title)}</b><small>${t.minutes ? t.minutes + '분' : ''}${t.link_title ? ` · 📝 ${esc(t.link_title)}` : ''}</small></div>`).join('')}</div>`).join('')
+        : `<p class="note">최근 ${LG.days}일에 적은 할 일이 없어요.</p>`}${more}`;
+    } else if (LG.view === 'time') {
+      const ss = T.sessions || [], tk = new Date(); const key = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+      const w = new Date(); w.setDate(w.getDate() - 6);
+      const sum = f => ss.filter(f).reduce((a, x) => a + (+x.seconds || 0), 0);
+      const bySub = {}; ss.forEach(x => { const k = x.mode === 'solve' ? '__solve' : x.subject_id || '__none'; bySub[k] = (bySub[k] || 0) + (+x.seconds || 0); });
+      const tot = sum(() => true) || 1;
+      box.innerHTML = `<div class="lg-meta lg-meta3"><div><span>오늘</span><b>${lgHM(sum(x => x.day === key(tk)))}</b></div><div><span>최근 7일</span><b>${lgHM(sum(x => x.day >= key(w)))}</b></div><div><span>최근 ${LG.days}일</span><b>${lgHM(sum(() => true))}</b></div></div>
+        ${Object.keys(bySub).length ? `<div class="card lg-bars">${Object.entries(bySub).sort((a, b) => b[1] - a[1]).map(([k, v]) => `<div class="lgb"><span>${k === '__solve' ? '문제 풀이' : k === '__none' ? '과목 없음' : esc((SJ[k] || {}).name || '삭제한 과목')}</span><i><em style="width:${Math.max(3, v / tot * 100)}%;background:${k[0] === '_' ? 'var(--acc)' : esc((SJ[k] || {}).color || 'var(--acc)')}"></em></i><b>${lgHM(v)}</b></div>`).join('')}</div>` : ''}
+        ${ss.length ? byDay(ss).map(([d, rs]) => `<div class="lg-day"><h5>${lgDayK(d)} <small>${lgHM(rs.reduce((a, x) => a + (+x.seconds || 0), 0))}</small></h5>
+          ${rs.map(x => `<div class="lgt"><span class="lgtm">${lgHHMM(x.started_at)}</span>${x.mode === 'solve' ? `<span class="lgs" style="--c:var(--acc)">문제 풀이</span><b>${esc(x.ref_title || '')}</b>` : `${chip(x.subject_id) || '<span class="lgs" style="--c:#9aa">과목 없음</span>'}<b>${x.mode === 'pomodoro' ? '뽀모도로' : '스톱워치'}</b>`}<small>${lgHM(x.seconds)}${x.q_total ? ` · ${x.q_correct || 0}/${x.q_total} 정답` : ''}</small></div>`).join('')}</div>`).join('')
+        : `<p class="note">최근 ${LG.days}일에 공부 시간 기록이 없어요.</p>`}${more}`;
+    } else {
+      const p = T.profile, dd = T.ddays || [], t0 = new Date(); t0.setHours(0, 0, 0, 0);
+      const dn = k => { const n = Math.round((new Date(k + 'T00:00:00') - t0) / 864e5); return n === 0 ? 'D-DAY' : n > 0 ? `D-${n}` : `D+${-n}`; };
+      box.innerHTML = `<div class="card lg-sch">${p && p.school_name ? `<b>${esc(p.school_name)}</b><span>${p.grade ? p.grade + '학년 ' : ''}${p.class_nm ? esc(p.class_nm) + '반' : ''}${p.allergies && p.allergies.length ? ` · 알레르기 표시 ${p.allergies.length}개` : ''}</span>` : '<span>학교를 아직 안 골랐어요.</span>'}</div>
+        <div class="lg-day"><h5>D-day <small>${dd.length}개</small></h5>${dd.length ? dd.map(x => `<div class="lgt"><span class="lgdd">${dn(x.day)}</span><b>${esc(x.title)}</b><small>${esc(x.day)}</small></div>`).join('') : '<p class="note">등록한 D-day가 없어요.</p>'}</div>`;
+    }
+    const ol = $('#lgOlder', box); if (ol) ol.onclick = () => { LG.days = LG.days < 90 ? 90 : 365; ol.disabled = true; ol.textContent = '불러오는 중…'; lgView(my); };
+  } catch (e) { if (B()) B().innerHTML = /qm_admin_tools|PGRST202|42883|Could not find the function/i.test((e.code || '') + (e.message || '')) ? `<div class="card lg-setup"><b>한 가지 SQL이 더 필요해요</b><p>Supabase SQL Editor에서 <code>supabase_admin_view.sql</code>을 실행해 주세요. 바꿀 곳 없이 그대로 실행하면 돼요.</p></div>` : lgErrBox(e); }
 }
 async function lgFetch(append) {
   const c = authClient();
@@ -3274,7 +3349,7 @@ async function lgLoad(my, append) {
   if (!append && L()) L().innerHTML = '<div class="note">불러오는 중…</div>';
   try { await lgFetch(append); } catch (e) { if (L()) L().innerHTML = lgErrBox(e); return; }
   const box = L(); if (!box) return;
-  if (LG.uid) { const r = LG.rows.find(x => x.name || x.email); if (r) { const n = $('#lgName'), m = $('#lgMail'), av = $('.lg-who .av'); if (n) n.textContent = r.name || '(이름 없음)'; if (m) m.textContent = r.email || ''; if (av) av.textContent = (r.name || r.email || '?').slice(0, 1); } }
+  if (LG.uid && !LG.who) { const r = LG.rows.find(x => x.name || x.email); if (r) { LG.who = { name: r.name, email: r.email }; const n = $('#lgName'), av = $('#lgAv'); if (n) n.textContent = r.name || '(이름 없음)'; if (av) av.textContent = (r.name || r.email || '?').slice(0, 1); } }
   if (!LG.rows.length) { box.innerHTML = '<p class="note">기록이 없어요.</p>'; return; }
   let day = '', html = '';
   LG.rows.forEach((r, i) => {
@@ -3289,7 +3364,7 @@ async function lgLoad(my, append) {
   html += '</div>';
   box.innerHTML = html + (LG.more ? '<button class="btn lg-more" id="lgMore">더 보기</button>' : `<p class="lg-end">${nfmt(LG.rows.length)}건 · 끝</p>`);
   $$('.lgr', box).forEach(el => el.onclick = e => {
-    const a = e.target.closest('a[data-u]'); if (a) { e.stopPropagation(); return go('#/admin/logs/' + a.dataset.u); }
+    const a = e.target.closest('a[data-u]'); if (a) { e.stopPropagation(); const r0 = LG.rows[+el.dataset.i]; LG.uid = null; LG.who = { name: r0.name, email: r0.email }; return go('#/admin/logs/' + a.dataset.u); }
     if (e.target.closest('.lgd')) return;
     const r = LG.rows[+el.dataset.i]; if (LG.open.has(r.id)) LG.open.delete(r.id); else LG.open.add(r.id);
     el.classList.toggle('open'); const old = $('.lgd', el); if (old) old.remove(); else el.insertAdjacentHTML('beforeend', lgDetail(r));
@@ -3336,7 +3411,7 @@ async function adminUsers() {
     };
     const sb = $('[data-a="sub"]', c); if (sb) sb.onclick = () => subModal(u);
     const ib = $('[data-a="items"]', c); if (ib) ib.onclick = () => { AD.q = u.email || ''; go('#/admin/items'); };
-    const lb = $('[data-a="logs"]', c); if (lb) lb.onclick = () => go('#/admin/logs/' + u.id);
+    const lb = $('[data-a="logs"]', c); if (lb) lb.onclick = () => { LG.who = { name: u.name, email: u.email }; LG.uid = null; go('#/admin/logs/' + u.id); };
   });
 }
 function grantModal(u) {
