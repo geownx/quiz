@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>학교생활 · 문제지메이커</title>
+<meta name="description" content="우리 학교 급식, 우리 반 시간표, 학사일정과 시험 D-day를 한 화면에서.">
+<meta name="theme-color" content="#f6f7fb">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="문제지메이커">
+<meta property="og:title" content="학교생활 · 문제지메이커">
+<meta property="og:description" content="급식, 시간표, 학사일정과 시험 D-day를 한 화면에서.">
+<meta property="og:url" content="https://quizmaker.pro/tools/school/">
+<meta property="og:image" content="https://quizmaker.pro/og.png">
+<link rel="manifest" href="/tools/manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="/tools/icons/icon-192.png">
+<link rel="apple-touch-icon" href="/tools/icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="공부도구">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="/tools/common.css">
+<style>
+.pbar{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px 14px;margin-bottom:12px}
+.pbar .pi{width:38px;height:38px;border-radius:12px;background:var(--acc2);display:grid;place-items:center;font-size:19px;flex:0 0 auto}
+.pbar div{flex:1;min-width:0}
+.pbar b{display:block;font-size:15.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pbar span{font-size:12.5px;color:var(--mute)}
+/* D-day */
+.dd{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:12px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.dd::-webkit-scrollbar{display:none}
+.dc{flex:0 0 auto;min-width:112px;max-width:150px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px 12px;position:relative;text-align:left}
+.dc b{display:block;font-size:20px;letter-spacing:-.5px;color:var(--acc);font-variant-numeric:tabular-nums}
+.dc span{display:block;font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
+.dc small{display:block;font-size:11.5px;color:var(--mute);margin-top:2px}
+.dc.auto{background:var(--acc2)}
+.dc.soon b{color:var(--bad)}
+.dc.add{display:grid;place-items:center;color:var(--mute);font-weight:700;font-size:14px;border-style:dashed;cursor:pointer;min-width:90px}
+.dc .x{position:absolute;top:4px;right:4px;border:0;background:none;color:var(--mute);font-size:13px;cursor:pointer;width:24px;height:24px;border-radius:6px}
+/* 날짜 */
+.dnav{display:flex;align-items:center;justify-content:space-between;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:6px 10px;margin-bottom:12px}
+.dnav>button{background:none;border:0;font-size:22px;width:40px;height:40px;border-radius:10px;cursor:pointer;color:var(--ink)}
+.dlab{text-align:center}
+.dlab strong{display:block;font-size:16px}
+.dlab span{font-size:12px;color:var(--mute);font-weight:600;cursor:pointer}
+.dlab span.rel{color:var(--acc);cursor:default}
+/* 카드 */
+.ch{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.ch b{font-size:16px;flex:1}
+.seg{display:inline-flex;background:var(--soft);border-radius:10px;padding:3px;gap:2px}
+.seg button{border:0;background:none;border-radius:8px;padding:5px 10px;font-size:12.5px;font-weight:700;color:var(--mute);cursor:pointer}
+.seg button.on{background:var(--card);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.tt{list-style:none;margin:0;padding:0}
+.tt li{display:flex;align-items:center;gap:10px;padding:8px 0;border-top:1px solid var(--line)}
+.tt li:first-child{border-top:0}
+.tt .pn{width:46px;font-size:12.5px;color:var(--mute);font-weight:700;flex:0 0 auto}
+.tt .sj{flex:1;font-size:15px;font-weight:600;display:flex;align-items:center;gap:8px}
+.tt .sj i{width:8px;height:8px;border-radius:50%;background:var(--c,var(--line2));flex:0 0 auto}
+.wk{display:grid;grid-template-columns:28px repeat(5,minmax(0,1fr));gap:3px;font-size:12px}
+.wk .h{text-align:center;font-weight:700;color:var(--mute);padding:4px 0}
+.wk .h.today{color:var(--acc)}
+.wk .p{color:var(--mute);font-weight:700;display:grid;place-items:center}
+.wk .c{background:var(--cb,var(--soft));color:var(--ink);border-radius:8px;padding:7px 2px;text-align:center;font-weight:600;line-height:1.25;word-break:keep-all;overflow-wrap:anywhere;min-height:34px;display:grid;place-items:center}
+.wk .c.e{background:transparent}
+.wk .c.today{box-shadow:inset 0 0 0 1.5px var(--acc)}
+.meal{padding:4px 0 2px}
+.meal+.meal{border-top:1px solid var(--line);margin-top:8px;padding-top:10px}
+.meal h4{margin:0 0 6px;font-size:13px;color:var(--acc);display:flex;gap:8px;align-items:baseline}
+.meal h4 small{color:var(--mute);font-weight:500}
+.dishes{display:flex;flex-wrap:wrap;gap:6px}
+.dish{font-size:14.5px;background:var(--soft);border-radius:9px;padding:6px 10px}
+.dish.warn{background:#ffe9ec;color:#c4243a;font-weight:700}
+body.dark .dish.warn{background:#3a1d24;color:#ff8b9b}
+.dish sup{font-size:10px;color:var(--mute);margin-left:3px}
+.dish.warn sup{color:inherit}
+.empty2{color:var(--mute);font-size:14px;text-align:center;padding:16px 0}
+.sch{list-style:none;margin:0;padding:0}
+.sch li{display:flex;gap:10px;align-items:center;padding:8px 0;border-top:1px solid var(--line);font-size:14.5px}
+.sch li:first-child{border-top:0}
+.sch .d{width:64px;font-size:12.5px;color:var(--mute);font-weight:700;flex:0 0 auto}
+.sch .n{flex:1;min-width:0}
+.sch .t{font-size:11px;font-weight:800;border-radius:6px;padding:2px 6px}
+.sch .t.off{background:#ffe9ec;color:#c4243a}.sch .t.ex{background:var(--acc2);color:var(--acc)}
+body.dark .sch .t.off{background:#3a1d24;color:#ff8b9b}
+.sch li.past{opacity:.45}
+.mnav{display:flex;align-items:center;gap:4px}
+.mnav button{border:0;background:var(--soft);border-radius:8px;width:28px;height:28px;cursor:pointer;color:var(--ink)}
+.mnav span{font-size:13px;font-weight:700;min-width:58px;text-align:center}
+.link{border:0;background:none;color:var(--acc);font-size:13px;font-weight:700;cursor:pointer;padding:4px}
+/* 설정 */
+.res{list-style:none;margin:10px 0 0;padding:0;max-height:46vh;overflow:auto}
+.res li{padding:10px 4px;border-top:1px solid var(--line);cursor:pointer;border-radius:8px}
+.res li:hover{background:var(--soft)}
+.res li b{display:block;font-size:15px}
+.res li span{font-size:12.5px;color:var(--mute)}
+.pick{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.pick button{min-width:56px;border:1.5px solid var(--line);background:var(--card);border-radius:12px;padding:10px 12px;font-weight:700;cursor:pointer;color:var(--ink)}
+.pick button.on{border-color:var(--acc);background:var(--acc2);color:var(--acc)}
+.lb{display:block;font-weight:700;font-size:13.5px;margin:16px 0 6px;color:var(--ink2)}
+.al{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.al button{border:1.5px solid var(--line);background:var(--card);border-radius:999px;padding:6px 11px;font-size:13px;font-weight:600;cursor:pointer;color:var(--ink2)}
+.al button.on{border-color:#e0445a;background:#ffe9ec;color:#c4243a}
+body.dark .al button.on{background:#3a1d24;color:#ff8b9b}
+</style>
+</head>
+<body>
+<main id="app"></main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="/tools/common.js"></script>
+<script src="/tools/checklist/data.js"></script>
+<script src="/tools/school/school.js"></script>
+<script>
+'use strict';
+const { $, $$, esc, toast, modal, SC, CL, LS } = QT;
+const V = { p: null, day: QT.todayKey(), ttMode: LS.get('qt_sc_ttmode', 'day'), meals: {}, tt: {}, sch: [], exams: [], ddays: [], month: QT.todayKey().slice(0, 7), subs: [] };
+const rgba = (hex, a) => { const n = parseInt(String(hex).slice(1), 16); return `rgba(${n >> 16 & 255},${n >> 8 & 255},${n & 255},${a})`; };
+/* 체크리스트 과목 색을 시간표에도 (예: '수학' 과목 → '수학Ⅰ' 수업) */
+function subColor(name) {
+  const n = String(name).replace(/\s/g, '');
+  const s = V.subs.slice().sort((a, b) => b.name.length - a.name.length).find(x => n.includes(x.name.replace(/\s/g, '')) || x.name.replace(/\s/g, '').includes(n));
+  return s ? s.color : null;
+}
+const isWeekend = k => [0, 6].includes(QT.parseKey(k).getDay());
+
+/* =============== 학교 설정 =============== */
+function setupView(first) {
+  const st = { school: V.p && V.p.school_code ? { ...V.p } : null, grade: V.p && V.p.grade, cls: V.p && V.p.class_nm };
+  const box = first ? $('#body') : null;
+  const html = `${first ? '' : '<h3>학교 · 반 바꾸기</h3>'}
+    <div class="${first ? 'card' : ''}" style="${first ? 'padding:16px' : ''}">
+      ${first ? '<b style="font-size:16px">우리 학교를 골라 주세요</b><p class="sub" style="margin:4px 0 0">학교와 반을 고르면 급식 · 시간표 · 학사일정이 자동으로 나와요.</p>' : ''}
+      <label class="lb">학교</label>
+      <form class="row" id="sF" style="flex-wrap:nowrap"><input type="text" id="sQ" placeholder="학교 이름 (예: 서울고)" autocomplete="off" enterkeyhint="search"><button class="btn acc" type="submit">찾기</button></form>
+      <div id="sSel"></div><ul class="res" id="sRes"></ul>
+      <div id="sGC"></div>
+      <button class="btn acc" id="sSave" style="width:100%;margin-top:18px" disabled>저장</button>
+    </div>`;
+  let root;
+  if (first) { box.innerHTML = html; root = box; } else root = $('.box', modal(html));
+  const drawSel = () => {
+    $('#sSel', root).innerHTML = st.school ? `<div class="pbar" style="margin:10px 0 0"><span class="pi">🏫</span><div><b>${esc(st.school.school_name)}</b><span>${esc(st.school.school_kind)}${st.school.addr ? ' · ' + esc(st.school.addr) : ''}</span></div></div>` : '';
+    const gc = $('#sGC', root);
+    if (!st.school) { gc.innerHTML = ''; return upd(); }
+    gc.innerHTML = `<label class="lb">학년</label><div class="pick" id="sG">${Array.from({ length: SC.maxGrade(st.school.school_kind) }, (_, i) => `<button type="button" data-g="${i + 1}" class="${st.grade === i + 1 ? 'on' : ''}">${i + 1}학년</button>`).join('')}</div>
+      <div id="sC"></div>`;
+    $$('#sG [data-g]', root).forEach(b => b.onclick = () => { st.grade = +b.dataset.g; st.cls = null; drawSel(); });
+    if (st.grade) drawClasses();
+    upd();
+  };
+  const drawClasses = async () => {
+    const c = $('#sC', root); c.innerHTML = '<label class="lb">반</label><p class="note">반 목록을 불러오는 중…</p>';
+    let list = [];
+    try { list = await SC.classes(st.school, st.grade); } catch (e) { toast(SC.errMsg(e), 3500); }
+    if (!$('#sC', root)) return;
+    c.innerHTML = `<label class="lb">반</label>${list.length ? `<div class="pick" id="sCl">${list.map(n => `<button type="button" data-c="${esc(n)}" class="${st.cls === n ? 'on' : ''}">${esc(n)}${/^\d+$/.test(n) ? '반' : ''}</button>`).join('')}</div>`
+      : `<p class="note" style="margin-bottom:8px">반 목록을 못 찾았어요. 직접 적어 주세요.</p><input type="text" id="sCi" maxlength="10" placeholder="예: 3" value="${esc(st.cls || '')}">`}`;
+    $$('#sCl [data-c]', root).forEach(b => b.onclick = () => { st.cls = b.dataset.c; $$('#sCl [data-c]', root).forEach(x => x.classList.toggle('on', x === b)); upd(); });
+    const ci = $('#sCi', root); if (ci) ci.oninput = () => { st.cls = ci.value.trim(); upd(); };
+  };
+  const upd = () => { $('#sSave', root).disabled = !(st.school && st.grade && st.cls); };
+  $('#sF', root).onsubmit = async e => {
+    e.preventDefault(); const q = $('#sQ', root).value.trim(); if (q.length < 2) return toast('학교 이름을 두 글자 이상 적어 주세요');
+    const R = $('#sRes', root); R.innerHTML = '<li style="cursor:default;color:var(--mute)">찾는 중…</li>';
+    try {
+      const list = await SC.searchSchools(q);
+      R.innerHTML = list.length ? list.map((s, i) => `<li data-i="${i}"><b>${esc(s.school_name)}</b><span>${esc(s.school_kind)} · ${esc(s.edu_name)}${s.addr ? ' · ' + esc(s.addr) : ''}</span></li>`).join('') : '<li style="cursor:default;color:var(--mute)">찾는 학교가 없어요. 이름을 다시 확인해 주세요.</li>';
+      $$('#sRes [data-i]', root).forEach(li => li.onclick = () => { st.school = list[+li.dataset.i]; st.grade = null; st.cls = null; R.innerHTML = ''; drawSel(); });
+    } catch (x) { R.innerHTML = `<li style="cursor:default" class="err">${esc(SC.errMsg(x))}</li>`; }
+  };
+  $('#sSave', root).onclick = async () => {
+    const b = $('#sSave', root); b.disabled = true; b.textContent = '저장하는 중…';
+    try { V.p = await SC.saveProfile({ ...st.school, grade: st.grade, class_nm: st.cls, allergies: (V.p && V.p.allergies) || [] }); const m = root.closest('.modal'); if (m) m.remove(); toast('저장했어요'); main(); }
+    catch (e) { toast(SC.errMsg(e), 3500); b.disabled = false; b.textContent = '저장'; }
+  };
+  drawSel();
+}
+function allergyModal() {
+  const sel = new Set((V.p && V.p.allergies) || []);
+  const m = modal(`<h3>알레르기 표시</h3><p class="sub" style="margin:4px 0 0">고른 재료가 들어간 메뉴를 빨갛게 표시해요.</p>
+    <div class="al" id="aL">${SC.ALLERGY.map((n, i) => i ? `<button type="button" data-a="${i}" class="${sel.has(i) ? 'on' : ''}">${i}. ${n}</button>` : '').join('')}</div>
+    <button class="btn acc" id="aS" style="width:100%;margin-top:18px">저장</button>`);
+  $$('#aL [data-a]', m).forEach(b => b.onclick = () => { const i = +b.dataset.a; sel.has(i) ? sel.delete(i) : sel.add(i); b.classList.toggle('on'); });
+  $('#aS', m).onclick = async () => { try { V.p = await SC.saveProfile({ ...V.p, allergies: [...sel].sort((a, b) => a - b) }); m.remove(); drawMeal(); toast('저장했어요'); } catch (e) { toast(SC.errMsg(e), 3500); } };
+}
+
+/* =============== 화면 =============== */
+function shell() {
+  const p = V.p;
+  $('#body').innerHTML = `
+    <div class="pbar"><span class="pi">🏫</span><div><b>${esc(p.school_name)}</b><span>${p.grade}학년 ${esc(p.class_nm)}${/^\d+$/.test(p.class_nm) ? '반' : ''} · ${esc(p.school_kind)}</span></div><button class="btn sm" id="pEdit">변경</button></div>
+    <div class="dd" id="dd"></div>
+    <div class="dnav"><button id="dP" aria-label="이전 날">‹</button><div class="dlab"><strong id="dM"></strong><span id="dR"></span></div><button id="dN" aria-label="다음 날">›</button></div>
+    <div class="card"><div class="ch"><b>⏰ 시간표</b><div class="seg" id="ttSeg"><button data-m="day">하루</button><button data-m="week">이번 주</button></div></div><div id="tt"></div></div>
+    <div class="card"><div class="ch"><b>🍱 급식</b><button class="link" id="mAl">알레르기 설정</button></div><div id="meal"></div></div>
+    <div class="card"><div class="ch"><b>🗓️ 학사일정</b><div class="mnav"><button id="mP" aria-label="이전 달">‹</button><span id="mL"></span><button id="mN" aria-label="다음 달">›</button></div></div><ul class="sch" id="sch"></ul></div>
+    <p class="note" style="margin-top:4px">급식 · 시간표 · 학사일정은 학교가 나이스에 올린 자료예요. 학교가 아직 안 올렸으면 비어 있을 수 있어요.</p>
+    <div id="inst"></div>`;
+  $('#pEdit').onclick = () => setupView(false);
+  $('#mAl').onclick = allergyModal;
+  $('#dP').onclick = () => setDay(QT.shiftKey(V.day, -1));
+  $('#dN').onclick = () => setDay(QT.shiftKey(V.day, 1));
+  $('#dR').onclick = () => { if (V.day !== QT.todayKey()) setDay(QT.todayKey()); };
+  $$('#ttSeg button').forEach(b => b.onclick = () => { V.ttMode = b.dataset.m; LS.set('qt_sc_ttmode', V.ttMode); drawTT(); });
+  $('#mP').onclick = () => setMonth(-1); $('#mN').onclick = () => setMonth(1);
+  QT.installCard($('#inst'));
+}
+function drawDay() {
+  const pd = QT.prettyDate(V.day), today = V.day === QT.todayKey();
+  $('#dM').textContent = pd.main;
+  const r = $('#dR'); r.className = today ? 'rel' : ''; r.textContent = today ? '오늘' : (pd.rel ? pd.rel + ' · ' : '') + '오늘로 이동';
+}
+function drawDD() {
+  const t = QT.todayKey();
+  const all = [...V.exams.filter(e => e.last >= t).map(e => ({ ...e })), ...V.ddays.map(d => ({ ...d }))].filter(x => (x.last || x.day) >= t).sort((a, b) => a.day < b.day ? -1 : 1);
+  $('#dd').innerHTML = all.map(x => { const n = Math.round((QT.parseKey(x.day) - QT.parseKey(t)) / 86400e3);
+    return `<div class="dc ${x.auto ? 'auto' : ''} ${n <= 7 ? 'soon' : ''}">${x.auto ? '' : `<button class="x" data-del="${x.id}" aria-label="삭제">✕</button>`}<b>${n < 0 && x.last >= t ? '진행 중' : SC.dLabel(x.day)}</b><span>${esc(x.title)}</span><small>${x.day.slice(5).replace('-', '/')}${x.auto ? ' · 학교 일정' : ''}</small></div>`; }).join('')
+    + `<button class="dc add" id="ddAdd">＋ D-day</button>`;
+  $('#ddAdd').onclick = addDday;
+  $$('#dd [data-del]').forEach(b => b.onclick = async () => { if (!confirm('이 D-day를 지울까요?')) return; try { await SC.deleteDday(b.dataset.del); V.ddays = V.ddays.filter(d => d.id !== b.dataset.del); drawDD(); } catch (e) { toast(SC.errMsg(e), 3500); } });
+}
+function addDday() {
+  const m = modal(`<h3>D-day 추가</h3><p class="sub" style="margin:4px 0 0">수능, 모의고사, 수행평가, 대회 같은 날짜를 넣어 두세요. 학교 시험은 학사일정에서 자동으로 나와요.</p>
+    <label class="lb">이름</label><input type="text" id="ddT" maxlength="30" placeholder="예: 수능, 11월 모의고사">
+    <div class="pick" id="ddQ" style="margin-top:8px"><button type="button" data-t="수능">수능</button><button type="button" data-t="모의고사">모의고사</button><button type="button" data-t="수행평가">수행평가</button></div>
+    <label class="lb">날짜</label><input type="date" id="ddD" value="${QT.shiftKey(QT.todayKey(), 7)}" min="${QT.todayKey()}" style="width:100%;border:1px solid var(--line);background:var(--bg);border-radius:12px;padding:11px 12px;font-size:15px">
+    <button class="btn acc" id="ddS" style="width:100%;margin-top:18px">추가</button>`);
+  $$('#ddQ [data-t]', m).forEach(b => b.onclick = () => { $('#ddT', m).value = b.dataset.t; });
+  $('#ddS', m).onclick = async () => {
+    const t = $('#ddT', m).value.trim(), d = $('#ddD', m).value;
+    if (!t) return toast('이름을 적어 주세요'); if (!QT.isKey(d)) return toast('날짜를 골라 주세요');
+    try { V.ddays.push(await SC.addDday(t, d)); m.remove(); drawDD(); toast('D-day를 추가했어요'); } catch (e) { toast(SC.errMsg(e), 3500); }
+  };
+}
+function drawTT() {
+  $$('#ttSeg button').forEach(b => b.classList.toggle('on', b.dataset.m === V.ttMode));
+  const box = $('#tt');
+  if (V.ttErr) { box.innerHTML = `<p class="empty2 err">${esc(V.ttErr)}</p>`; return; }
+  if (V.ttMode === 'week') {
+    const w = SC.weekRange(V.day), max = Math.max(0, ...w.days.map(d => (V.tt[d] || []).reduce((m, x) => Math.max(m, x.p), 0)));
+    if (!max) { box.innerHTML = `<p class="empty2">${V.ttLoading ? '불러오는 중…' : '이번 주 시간표가 없어요'}</p>`; return; }
+    let h = '<div class="wk"><div></div>' + w.days.map(d => `<div class="h ${d === QT.todayKey() ? 'today' : ''}">${'일월화수목금토'[QT.parseKey(d).getDay()]}</div>`).join('');
+    for (let p = 1; p <= max; p++) {
+      h += `<div class="p">${p}</div>` + w.days.map(d => { const x = (V.tt[d] || []).find(y => y.p === p); if (!x) return '<div class="c e"></div>'; const c = subColor(x.s);
+        return `<div class="c ${d === QT.todayKey() ? 'today' : ''}" style="${c ? `--cb:${rgba(c, .16)}` : ''}">${esc(x.s)}</div>`; }).join('');
+    }
+    box.innerHTML = h + '</div>'; return;
+  }
+  const list = V.tt[V.day] || [];
+  box.innerHTML = list.length ? `<ul class="tt">${list.map(x => { const c = subColor(x.s); return `<li><span class="pn">${x.p}교시</span><span class="sj" style="${c ? `--c:${c}` : ''}"><i></i>${esc(x.s)}</span></li>`; }).join('')}</ul>`
+    : `<p class="empty2">${V.ttLoading ? '불러오는 중…' : isWeekend(V.day) ? '주말이에요 🛋️' : (V.sch.find(e => e.day === V.day && e.off) || {}).name ? `${esc(V.sch.find(e => e.day === V.day && e.off).name)} · 수업이 없어요` : '이날 시간표가 없어요'}</p>`;
+}
+function drawMeal() {
+  const box = $('#meal');
+  if (V.mealErr) { box.innerHTML = `<p class="empty2 err">${esc(V.mealErr)}</p>`; return; }
+  const list = V.meals[V.day] || [], mine = new Set((V.p && V.p.allergies) || []);
+  box.innerHTML = list.length ? list.map(m => `<div class="meal"><h4>${esc(m.type)} ${m.cal ? `<small>${esc(m.cal)}</small>` : ''}</h4><div class="dishes">${m.dishes.map(d => { const bad = d.al.filter(a => mine.has(a));
+      return `<span class="dish ${bad.length ? 'warn' : ''}" title="${esc(d.al.map(a => SC.ALLERGY[a]).join(', '))}">${bad.length ? '⚠ ' : ''}${esc(d.name)}${bad.length ? `<sup>${bad.map(a => SC.ALLERGY[a]).join('·')}</sup>` : ''}</span>`; }).join('')}</div></div>`).join('')
+    : `<p class="empty2">${V.mealLoading ? '불러오는 중…' : isWeekend(V.day) ? '주말이라 급식이 없어요' : '이날 급식 정보가 없어요'}</p>`;
+}
+function drawSch() {
+  const [y, m] = V.month.split('-').map(Number), t = QT.todayKey();
+  $('#mL').textContent = `${y}. ${m}월`;
+  const list = V.sch.filter(e => e.day.startsWith(V.month));
+  $('#sch').innerHTML = V.schErr ? `<li class="err">${esc(V.schErr)}</li>` : list.length ? list.map(e => { const d = QT.parseKey(e.day), ex = /고사|시험|평가|학력/.test(e.name) && !/수행/.test(e.name);
+    return `<li class="${e.day < t ? 'past' : ''}"><span class="d">${d.getMonth() + 1}/${d.getDate()} (${'일월화수목금토'[d.getDay()]})</span><span class="n">${esc(e.name)}</span>${e.off ? '<span class="t off">쉬는 날</span>' : ex ? '<span class="t ex">시험</span>' : ''}</li>`; }).join('')
+    : `<li class="empty2" style="border:0;display:block">${V.schLoading ? '불러오는 중…' : '이번 달 학사일정이 없어요'}</li>`;
+}
+
+/* =============== 불러오기 =============== */
+async function setDay(k) {
+  const oldWeek = SC.weekRange(V.day).mon; V.day = k; drawDay();
+  if (SC.weekRange(k).mon !== oldWeek || !Object.keys(V.meals).length) await loadWeek(); else { drawTT(); drawMeal(); }
+  if (k.slice(0, 7) !== V.month) { V.month = k.slice(0, 7); loadMonth(); }
+}
+async function loadWeek() {
+  const w = SC.weekRange(V.day), sun = QT.shiftKey(w.mon, 6);
+  V.ttLoading = V.mealLoading = true; V.ttErr = V.mealErr = null; drawTT(); drawMeal();
+  await Promise.all([
+    SC.timetable(V.p, w.mon, w.fri).then(r => { V.tt = r; }).catch(e => { V.tt = {}; V.ttErr = SC.errMsg(e); }),
+    SC.meals(V.p, w.mon, sun).then(r => { V.meals = r; }).catch(e => { V.meals = {}; V.mealErr = SC.errMsg(e); }),
+  ]);
+  V.ttLoading = V.mealLoading = false; drawTT(); drawMeal();
+}
+async function loadMonth() {
+  const [y, m] = V.month.split('-').map(Number), last = new Date(y, m, 0).getDate();
+  V.schLoading = true; V.schErr = null; drawSch();
+  try { const r = await SC.schedule(V.p, `${V.month}-01`, `${V.month}-${String(last).padStart(2, '0')}`); V.sch = V.sch.filter(e => !e.day.startsWith(V.month)).concat(r); }
+  catch (e) { V.schErr = SC.errMsg(e); }
+  V.schLoading = false; drawSch(); drawTT();
+}
+function setMonth(n) { const [y, m] = V.month.split('-').map(Number), d = new Date(y, m - 1 + n, 1); V.month = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`; loadMonth(); }
+async function loadDdays() {
+  const t = QT.todayKey();
+  await Promise.all([
+    SC.ddays().then(r => { V.ddays = r; }).catch(() => {}),
+    SC.schedule(V.p, t, QT.shiftKey(t, 200)).then(r => { V.exams = SC.exams(r); }).catch(() => {}),
+  ]);
+  drawDD();
+}
+async function main() {
+  if (!V.p || !V.p.school_code) return setupView(true);
+  shell(); drawDay(); drawDD(); drawTT(); drawMeal(); drawSch();
+  loadWeek(); loadMonth(); loadDdays();
+}
+
+(async () => {
+  QT.registerSW();
+  const ctx = await QT.boot('school'); if (!ctx) return;
+  SC.init(ctx.user.id); CL.init(ctx.user.id); V.subs = CL.cache.get('subjects', []);
+  $('#app').innerHTML = '<div class="wrap"><h1>🏫 학교생활</h1><div id="body"><div class="loadingdot"><div class="spin"></div>불러오는 중…</div></div></div>';
+  V.p = SC.cache.get('profile');
+  if (V.p) main();
+  try {
+    const p = await SC.profile();
+    const changed = JSON.stringify(p) !== JSON.stringify(V.p); V.p = p;
+    if (changed || !p) main();
+    if (!V.subs.length) CL.subjects().then(s => { V.subs = s; if (V.p) { drawTT(); } }).catch(() => {});
+  } catch (e) { if (!V.p) $('#body').innerHTML = `<div class="card"><b class="err">불러오지 못했어요</b><p class="sub" style="margin:6px 0 0">${esc(SC.errMsg(e))}</p></div>`; }
+  // 자정이 지나 다시 열면 오늘로
+  let shown = QT.todayKey();
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState !== 'visible' || !V.p) return; const t = QT.todayKey(); if (t !== shown) { if (V.day === shown) setDay(t); shown = t; } });
+})();
+</script>
+</body>
+</html>

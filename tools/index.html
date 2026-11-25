@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>공부도구 · 문제지메이커</title>
+<meta name="description" content="문제지메이커 공부도구: 공부 체크리스트와 학교생활 도구를 한곳에서.">
+<meta name="theme-color" content="#f6f7fb">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="문제지메이커">
+<meta property="og:title" content="공부도구 · 문제지메이커">
+<meta property="og:description" content="공부 체크리스트와 학교생활 도구를 한곳에서.">
+<meta property="og:url" content="https://quizmaker.pro/tools/">
+<meta property="og:image" content="https://quizmaker.pro/og.png">
+<link rel="manifest" href="/tools/manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="/tools/icons/icon-192.png">
+<link rel="apple-touch-icon" href="/tools/icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="공부도구">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="/tools/common.css">
+<style>
+.today{padding:16px 16px 10px}
+.today .th{display:flex;align-items:baseline;gap:8px;margin-bottom:10px}
+.today .th b{font-size:16px}
+.today .th span{font-size:12.5px;color:var(--mute);font-weight:600}
+.today .th em{margin-left:auto;font-style:normal;font-weight:800;color:var(--acc);font-size:15px;font-variant-numeric:tabular-nums}
+.today .bar{margin-bottom:10px}
+.mini{list-style:none;margin:0;padding:0}
+.mini li{display:flex;align-items:center;gap:10px;padding:9px 0;border-top:1px solid var(--line)}
+.mini .ck{width:22px;height:22px;border-radius:7px;border:2px solid var(--line2);background:none;cursor:pointer;flex:0 0 auto;display:grid;place-items:center;color:#fff;font-size:13px;font-weight:900;padding:0}
+.mini li.done .ck{background:var(--c);border-color:var(--c)}
+.mini .t{flex:1;min-width:0;font-size:14.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mini li.done .t{text-decoration:line-through;color:var(--mute)}
+.mini .dot{width:8px;height:8px;border-radius:50%;background:var(--c);flex:0 0 auto}
+.more{display:block;text-align:center;padding:12px 0 4px;font-weight:700;font-size:14px;color:var(--ink);text-decoration:none;border-top:1px solid var(--line)}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.tool{display:flex;flex-direction:column;gap:4px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;text-decoration:none;color:var(--ink);min-width:0;transition:transform .15s,box-shadow .15s}
+a.tool:hover{transform:translateY(-2px);box-shadow:0 10px 24px -14px rgba(31,42,68,.35)}
+.tool .ti{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;font-size:21px;margin-bottom:8px}
+.tool b{font-size:16px}
+.tool span{font-size:12.5px;color:var(--mute);line-height:1.45}
+.tool.soon{opacity:.6;border-style:dashed}
+.tool .badge{align-self:flex-start;font-size:11px;font-weight:800;border-radius:6px;padding:2px 7px;background:var(--soft2);color:var(--ink2);margin-top:4px}
+.sct{display:block;text-decoration:none;color:var(--ink)}
+.sct .row1{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.sct .row1 b{font-size:16px;flex:1}
+.sct .row1 em{font-style:normal;font-weight:800;color:var(--acc);font-size:14px}
+.sct .ln{font-size:13.5px;color:var(--ink2);line-height:1.6;margin-top:4px}
+.sct .ln span{color:var(--mute);font-weight:700;margin-right:6px}
+.t1 .ti{background:var(--acc2)}.t2 .ti{background:#fdf3d8}.t3 .ti{background:#e6f1fb}
+body.dark .t2 .ti{background:#33290f}body.dark .t3 .ti{background:#17283d}
+</style>
+</head>
+<body>
+<main id="app"></main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="/tools/common.js"></script>
+<script src="/tools/checklist/data.js"></script>
+<script src="/tools/school/school.js"></script>
+<script>
+'use strict';
+const { $, $$, esc, toast, CL, SC } = QT;
+const H = { subs: [], tasks: [], loaded: false };
+const subColor = id => (H.subs.find(s => s.id === id) || { color: '#8a8f9c' }).color;
+
+function shell(me) {
+  const hour = new Date().getHours(), hi = hour < 6 ? '늦은 밤이에요' : hour < 12 ? '좋은 아침이에요' : hour < 18 ? '오늘도 화이팅' : '오늘 하루 마무리해요';
+  $('#app').innerHTML = `<div class="wrap">
+    <h1>🧰 공부도구</h1><p class="sub">${esc(me.name ? `${me.name}님, ${hi}` : hi)} ✏️ 문제지메이커 계정에 저장돼서 폰과 PC에서 이어져요.</p>
+    <div class="card today" id="today"></div>
+    <div id="school"></div>
+    <div class="sec-t">도구</div>
+    <div class="grid">
+      <a class="tool t1" href="/tools/checklist/"><span class="ti">✅</span><b>공부 체크리스트</b><span>과목별로 할 일을 정리하고 연속 달성 기록 쌓기</span></a>
+      <a class="tool t2" href="/tools/school/"><span class="ti">🏫</span><b>학교생활</b><span>급식 · 시간표 · 학사일정 · 시험 D-day</span></a>
+      <a class="tool t3" href="/#/"><span class="ti">📝</span><b>문제지 만들기</b><span>자료를 올려서 문제지·플래시카드 만들기</span></a>
+    </div>
+    <div id="inst"></div>
+  </div>`;
+  QT.installCard($('#inst'));
+}
+function drawToday() {
+  const all = H.tasks, done = all.filter(t => t.done).length, pct = all.length ? Math.round(done / all.length * 100) : 0;
+  const shown = all.slice().sort((a, b) => a.done - b.done).slice(0, 6);
+  $('#today').innerHTML = `<div class="th"><b>오늘 할 일</b><span>${QT.prettyDate(QT.todayKey()).main}</span><em>${all.length ? `${done}/${all.length}` : ''}</em></div>
+    ${all.length ? `<div class="bar"><i style="width:${pct}%"></i></div>` : ''}
+    ${!H.loaded && !all.length ? '<p class="note" style="margin:0 0 10px">불러오는 중…</p>'
+      : all.length ? `<ul class="mini">${shown.map(t => `<li class="${t.done ? 'done' : ''}" data-id="${t.id}" style="--c:${subColor(t.subject_id)}"><button class="ck" aria-label="완료">${t.done ? '✓' : ''}</button><span class="t">${esc(t.title)}</span><span class="dot"></span></li>`).join('')}</ul>`
+      : '<p class="note" style="margin:0 0 10px">아직 오늘 할 일이 없어요. 체크리스트에서 추가해 보세요.</p>'}
+    <a class="more" href="/tools/checklist/">${all.length > shown.length ? `+${all.length - shown.length}개 더 · ` : ''}체크리스트 열기 →</a>`;
+  $$('#today .mini li').forEach(li => $('.ck', li).onclick = async () => {
+    const t = H.tasks.find(x => x.id === li.dataset.id); if (!t) return;
+    t.done = !t.done; drawToday();
+    try { await CL.setDone(t.id, t.done); CL.cache.set('day_' + QT.todayKey(), H.tasks); if (t.done && H.tasks.every(x => x.done)) toast('🎉 오늘 할 일 전부 완료!'); }
+    catch (e) { t.done = !t.done; drawToday(); toast(CL.errMsg(e), 3500); }
+  });
+}
+/* 오늘 학교: 시간표 · 점심 · 가까운 D-day (학교를 정한 사람만) */
+async function drawSchool() {
+  const box = $('#school'), p = SC.cache.get('profile'); if (!p || !p.school_code) { box.innerHTML = ''; return; }
+  const t = QT.todayKey(), w = SC.weekRange(t);
+  let tt = {}, meals = {}, dd = [], ex = [];
+  await Promise.all([
+    SC.timetable(p, w.mon, w.fri).then(r => tt = r).catch(() => {}),
+    SC.meals(p, w.mon, QT.shiftKey(w.mon, 6)).then(r => meals = r).catch(() => {}),
+    SC.ddays().then(r => dd = r).catch(() => {}),
+    SC.schedule(p, t, QT.shiftKey(t, 200)).then(r => ex = SC.exams(r)).catch(() => {}),
+  ]);
+  const next = [...ex.filter(e => e.day >= t), ...dd.filter(d => d.day >= t)].sort((a, b) => a.day < b.day ? -1 : 1)[0];
+  const lunch = (meals[t] || []).find(m => m.type === '중식') || (meals[t] || [])[0];
+  const cls = (tt[t] || []).map(x => x.s);
+  box.innerHTML = `<a class="card sct" href="/tools/school/"><div class="row1"><b>🏫 오늘 학교</b>${next ? `<em>${esc(next.title)} ${SC.dLabel(next.day)}</em>` : ''}</div>
+    <div class="ln"><span>시간표</span>${cls.length ? cls.map(esc).join(' · ') : '수업 없음'}</div>
+    <div class="ln"><span>${lunch ? esc(lunch.type) : '급식'}</span>${lunch ? lunch.dishes.slice(0, 6).map(d => esc(d.name)).join(', ') : '정보 없음'}</div></a>`;
+}
+async function load() {
+  try { [H.subs, H.tasks] = await Promise.all([CL.subjects(), CL.tasks(QT.todayKey())]); H.loaded = true; drawToday(); }
+  catch (e) { H.loaded = true; drawToday(); toast(CL.errMsg(e), 4000); }
+}
+(async () => {
+  QT.registerSW();
+  const ctx = await QT.boot('hub'); if (!ctx) return;
+  CL.init(ctx.user.id);
+  H.subs = CL.cache.get('subjects', []); H.tasks = CL.cache.get('day_' + QT.todayKey(), []);
+  SC.init(ctx.user.id);
+  shell(ctx.me); drawToday(); load(); drawSchool();
+  SC.profile().then(p => { if (p) drawSchool(); }).catch(() => {});
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') load(); });
+})();
+</script>
+</body>
+</html>

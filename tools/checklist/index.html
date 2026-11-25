@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>공부 체크리스트 · 문제지메이커</title>
+<meta name="description" content="오늘 할 공부를 과목별로 체크하고 연속 달성 기록을 쌓아요. 문제지메이커 계정에 저장돼요.">
+<meta name="theme-color" content="#f6f7fb">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="문제지메이커">
+<meta property="og:title" content="공부 체크리스트 · 문제지메이커">
+<meta property="og:description" content="오늘 할 공부를 과목별로 체크하고 연속 달성 기록을 쌓아요.">
+<meta property="og:url" content="https://quizmaker.pro/tools/checklist/">
+<meta property="og:image" content="https://quizmaker.pro/og.png">
+<link rel="manifest" href="/tools/manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="/tools/icons/icon-192.png">
+<link rel="apple-touch-icon" href="/tools/icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="공부도구">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="/tools/common.css">
+<style>
+.dnav{display:flex;align-items:center;justify-content:space-between;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:8px 10px;margin-bottom:12px}
+.dnav>button{background:none;border:0;font-size:22px;width:40px;height:40px;border-radius:10px;cursor:pointer;color:var(--ink)}
+.dnav>button:hover{background:var(--soft)}
+.dlab{text-align:center;padding:2px 10px}
+.dpk{position:relative;display:block;cursor:pointer}
+.dlab strong{display:block;font-size:16.5px;letter-spacing:-.3px}
+.dlab strong::after{content:" ▾";font-size:11px;color:var(--mute)}
+.dlab>span{font-size:12px;color:var(--mute);font-weight:600;cursor:pointer}
+.dlab>span.rel{color:var(--acc);cursor:default}
+.dpk input{position:absolute;inset:0;opacity:0;width:100%;height:100%;cursor:pointer;border:0;padding:0}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:12px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 13px;min-width:0}
+.stat small{display:block;color:var(--mute);font-size:12px;font-weight:600}
+.stat b{display:block;font-size:21px;letter-spacing:-.5px;margin-top:2px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.stat em{display:block;font-style:normal;font-size:11.5px;color:var(--ink2);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.stat .bar{margin-top:8px;height:6px}
+.stat.hot b{color:var(--acc)}
+@media(max-width:400px){.stat b{font-size:18px}.stat{padding:10px}}
+.addbox{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px;margin-bottom:14px}
+.addrow{display:flex;gap:8px}
+.addrow input[type=text]{flex:1}
+.addrow .minw{flex:0 0 92px;position:relative}
+.addrow .minw input{padding-right:26px;text-align:right}
+.addrow .minw span{position:absolute;right:10px;top:50%;transform:translateY(-50%);color:var(--mute);font-size:13px;pointer-events:none}
+.addrow .btn{flex:0 0 auto}
+.spick{display:flex;gap:6px;overflow-x:auto;padding:10px 0 2px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.spick::-webkit-scrollbar{display:none}
+.sc{flex:0 0 auto;display:inline-flex;align-items:center;gap:6px;border:1.5px solid var(--line);background:var(--card);border-radius:999px;padding:6px 12px;font-size:13.5px;font-weight:600;color:var(--ink2);cursor:pointer;white-space:nowrap}
+.sc i{width:9px;height:9px;border-radius:50%;background:var(--c);flex:0 0 auto}
+.sc.on{border-color:var(--c);background:var(--cb);color:var(--ink)}
+.sc.edit{border-style:dashed;color:var(--mute)}
+.filters{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.filters .sc{padding:5px 11px;font-size:13px}
+.filters .sc.all.on{border-color:var(--ink);background:var(--sel)}
+ul.tl{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.ti{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 10px 12px 14px;animation:pop .18s ease}
+@keyframes pop{from{transform:scale(.98);opacity:0}to{transform:none;opacity:1}}
+.ck{width:26px;height:26px;border-radius:8px;border:2px solid var(--line2);flex:0 0 auto;cursor:pointer;display:grid;place-items:center;background:none;color:#fff;font-size:15px;font-weight:900;padding:0;transition:all .15s}
+.ti.done .ck{background:var(--c);border-color:var(--c)}
+.tb{flex:1;min-width:0;cursor:pointer}
+.tt{font-size:15px;line-height:1.45;word-break:break-word}
+.ti.done .tt{text-decoration:line-through;color:var(--mute)}
+.tm{display:flex;gap:6px;align-items:center;margin-top:4px;font-size:12px;color:var(--mute);flex-wrap:wrap}
+.tag{font-size:11.5px;font-weight:700;border-radius:6px;padding:2px 7px;background:var(--cb);color:var(--c)}
+body.dark .tag{filter:brightness(1.35)}
+.ti.done{opacity:.8}
+.empty{text-align:center;color:var(--ink2);padding:34px 10px;font-size:14px;line-height:1.7;background:var(--card);border:1px dashed var(--line2);border-radius:16px}
+.tools{display:flex;gap:8px;margin-top:14px}
+.tools .btn{flex:1;font-size:13px;color:var(--ink2);padding:10px 8px}
+.notice{margin-bottom:12px}
+.notice .card{display:flex;gap:12px;align-items:center;border-color:var(--acc)}
+.notice .card div{flex:1;font-size:13.5px;line-height:1.5}
+/* 과목 관리 */
+.srow{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--line)}
+.srow .sw{width:34px;height:34px;border-radius:10px;background:var(--c);border:0;cursor:pointer;flex:0 0 auto;box-shadow:inset 0 0 0 2px rgba(255,255,255,.35)}
+.srow input{flex:1;padding:8px 10px;font-size:14.5px}
+.srow .ib{border:0;background:var(--soft);border-radius:8px;width:32px;height:32px;cursor:pointer;color:var(--ink2);flex:0 0 auto;font-size:14px}
+.srow .ib:disabled{opacity:.35;cursor:default}
+.srow .ib.del:hover{color:var(--bad)}
+.pal{display:flex;flex-wrap:wrap;gap:8px;padding:10px 0 12px 42px;border-bottom:1px solid var(--line)}
+.pal button{width:30px;height:30px;border-radius:50%;border:3px solid transparent;background:var(--c);cursor:pointer;padding:0}
+.pal button.on{border-color:var(--ink);box-shadow:0 0 0 2px var(--card) inset}
+.pal label{width:30px;height:30px;border-radius:50%;border:2px dashed var(--line2);display:grid;place-items:center;cursor:pointer;font-size:14px;color:var(--mute);position:relative;overflow:hidden}
+.pal label input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;padding:0;border:0}
+.lb{display:block;font-weight:600;font-size:13.5px;margin:14px 0 6px;color:var(--ink2)}
+</style>
+</head>
+<body>
+<main id="app"></main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="/tools/common.js"></script>
+<script src="/tools/checklist/data.js"></script>
+<script src="/tools/quotes.js"></script>
+<script>
+'use strict';
+const { $, $$, esc, toast, modal, CL, LS } = QT;
+const NONE = { id: null, name: '과목 없음', color: '#8a8f9c' };
+const S = { subs: [], tasks: [], day: QT.todayKey(), filter: 'all', pick: null, streak: 0, uid: null, loaded: false };
+{ const d = new URLSearchParams(location.search).get('d'); if (QT.isKey(d)) S.day = d; }
+
+const rgba = (hex, a) => { const n = parseInt(String(hex).slice(1), 16); return `rgba(${n >> 16 & 255},${n >> 8 & 255},${n & 255},${a})`; };
+const cvars = c => `--c:${c};--cb:${rgba(c, .13)}`;
+const subOf = id => S.subs.find(s => s.id === id) || NONE;
+
+/* ---------- 화면 뼈대 ---------- */
+function shell() {
+  $('#app').innerHTML = `<div class="wrap">
+    <h1>📚 공부 체크리스트</h1>
+    <div id="quote"></div>
+    <div class="notice" id="notice"></div>
+    <div class="dnav"><button id="dPrev" aria-label="이전 날">‹</button>
+      <div class="dlab"><label class="dpk"><strong id="dMain"></strong><input type="date" id="dPick" aria-label="날짜 고르기"></label><span id="dRel"></span></div>
+      <button id="dNext" aria-label="다음 날">›</button></div>
+    <div class="stats" id="stats"></div>
+    <form class="addbox" id="addF" autocomplete="off">
+      <div class="addrow"><input type="text" id="aT" maxlength="100" placeholder="오늘 할 공부 적기" enterkeyhint="done">
+        <div class="minw"><input type="number" id="aM" min="0" max="600" inputmode="numeric" placeholder="시간" aria-label="예상 시간(분)"><span>분</span></div>
+        <button class="btn acc" type="submit" id="aGo">추가</button></div>
+      <div class="spick" id="spick"></div>
+    </form>
+    <div class="filters" id="filters"></div>
+    <ul class="tl" id="list"></ul>
+    <div class="tools"><button class="btn" id="tCopy">어제 못 한 일 가져오기</button><button class="btn" id="tClear">완료 항목 지우기</button></div>
+    <div id="inst"></div>
+  </div>`;
+  $('#dPrev').onclick = () => setDay(QT.shiftKey(S.day, -1));
+  $('#dNext').onclick = () => setDay(QT.shiftKey(S.day, 1));
+  $('#dPick').onchange = e => { if (QT.isKey(e.target.value)) setDay(e.target.value); };
+  $('#dRel').onclick = () => { if (S.day !== QT.todayKey()) setDay(QT.todayKey()); };
+  $('#addF').onsubmit = e => { e.preventDefault(); addTask(); };
+  $('#tCopy').onclick = copyYesterday;
+  $('#tClear').onclick = clearDone;
+  QT.installCard($('#inst'));
+  QT.quoteBoard($('#quote'));
+}
+
+/* ---------- 그리기 ---------- */
+function render() {
+  const p = QT.prettyDate(S.day), today = S.day === QT.todayKey();
+  $('#dMain').textContent = p.main;
+  const rel = $('#dRel'); rel.className = p.rel === '오늘' ? 'rel' : ''; rel.textContent = today ? '오늘' : (p.rel ? p.rel + ' · ' : '') + '오늘로 이동';
+  $('#dPick').value = S.day;
+
+  const all = S.tasks, done = all.filter(t => t.done);
+  const pct = all.length ? Math.round(done.length / all.length * 100) : 0;
+  const plan = all.reduce((a, t) => a + (+t.minutes || 0), 0), got = done.reduce((a, t) => a + (+t.minutes || 0), 0);
+  const hm = m => m >= 60 ? `${Math.floor(m / 60)}시간${m % 60 ? ' ' + m % 60 + '분' : ''}` : `${m}분`;
+  $('#stats').innerHTML = `
+    <div class="stat ${pct === 100 && all.length ? 'hot' : ''}"><small>달성률</small><b>${pct}%</b><div class="bar"><i style="width:${pct}%"></i></div></div>
+    <div class="stat"><small>할 일</small><b>${done.length}<span style="font-size:14px;color:var(--mute)"> / ${all.length}</span></b><em>${plan ? `${hm(got)} / ${hm(plan)}` : '시간 미정'}</em></div>
+    <div class="stat ${S.streak ? 'hot' : ''}"><small>연속 달성</small><b>${S.streak}일 ${S.streak ? '🔥' : ''}</b><em>다 끝낸 날 기준</em></div>`;
+
+  // 과목 고르기 (추가할 때)
+  if (S.pick !== null && !S.subs.some(s => s.id === S.pick)) S.pick = null;
+  $('#spick').innerHTML = S.subs.map(s => `<button type="button" class="sc ${S.pick === s.id ? 'on' : ''}" data-s="${s.id}" style="${cvars(s.color)}"><i></i>${esc(s.name)}</button>`).join('')
+    + `<button type="button" class="sc edit" id="sEdit">＋ 과목 추가 · 편집</button>`;
+  $$('#spick [data-s]').forEach(b => b.onclick = () => { S.pick = S.pick === b.dataset.s ? null : b.dataset.s; LS.set('qt_cl_pick', S.pick); render(); });
+  $('#sEdit').onclick = subjectManager;
+
+  // 과목별 보기
+  const used = [...new Set(all.map(t => t.subject_id || 'none'))];
+  if (S.filter !== 'all' && !used.includes(S.filter)) S.filter = 'all';
+  $('#filters').innerHTML = used.length > 1 ? `<button class="sc all ${S.filter === 'all' ? 'on' : ''}" data-f="all">전체 ${all.length}</button>` + used.map(u => {
+    const s = u === 'none' ? NONE : subOf(u), n = all.filter(t => (t.subject_id || 'none') === u).length;
+    return `<button class="sc ${S.filter === u ? 'on' : ''}" data-f="${u}" style="${cvars(s.color)}"><i></i>${esc(s.name)} ${n}</button>`;
+  }).join('') : '';
+  $$('#filters [data-f]').forEach(b => b.onclick = () => { S.filter = b.dataset.f; render(); });
+
+  // 목록 (안 한 일 먼저)
+  const shown = all.filter(t => S.filter === 'all' || (t.subject_id || 'none') === S.filter).sort((a, b) => a.done - b.done);
+  const L = $('#list');
+  if (!S.loaded && !all.length) L.innerHTML = '<div class="empty">불러오는 중…</div>';
+  else if (!shown.length) L.innerHTML = `<div class="empty">${today ? '오늘 할 공부를 추가해 보세요 ✨' : '이 날은 할 일이 없어요'}<br><small style="color:var(--mute)">과목을 고르고 할 일을 적으면 돼요</small></div>`;
+  else L.innerHTML = shown.map(t => { const s = subOf(t.subject_id); return `<li class="ti ${t.done ? 'done' : ''}" data-id="${t.id}" style="${cvars(s.color)}">
+      <button class="ck" aria-label="${t.done ? '완료 취소' : '완료'}">${t.done ? '✓' : ''}</button>
+      <div class="tb"><div class="tt">${esc(t.title)}</div><div class="tm"><span class="tag">${esc(s.name)}</span>${t.minutes ? `<span>⏱ ${t.minutes}분</span>` : ''}</div></div></li>`; }).join('');
+  $$('#list .ti').forEach(li => {
+    $('.ck', li).onclick = () => toggle(li.dataset.id);
+    $('.tb', li).onclick = () => editTask(li.dataset.id);
+  });
+}
+
+/* ---------- 불러오기 ---------- */
+async function setDay(k) {
+  S.day = k; S.filter = 'all';
+  history.replaceState(null, '', k === QT.todayKey() ? location.pathname : `?d=${k}`);
+  S.tasks = CL.cache.get('day_' + k, []); S.loaded = false; render();
+  try { const list = await CL.tasks(k); if (S.day !== k) return; S.tasks = list; S.loaded = true; render(); } catch (e) { S.loaded = true; render(); toast(CL.errMsg(e), 3500); }
+}
+async function refreshStreak() { try { S.streak = await CL.streak(); render(); } catch (e) {} }
+
+/* ---------- 할 일 ---------- */
+async function addTask() {
+  const t = $('#aT'), m = $('#aM'), title = t.value.trim();
+  if (!title) { t.focus(); return; }
+  const b = $('#aGo'); b.disabled = true;
+  try {
+    const row = await CL.addTask({ day: S.day, title, subject_id: S.pick, minutes: Math.max(0, Math.min(600, parseInt(m.value, 10) || 0)) });
+    S.tasks.push(row); CL.cache.set('day_' + S.day, S.tasks);
+    t.value = ''; m.value = ''; t.focus(); render(); refreshStreak();
+  } catch (e) { toast(CL.errMsg(e), 3500); }
+  b.disabled = false;
+}
+async function toggle(id) {
+  const t = S.tasks.find(x => x.id === id); if (!t) return;
+  t.done = !t.done; render();
+  try {
+    await CL.setDone(id, t.done); CL.cache.set('day_' + S.day, S.tasks);
+    if (t.done && S.tasks.every(x => x.done)) toast('🎉 오늘 할 일 전부 완료! 수고했어요');
+    refreshStreak();
+  } catch (e) { t.done = !t.done; render(); toast(CL.errMsg(e), 3500); }
+}
+function editTask(id) {
+  const t = S.tasks.find(x => x.id === id); if (!t) return;
+  let pick = t.subject_id;
+  const m = modal(`<h3>할 일 고치기</h3>
+    <label class="lb">할 일</label><input type="text" id="eT" maxlength="100" value="${esc(t.title)}">
+    <label class="lb">과목</label><div class="spick" id="eS" style="flex-wrap:wrap;padding-top:0"></div>
+    <label class="lb">예상 시간 (분)</label><input type="number" id="eM" min="0" max="600" inputmode="numeric" value="${t.minutes || ''}">
+    <div class="row" style="margin-top:18px"><button class="btn" id="eDel" style="color:var(--bad)">삭제</button>${t.done ? '' : '<button class="btn" id="eTmr">내일로 미루기</button>'}<span class="spacer"></span><button class="btn pri" id="eSave">저장</button></div>`);
+  const drawS = () => { $('#eS', m).innerHTML = [NONE, ...S.subs].map(s => `<button type="button" class="sc ${pick === s.id ? 'on' : ''}" data-s="${s.id || ''}" style="${cvars(s.color)}"><i></i>${esc(s.name)}</button>`).join('');
+    $$('#eS [data-s]', m).forEach(b => b.onclick = () => { pick = b.dataset.s || null; drawS(); }); };
+  drawS();
+  $('#eSave', m).onclick = async () => {
+    const title = $('#eT', m).value.trim(); if (!title) return toast('할 일을 써 주세요');
+    try { Object.assign(t, await CL.updateTask(id, { title: title.slice(0, 100), subject_id: pick, minutes: Math.max(0, Math.min(600, parseInt($('#eM', m).value, 10) || 0)) || null })); m.remove(); render(); }
+    catch (e) { toast(CL.errMsg(e), 3500); }
+  };
+  $('#eDel', m).onclick = async () => {
+    try { await CL.deleteTask(id); S.tasks = S.tasks.filter(x => x.id !== id); CL.cache.set('day_' + S.day, S.tasks); m.remove(); render(); refreshStreak(); toast('지웠어요'); }
+    catch (e) { toast(CL.errMsg(e), 3500); }
+  };
+  const tm = $('#eTmr', m); if (tm) tm.onclick = async () => {
+    try { await CL.updateTask(id, { day: QT.shiftKey(S.day, 1) }); S.tasks = S.tasks.filter(x => x.id !== id); CL.cache.set('day_' + S.day, S.tasks); m.remove(); render(); refreshStreak(); toast('다음 날로 옮겼어요'); }
+    catch (e) { toast(CL.errMsg(e), 3500); }
+  };
+}
+async function copyYesterday() {
+  const prev = QT.shiftKey(S.day, -1);
+  try {
+    const left = (await CL.tasks(prev)).filter(t => !t.done);
+    if (!left.length) return toast('전날 못 한 일이 없어요 👍');
+    const have = new Set(S.tasks.map(t => t.title));
+    const rows = left.filter(t => !have.has(t.title)).map(t => ({ day: S.day, title: t.title, subject_id: t.subject_id, minutes: t.minutes }));
+    if (!rows.length) return toast('이미 다 가져왔어요');
+    S.tasks.push(...await CL.addTasks(rows)); CL.cache.set('day_' + S.day, S.tasks); render(); refreshStreak();
+    toast(`${rows.length}개 가져왔어요`);
+  } catch (e) { toast(CL.errMsg(e), 3500); }
+}
+async function clearDone() {
+  const n = S.tasks.filter(t => t.done).length;
+  if (!n) return toast('지울 완료 항목이 없어요');
+  if (!confirm(`완료한 ${n}개를 지울까요? 지우면 연속 달성 기록에서도 빠져요.`)) return;
+  try { await CL.deleteDone(S.day); S.tasks = S.tasks.filter(t => !t.done); CL.cache.set('day_' + S.day, S.tasks); render(); refreshStreak(); toast(`${n}개 지웠어요`); }
+  catch (e) { toast(CL.errMsg(e), 3500); }
+}
+
+/* ---------- 과목 관리 ---------- */
+function subjectManager() {
+  let open = null;
+  const m = modal(`<h3>과목 관리</h3><p class="sub" style="margin:4px 0 6px">색 동그라미를 누르면 색을 바꿀 수 있어요. 새 과목은 색이 자동으로 정해져요.</p>
+    <div id="sl"></div>
+    <label class="lb">새 과목</label><form class="addrow" id="sAdd"><input type="text" id="sN" maxlength="20" placeholder="예: 물리학Ⅰ, 정보, 제2외국어"><button class="btn acc" type="submit">추가</button></form>
+    <button class="btn" data-close style="width:100%;margin-top:16px">닫기</button>`);
+  const draw = () => {
+    const box = $('#sl', m);
+    box.innerHTML = S.subs.length ? S.subs.map((s, i) => `<div class="srow" data-id="${s.id}" style="${cvars(s.color)}">
+        <button class="sw" data-a="color" aria-label="${esc(s.name)} 색 바꾸기"></button>
+        <input type="text" value="${esc(s.name)}" maxlength="20" data-a="name" aria-label="과목 이름">
+        <button class="ib" data-a="up" ${i ? '' : 'disabled'} aria-label="위로">↑</button><button class="ib" data-a="down" ${i < S.subs.length - 1 ? '' : 'disabled'} aria-label="아래로">↓</button>
+        <button class="ib del" data-a="del" aria-label="삭제">🗑</button></div>
+      ${open === s.id ? `<div class="pal">${CL.PALETTE.map(c => `<button data-c="${c}" class="${c === s.color.toLowerCase() ? 'on' : ''}" style="--c:${c}" aria-label="${c}"></button>`).join('')}<label title="직접 고르기">＋<input type="color" value="${s.color}" data-custom></label></div>` : ''}`).join('')
+      : '<p class="note">과목이 없어요. 아래에서 추가해 주세요.</p>';
+    $$('.srow', box).forEach(r => {
+      const s = S.subs.find(x => x.id === r.dataset.id);
+      $('[data-a=color]', r).onclick = () => { open = open === s.id ? null : s.id; draw(); };
+      const inp = $('[data-a=name]', r);
+      inp.onkeydown = e => { if (e.key === 'Enter') { e.preventDefault(); inp.blur(); } };
+      inp.onchange = async () => { const v = inp.value.trim(); if (v === s.name) return; if (S.subs.some(x => x.name === v && x.id !== s.id)) { inp.value = s.name; return toast('이미 있는 과목 이름이에요'); }
+        try { Object.assign(s, await CL.updateSubject(s.id, { name: v })); render(); toast('이름을 바꿨어요'); } catch (e) { inp.value = s.name; toast(CL.errMsg(e), 3500); } };
+      $('[data-a=up]', r).onclick = () => move(s.id, -1);
+      $('[data-a=down]', r).onclick = () => move(s.id, 1);
+      $('[data-a=del]', r).onclick = async () => {
+        if (!confirm(`'${s.name}' 과목을 지울까요? 이 과목의 할 일은 지워지지 않고 '과목 없음'이 돼요.`)) return;
+        try { await CL.deleteSubject(s.id); S.subs = S.subs.filter(x => x.id !== s.id); S.tasks.forEach(t => { if (t.subject_id === s.id) t.subject_id = null; }); CL.cache.set('subjects', S.subs); draw(); render(); }
+        catch (e) { toast(CL.errMsg(e), 3500); }
+      };
+    });
+    const setColor = async (s, c) => { try { Object.assign(s, await CL.updateSubject(s.id, { color: c })); CL.cache.set('subjects', S.subs); draw(); render(); } catch (e) { toast(CL.errMsg(e), 3500); } };
+    $$('.pal [data-c]', box).forEach(b => b.onclick = () => setColor(S.subs.find(x => x.id === open), b.dataset.c));
+    const cu = $('.pal [data-custom]', box); if (cu) cu.onchange = () => setColor(S.subs.find(x => x.id === open), cu.value.toLowerCase());
+  };
+  const move = async (id, dir) => { try { S.subs = await CL.moveSubject(S.subs, id, dir); CL.cache.set('subjects', S.subs); draw(); render(); } catch (e) { toast(CL.errMsg(e), 3500); } };
+  $('#sAdd', m).onsubmit = async e => {
+    e.preventDefault(); const n = $('#sN', m);
+    try { const s = await CL.addSubject(n.value, S.subs); S.subs.push(s); CL.cache.set('subjects', S.subs); S.pick = s.id; LS.set('qt_cl_pick', s.id); n.value = ''; draw(); render(); toast(`'${s.name}' 과목을 추가했어요`); }
+    catch (x) { toast(CL.errMsg(x), 3500); }
+  };
+  draw();
+}
+
+/* ---------- 예전 기록 옮기기 ---------- */
+function legacyNotice() {
+  const box = $('#notice'); if (!CL.legacy()) { box.innerHTML = ''; return; }
+  box.innerHTML = `<div class="card"><div><b>이 기기에 예전 체크리스트 기록이 있어요</b><br>계정으로 옮기면 다른 기기에서도 볼 수 있어요.</div><button class="btn sm acc" id="lgGo">옮기기</button></div>`;
+  $('#lgGo').onclick = async () => {
+    const b = $('#lgGo'); b.disabled = true; b.textContent = '옮기는 중…';
+    try { const n = await CL.importLegacy(S.subs); S.subs = await CL.subjects(); box.innerHTML = ''; toast(`${n}개를 계정으로 옮겼어요`); setDay(S.day); refreshStreak(); }
+    catch (e) { b.disabled = false; b.textContent = '옮기기'; toast(CL.errMsg(e), 3500); }
+  };
+}
+
+/* ---------- 시작 ---------- */
+(async () => {
+  QT.registerSW();
+  const ctx = await QT.boot('checklist'); if (!ctx) return;
+  CL.init(ctx.user.id); S.uid = ctx.user.id;
+  S.subs = CL.cache.get('subjects', []); S.tasks = CL.cache.get('day_' + S.day, []); S.streak = CL.cache.get('streak', 0);
+  S.pick = LS.get('qt_cl_pick', null);
+  shell(); render();
+  try {
+    S.subs = await CL.subjects();
+    if (S.pick === null && S.subs[0]) S.pick = S.subs[0].id;
+    S.tasks = await CL.tasks(S.day); S.loaded = true; render(); legacyNotice();
+    refreshStreak();
+  } catch (e) {
+    S.loaded = true; render();
+    $('#notice').innerHTML = `<div class="card"><div><b class="err">불러오지 못했어요</b><br>${esc(CL.errMsg(e))}</div><button class="btn sm" onclick="location.reload()">다시</button></div>`;
+  }
+  // 앱을 다시 열었을 때 (자정이 지났으면 오늘로) 새로 불러와요
+  let shownToday = QT.todayKey(), hiddenAt = 0;
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState !== 'visible') { hiddenAt = Date.now(); return; }
+    // 1분 넘게 다른 앱에 있다가 다시 들어오면 명언도 새로 바꿔요
+    if (hiddenAt && Date.now() - hiddenAt > 60e3) QT.quoteBoard($('#quote'));
+    const t = QT.todayKey();
+    if (t !== shownToday) { if (S.day === shownToday) S.day = t; shownToday = t; }
+    setDay(S.day); refreshStreak();
+  });
+})();
+</script>
+</body>
+</html>
