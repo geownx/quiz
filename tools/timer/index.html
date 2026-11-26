@@ -2,6 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="utf-8">
+<script src="/tools/theme.js?v=2026112607"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>공부 타이머 · 문제지메이커</title>
 <meta name="description" content="과목별 공부 타이머, 뽀모도로, 공부 기록 달력과 통계. 문제지메이커 계정에 저장돼요.">
@@ -11,7 +12,7 @@
 <meta property="og:title" content="공부 타이머 · 문제지메이커">
 <meta property="og:description" content="과목별 공부 타이머, 뽀모도로, 공부 기록 달력과 통계.">
 <meta property="og:url" content="https://quizmaker.pro/tools/timer/">
-<meta property="og:image" content="https://quizmaker.pro/og.png?v=2">
+<meta property="og:image" content="https://quizmaker.pro/og.png?v=2026112607">
 <link rel="manifest" href="/tools/manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="192x192" href="/tools/icons/icon-192.png">
 <link rel="apple-touch-icon" href="/tools/icons/apple-touch-icon.png">
@@ -19,8 +20,8 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="공부도구">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
-<link rel="stylesheet" href="/tools/common.css">
-<link rel="stylesheet" href="/tools/nav.css">
+<link rel="stylesheet" href="/tools/common.css?v=2026112607">
+<link rel="stylesheet" href="/tools/nav.css?v=2026112607">
 <style>
 .tabs{display:flex;background:var(--soft2);border-radius:14px;padding:4px;gap:4px;margin-bottom:14px}
 .tabs button{flex:1;border:0;background:none;border-radius:11px;padding:10px 4px;font-size:14px;font-weight:700;color:var(--mute);cursor:pointer}
@@ -54,6 +55,16 @@ select{appearance:none;-webkit-appearance:none;background-image:linear-gradient(
 .seg span{font-size:12px;color:var(--mute);font-weight:700;padding:6px 4px 6px 8px}
 .tom{text-align:center;font-size:13px;color:var(--mute);margin-top:2px;min-height:20px}
 .hint{text-align:center;font-size:12.5px;color:var(--mute);margin:8px 0 0;line-height:1.5}
+.snd{border-top:1px solid var(--line);margin-top:16px;padding-top:14px}
+.snd-h{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}.snd-h b{font-size:14.5px}.snd-h small{font-size:12px;color:var(--mute)}
+.snd-off{border:1px solid var(--line);background:var(--card);color:var(--ink2);border-radius:999px;padding:5px 11px;font-size:12.5px;font-weight:700;cursor:pointer}
+.snd-c{display:flex;flex-wrap:wrap;gap:6px}
+.snd-c button{border:1.5px solid var(--line);background:var(--card);color:var(--ink2);border-radius:12px;padding:8px 11px;font-size:13px;font-weight:700;cursor:pointer}
+.snd-c button.on{border-color:var(--acc);background:var(--acc2);color:var(--acc)}
+.snd-v{display:flex;align-items:center;gap:10px;margin-top:10px;font-size:12.5px;color:var(--mute);font-weight:700}
+.snd-v input{flex:1;accent-color:var(--acc);margin:0;padding:0;border:0;background:none;height:24px}
+.snd-nt{width:100%;margin-top:12px;font-size:13.5px}
+.snd-p{font-size:12px;color:var(--mute);margin:10px 0 0;line-height:1.5}
 /* 요약 · 통계 */
 .tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-bottom:12px}
 .tile{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 13px}
@@ -110,10 +121,12 @@ body.dark .cal .d.l1{background:rgba(125,139,255,.2)}body.dark .cal .d.l2{backgr
 <body>
 <main id="app"></main>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="/tools/nav.js"></script>
-<script src="/tools/common.js"></script>
-<script src="/tools/checklist/data.js"></script>
-<script src="/tools/timer/timer.js"></script>
+<script src="/tools/nav.js?v=2026112607"></script>
+<script src="/tools/badges.js?v=2026112607"></script>
+<script src="/tools/common.js?v=2026112607"></script>
+<script src="/tools/checklist/data.js?v=2026112607"></script>
+<script src="/tools/timer/timer.js?v=2026112607"></script>
+<script src="/tools/sound.js?v=2026112607"></script>
 <script>
 'use strict';
 const { $, $$, esc, toast, modal, CL, TM, LS } = QT;
@@ -126,10 +139,13 @@ const subOf = id => S.subs.find(s => s.id === id) || NONE;
 let TICK = null, wake = null;
 
 /* ---------- 소리 · 진동 (화면을 보고 있을 때) ---------- */
-function beep(n = 2) {
-  try { const A = new (window.AudioContext || window.webkitAudioContext)(); for (let i = 0; i < n; i++) { const o = A.createOscillator(), g = A.createGain(); o.frequency.value = 880; o.connect(g); g.connect(A.destination);
-    const t = A.currentTime + i * .35; g.gain.setValueAtTime(.0001, t); g.gain.exponentialRampToValueAtTime(.3, t + .02); g.gain.exponentialRampToValueAtTime(.0001, t + .25); o.start(t); o.stop(t + .27); } } catch (e) {}
-  try { navigator.vibrate && navigator.vibrate([200, 100, 200]); } catch (e) {}
+function beep(title, body) { if (window.QTSND) QTSND.alarm(title, body); }
+/* 끝나는 순간에 맞춰 한 번 더 확인 (다른 앱을 보고 있어도 제때 울리게) */
+let ENDT = null;
+function scheduleEnd() {
+  clearTimeout(ENDT); const r = TM.run();
+  if (!r || r.mode !== 'pomodoro' || !r.seg) return;
+  const left = (r.pomo.len - TM.elapsed(r)) * 1000; if (left > 0) ENDT = setTimeout(() => { tick(); scheduleEnd(); }, left + 80);
 }
 /* 타이머가 도는 동안 화면이 꺼지지 않게 */
 async function keepAwake(on) {
@@ -167,6 +183,32 @@ function bindPicker() {
 }
 const labelOf = () => { const t = S.tasks.find(x => x.id === S.task); return t ? t.title : subOf(S.pick).name; };
 
+
+/* ---------- 백색소음 · 알람 ---------- */
+function soundHTML(pomo) {
+  if (!window.QTSND) return '';
+  const Z = QTSND.S, nk = QTSND.noise.kind;
+  return `<div class="snd"><div class="snd-h"><b>🎧 백색소음</b>${nk ? '<button class="snd-off" id="nOff">끄기</button>' : '<small>눌러서 켜기</small>'}</div>
+      <div class="snd-c" id="nz">${QTSND.NOISES.map(([k, l]) => `<button data-n="${k}" class="${nk === k ? 'on' : ''}">${l}</button>`).join('')}</div>
+      <label class="snd-v"><span>소리</span><input type="range" id="nv" min="0.05" max="1" step="0.05" value="${Z.nvol}"></label>
+    ${pomo ? `<div class="snd-h" style="margin-top:16px"><b>🔔 끝나면 알람</b><button class="snd-off" id="aT">▶ 들어보기</button></div>
+      <div class="snd-c" id="al">${QTSND.ALARMS.map(([k, l]) => `<button data-a="${k}" class="${Z.alarm === k ? 'on' : ''}">${l}</button>`).join('')}</div>
+      <label class="snd-v"><span>소리</span><input type="range" id="av" min="0.1" max="1" step="0.05" value="${Z.avol}"></label>
+      ${'Notification' in window && Notification.permission === 'default' ? '<button class="btn snd-nt" id="aN">📲 다른 앱 보고 있을 때도 알림 받기</button>' : ''}` : ''}
+    <p class="snd-p">타이머 화면을 열어 둔 동안 소리가 나요.${pomo ? ' 폰은 무음 모드에서도 알람이 울려요.' : ''}</p></div>`;
+}
+function bindSound() {
+  if (!window.QTSND) return;
+  $$('#nz [data-n]').forEach(b => b.onclick = () => { if (QTSND.noise.kind === b.dataset.n) QTSND.noise.stop(); else QTSND.noise.play(b.dataset.n); redrawSound(); });
+  const off = $('#nOff'); if (off) off.onclick = () => { QTSND.noise.stop(); redrawSound(); };
+  const nv = $('#nv'); if (nv) nv.oninput = () => QTSND.noise.vol(+nv.value);
+  $$('#al [data-a]').forEach(b => b.onclick = () => { QTSND.setAlarm(b.dataset.a); QTSND.test(b.dataset.a); redrawSound(); });
+  const av = $('#av'); if (av) { av.oninput = () => QTSND.setAlarmVol(+av.value); av.onchange = () => QTSND.test(); }
+  const at = $('#aT'); if (at) at.onclick = () => QTSND.test();
+  const an = $('#aN'); if (an) an.onclick = async () => { const r = await QTSND.askNotify(); toast(r === 'granted' ? '알림을 켰어요' : '알림이 꺼져 있어요. 휴대폰 설정에서 켤 수 있어요'); redrawSound(); };
+}
+function redrawSound() { const el = $('.snd'); if (!el) return; el.outerHTML = soundHTML(S.tab === 'pomodoro'); bindSound(); }
+
 /* ---------- 스톱워치 · 뽀모도로 ---------- */
 function drawTimer() {
   const r = TM.run(), pomo = S.tab === 'pomodoro', locked = !!r;
@@ -182,8 +224,9 @@ function drawTimer() {
       <p class="hint">${pomo ? '집중 시간이 끝나면 자동으로 기록되고 휴식이 시작돼요.' : '끝내기를 누르면 공부 기록에 저장돼요.'} 앱을 닫아도 시간은 계속 흘러가요.</p>
 
     </div>
-    <div class="card t-side"><div class="ch"><b>오늘 공부</b><span style="font-weight:800;color:var(--acc)" id="tdSum"></span></div><div id="tdBy"></div><a class="btn" href="?tab=stats" id="toStats" style="width:100%;margin-top:14px">📊 공부 기록 보기</a></div></div>`;
-  bindPicker();
+    <div class="card t-side"><div class="ch"><b>오늘 공부</b><span style="font-weight:800;color:var(--acc)" id="tdSum"></span></div><div id="tdBy"></div><a class="btn" href="?tab=stats" id="toStats" style="width:100%;margin-top:14px">📊 공부 기록 보기</a>
+      ${soundHTML(pomo)}</div></div>`;
+  bindPicker(); bindSound();
   $$('#pf [data-v]').forEach(b => b.onclick = () => { S.pomo.focus = +b.dataset.v; LS.set('qt_tm_pomo', S.pomo); drawTimer(); });
   $$('#pb [data-v]').forEach(b => b.onclick = () => { S.pomo.brk = +b.dataset.v; LS.set('qt_tm_pomo', S.pomo); drawTimer(); });
   drawCtl(); drawToday(); tick();
@@ -196,6 +239,7 @@ function drawCtl() {
   else c.innerHTML = `${r.seg ? '<button class="btn" id="cPa">⏸ 멈춤</button>' : '<button class="btn acc" id="cRe">▶ 계속</button>'}<button class="btn stop" id="cSt">■ 끝내기</button>`;
   const on = (id, f) => { const b = $('#' + id); if (b) b.onclick = f; };
   on('cGo', start); on('cPa', pause); on('cRe', resume); on('cSt', finish); on('cSk', skip);
+  scheduleEnd();
 }
 function tick() {
   let r = TM.run(); if (!$('#tt')) return;
@@ -231,10 +275,10 @@ function advance(r) {
       saveSession({ mode: 'pomodoro', subject_id: r.subject_id, task_id: r.task_id, seconds: p.len, started_at: p.start || end - p.len * 1000, ended_at: end }, true);
       const long = p.round % 4 === 0;
       Object.assign(p, { phase: long ? 'long' : 'break', len: (long ? 15 : p.brk) * 60, start: end }); r.acc = 0; r.seg = end;
-      if (Date.now() - end < 5000) { beep(2); toast(long ? '🍅 4번째 집중 끝! 15분 쉬어요' : '🍅 집중 끝! 쉬는 시간이에요'); }
+      if (Date.now() - end < 120000) { beep('🍅 집중 끝!', long ? '4번째 집중 끝! 15분 쉬어요' : '쉬는 시간이에요'); toast(long ? '🍅 4번째 집중 끝! 15분 쉬어요' : '🍅 집중 끝! 쉬는 시간이에요'); }
     } else {
       Object.assign(p, { phase: 'focus', len: p.focus * 60, round: p.round + 1, start: null }); r.acc = 0; r.seg = null;
-      if (Date.now() - end < 5000) { beep(3); toast('☕ 휴식 끝! 다시 집중해요'); }
+      if (Date.now() - end < 120000) { beep('☕ 휴식 끝!', '다시 집중해요'); toast('☕ 휴식 끝! 다시 집중해요'); }
     }
     changed = true;
   }

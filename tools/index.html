@@ -2,6 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="utf-8">
+<script src="/tools/theme.js?v=2026112607"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>홈 · 문제지메이커</title>
 <meta name="description" content="문제지메이커: 사진으로 문제지 만들기, 공부 체크리스트, 공부 타이머, 급식·시간표까지 한곳에서.">
@@ -11,7 +12,7 @@
 <meta property="og:title" content="문제지메이커">
 <meta property="og:description" content="사진으로 문제지 만들기, 체크리스트, 공부 타이머, 급식·시간표까지 한곳에서.">
 <meta property="og:url" content="https://quizmaker.pro/tools/">
-<meta property="og:image" content="https://quizmaker.pro/og.png?v=2">
+<meta property="og:image" content="https://quizmaker.pro/og.png?v=2026112607">
 <link rel="manifest" href="/tools/manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="192x192" href="/tools/icons/icon-192.png">
 <link rel="apple-touch-icon" href="/tools/icons/apple-touch-icon.png">
@@ -19,18 +20,18 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="문제지메이커">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
-<link rel="stylesheet" href="/tools/common.css">
-<link rel="stylesheet" href="/tools/nav.css">
+<link rel="stylesheet" href="/tools/common.css?v=2026112607">
+<link rel="stylesheet" href="/tools/nav.css?v=2026112607">
 <style>
 .hi{font-size:15px;color:var(--mute);font-weight:600;margin:0 0 4px}
 .hi b{color:var(--ink)}
 /* 문제지 만들기 */
-.mk{border-radius:18px;padding:18px;margin-bottom:6px;color:#fff;background:linear-gradient(135deg,#5b6cff,#8462ff)}
+.mk{border-radius:18px;padding:18px;margin-bottom:6px;color:#fff;background:linear-gradient(135deg,var(--g1,#5b6cff),var(--g2,#8462ff))}
 .mk h2{color:#fff;font-size:20px;margin:0 0 4px;letter-spacing:-.5px}
 .mk p{margin:0 0 14px;font-size:13.5px;line-height:1.55;opacity:.9;word-break:keep-all}
 .mk .row{gap:8px}
 .mk .btn{border:0;font-weight:800;padding:11px 16px;border-radius:12px}
-.mk .b1{background:#fff;color:#4b54d8}
+.mk .b1{background:#fff;color:var(--deep,#4b54d8)}
 .mk .b2{background:rgba(255,255,255,.18);color:#fff}
 /* 이어서 하기 */
 .rc{display:flex;gap:8px;overflow-x:auto;padding:2px 0 4px;margin-bottom:12px;scrollbar-width:none}
@@ -66,6 +67,7 @@
 .ddx div{flex:1;min-width:0;display:flex;gap:8px;align-items:baseline}
 .ddx b{color:var(--acc);font-size:15px}
 .ddx span{font-size:13.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hwx{text-decoration:none;color:var(--ink)}.hwx b{color:#e0445a}.hwx small{flex:0 0 auto;font-size:11.5px;font-weight:700;color:var(--mute);background:var(--soft);border-radius:6px;padding:2px 7px}
 .wk1{display:flex;align-items:baseline;gap:8px;border-top:1px solid var(--line);padding:11px 0;text-decoration:none;color:var(--ink);font-size:13.5px}
 .wk1 span{color:var(--mute);font-weight:700}
 .wk1 b{font-size:15px}
@@ -80,11 +82,12 @@
 <body>
 <main id="app"></main>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="/tools/nav.js"></script>
-<script src="/tools/common.js"></script>
-<script src="/tools/checklist/data.js"></script>
-<script src="/tools/school/school.js"></script>
-<script src="/tools/timer/timer.js"></script>
+<script src="/tools/nav.js?v=2026112607"></script>
+<script src="/tools/badges.js?v=2026112607"></script>
+<script src="/tools/common.js?v=2026112607"></script>
+<script src="/tools/checklist/data.js?v=2026112607"></script>
+<script src="/tools/school/school.js?v=2026112607"></script>
+<script src="/tools/timer/timer.js?v=2026112607"></script>
 <script>
 'use strict';
 const { $, $$, esc, toast, CL, SC, TM, LS } = QT;
@@ -166,13 +169,15 @@ async function loadRecent() {
 /* 가까운 시험 D-day 한 줄 (시간표 · 급식은 학교 탭에서) */
 async function drawSchool() {
   const box = $('#tdSchool'), p = SC.cache.get('profile'), t = QT.todayKey();
-  let dd = [], ex = [];
+  let dd = [], ex = [], hw = [];
   await Promise.all([
+    QT.sb().from('tools_assignments').select('id,kind,title,due,subject').eq('done', false).gte('due', t).lte('due', QT.shiftKey(t, 7)).order('due').limit(3).then(r => { hw = r.data || []; }, () => {}),
     SC.ddays().then(r => dd = r).catch(() => {}),
     p && p.school_code ? SC.schedule(p, t, QT.shiftKey(t, 200)).then(r => ex = SC.exams(r)).catch(() => {}) : null,
   ]);
   const next = [...ex.filter(e => e.day >= t), ...dd.filter(d => d.day >= t)].sort((a, b) => a.day < b.day ? -1 : 1)[0];
-  box.innerHTML = next ? `<div class="ddx"><div><b>${SC.dLabel(next.day)}</b><span>${esc(next.title)}</span></div>${(next.auto || /고사|시험|모의|수능|평가/.test(next.title)) ? '<button class="btn sm acc" id="exBtn">대비 문제지</button>' : ''}</div>` : '';
+  box.innerHTML = (next ? `<div class="ddx"><div><b>${SC.dLabel(next.day)}</b><span>${esc(next.title)}</span></div>${(next.auto || /고사|시험|모의|수능|평가/.test(next.title)) ? '<button class="btn sm acc" id="exBtn">대비 문제지</button>' : ''}</div>` : '')
+    + hw.map(a => `<a class="ddx hwx" href="/tools/school/?tab=hw&hw=${esc(a.id)}"><div><b>${SC.dLabel(a.due)}</b><span>${a.subject ? `[${esc(a.subject)}] ` : ''}${esc(a.title)}</span></div><small>${esc(a.kind)}</small></a>`).join('');
   const b = $('#exBtn'); if (b) b.onclick = () => QT.examPicker(next.title);
 }
 

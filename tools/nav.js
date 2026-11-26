@@ -11,7 +11,7 @@
     school: S('<path d="M3 21h18"/><path d="M5 21V10l7-5 7 5v11"/><path d="M10 21v-5h4v5"/>'),
     user: S('<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>'),
   };
-  const LOGO = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="16" fill="#5B6CFF"/><g transform="rotate(-8 30 34)"><rect x="15" y="13" width="28" height="36" rx="4" fill="#fff" opacity=".45"/></g><path d="M21 12h17l8 8v29a3 3 0 0 1-3 3H21a3 3 0 0 1-3-3V15a3 3 0 0 1 3-3z" fill="#fff"/><path d="M38 12v6a2 2 0 0 0 2 2h6z" fill="#C9CFFF"/><rect x="23" y="24" width="15" height="3" rx="1.5" fill="#1D1F27"/><rect x="23" y="31" width="18" height="2.6" rx="1.3" fill="#1D1F27" opacity=".28"/><rect x="23" y="37" width="12" height="2.6" rx="1.3" fill="#1D1F27" opacity=".28"/><circle cx="44.5" cy="45.5" r="10.5" fill="#1D1F27" stroke="#5B6CFF" stroke-width="3"/><path d="M39.6 45.6l3.3 3.3 6.4-6.6" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  const LOGO = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="16" style="fill:var(--logo,#5B6CFF)"/><g transform="rotate(-8 30 34)"><rect x="15" y="13" width="28" height="36" rx="4" fill="#fff" opacity=".45"/></g><path d="M21 12h17l8 8v29a3 3 0 0 1-3 3H21a3 3 0 0 1-3-3V15a3 3 0 0 1 3-3z" fill="#fff"/><path d="M38 12v6a2 2 0 0 0 2 2h6z" style="fill:var(--logo2,#C9CFFF)"/><rect x="23" y="24" width="15" height="3" rx="1.5" fill="#1D1F27"/><rect x="23" y="31" width="18" height="2.6" rx="1.3" fill="#1D1F27" opacity=".28"/><rect x="23" y="37" width="12" height="2.6" rx="1.3" fill="#1D1F27" opacity=".28"/><circle cx="44.5" cy="45.5" r="10.5" fill="#1D1F27" stroke="#5B6CFF" stroke-width="3"/><path d="M39.6 45.6l3.3 3.3 6.4-6.6" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
   const TABS = [
     { k: 'home', l: '홈', href: '/tools/' },
     { k: 'maker', l: '문제지', href: '/#/lib' },
@@ -38,17 +38,62 @@
     const tabs = opts.tabs ? TABS : [];
     h.innerHTML = `<div class="in">
       <a class="qn-logo" href="/" aria-label="문제지메이커 홈">${LOGO}<span>문제지<b>메이커</b></span></a>
-      ${tabs.length ? `<nav class="qn-tabs" aria-label="메뉴">${tabs.map(t => `<a href="${t.href}" class="${t.k === opts.active ? 'on' : ''} ${t.k === 'maker' ? 'maker' : ''}">${IC[t.k]}${t.l}</a>`).join('')}</nav>` : ''}
+      ${tabs.length ? `<nav class="qn-tabs" aria-label="메뉴">${tabs.map(t => `<a href="${t.href}" data-k="${t.k}">${IC[t.k]}${t.l}</a>`).join('')}</nav>` : ''}
       <div class="qn-right" id="qnRight">${opts.right || ''}<button class="qn-ib" id="qnTheme" type="button" title="다크모드" aria-label="다크모드">${isDark() ? '☀️' : '🌙'}</button></div></div>`;
     document.getElementById('qnTheme').onclick = () => { const d = !document.body.classList.contains('dark'); applyTheme(d); ls.set('qt_theme', d ? '1' : '0'); };
     let bar = document.getElementById('qnBar');
     if (tabs.length) {
       if (!bar) { bar = document.createElement('nav'); bar.id = 'qnBar'; bar.className = 'qn-bar'; bar.setAttribute('aria-label', '아래 메뉴'); document.body.append(bar); }
-      bar.innerHTML = tabs.map(t => `<a href="${t.href}" class="${t.k === opts.active ? 'on' : ''} ${t.k === 'maker' ? 'maker' : ''}">${t.k === 'maker' ? `<span class="ic">${IC.maker}</span>` : IC[t.k]}<span>${t.s || t.l}</span></a>`).join('');
+      bar.innerHTML = tabs.map(t => `<a href="${t.href}" data-k="${t.k}"><span class="ic">${IC[t.k]}</span><span>${t.s || t.l}</span></a>`).join('');
       document.body.classList.add('qn-has-bar');
     } else { if (bar) bar.remove(); document.body.classList.remove('qn-has-bar'); }
     if (opts.onRight) opts.onRight(document.getElementById('qnRight'));
+    mark(); drawNotice();
   }
+  /* 지금 보고 있는 파트만 보라색으로 (관리자 · 내 계정 화면에서는 아무것도 칠하지 않아요) */
+
+  /* ===== 공지 배너 (관리자 › 공지에서 써요) =====
+     일반 공지는 ✕로 닫으면 그 공지는 다시 안 떠요. 중요 공지는 닫기 없이 계속 보여요. */
+  let NOTICES = null, NLOAD = false;
+  const NK = 'qt_notice_closed';
+  async function loadNotices(c) {
+    if (NLOAD || !c || typeof c.from !== 'function') return; NLOAD = true;
+    try {
+      const { data, error } = await c.from('qm_notices').select('id,title,body,level,link,link_label,starts_at,ends_at').order('created_at', { ascending: false }).limit(10);
+      if (error) { NOTICES = []; return; }
+      const now = Date.now();
+      NOTICES = (data || []).filter(n => Date.parse(n.starts_at) <= now && (!n.ends_at || Date.parse(n.ends_at) > now)).sort((a, b) => (b.level === 'important') - (a.level === 'important'));
+      drawNotice();
+    } catch (e) { NOTICES = []; }
+  }
+  function drawNotice() {
+    if (!NOTICES) return;
+    const closed = ls.get(NK) ? ls.get(NK).split(',') : [];
+    const n = NOTICES.find(x => x.level === 'important' || !closed.includes(x.id));
+    let el = document.getElementById('qnNotice');
+    if (!n) { if (el) el.remove(); return; }
+    const head = document.getElementById('qnHead');
+    if (!el) { el = document.createElement('div'); el.id = 'qnNotice'; }
+    if (head) head.after(el); else if (!el.parentNode) document.body.prepend(el);
+    const esc = t => String(t ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    const safe = /^(https?:\/\/|\/)/.test(n.link || '') ? n.link : '';
+    el.className = 'qnb ' + (n.level === 'important' ? 'imp' : '');
+    el.innerHTML = `<div class="in"><span class="qnb-i">${n.level === 'important' ? '⚠️' : '📢'}</span><div class="qnb-t"><b>${esc(n.title)}</b>${n.body ? `<span>${esc(n.body)}</span>` : ''}</div>
+      ${safe ? `<a class="qnb-a" href="${esc(safe)}" ${/^https?:/.test(safe) && !safe.includes(location.host) ? 'target="_blank" rel="noopener"' : ''}>${esc(n.link_label || '자세히')}</a>` : ''}
+      ${n.level === 'important' ? '' : '<button class="qnb-x" type="button" aria-label="공지 닫기">✕</button>'}</div>`;
+    const x = el.querySelector('.qnb-x'); if (x) x.onclick = () => { closed.push(n.id); ls.set(NK, closed.slice(-50).join(',')); drawNotice(); };
+  }
+  function current() {
+    const p = location.pathname, h = location.hash;
+    if (p.startsWith('/tools/checklist')) return 'checklist';
+    if (p.startsWith('/tools/timer')) return 'timer';
+    if (p.startsWith('/tools/school')) return 'school';
+    if (p.startsWith('/tools')) return 'home';
+    if (/^#\/(admin|me)/.test(h)) return '';
+    return 'maker';
+  }
+  function mark() { const k = current(); document.querySelectorAll('.qn-tabs a[data-k], .qn-bar a[data-k]').forEach(a => { const on = a.dataset.k === k; a.classList.toggle('on', on); if (on) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current'); }); }
+  window.addEventListener('hashchange', mark);
 
   /* =============== 앱으로 설치 (PWA) — 메인 · 공부도구 같이 씀 ===============
      폰은 홈 화면에, 컴퓨터는 앱(작업 표시줄 · Dock)으로. 이미 설치한 사람에게는 안 보여요.
@@ -212,8 +257,8 @@
     }
     /* supabase 클라이언트: 공부도구 테이블에 쓰는 일(추가 · 완료 · 수정 · 삭제)을 자동으로 기록해요.
        완료 · 삭제처럼 id만 오가는 일도 무엇을 했는지 보이게, 불러온 할 일 · 과목 · D-day 이름을 기억해 둬요. */
-    const TBL = { tools_tasks: 'checklist', tools_subjects: 'checklist', tools_sessions: 'timer', tools_profile: 'school', tools_ddays: 'school' };
-    const NAMES = { tools_tasks: {}, tools_subjects: {}, tools_ddays: {} };
+    const TBL = { tools_tasks: 'checklist', tools_subjects: 'checklist', tools_sessions: 'timer', tools_profile: 'school', tools_ddays: 'school', tools_assignments: 'school', tools_grades: 'school' };
+    const NAMES = { tools_tasks: {}, tools_subjects: {}, tools_ddays: {}, tools_assignments: {}, tools_grades: {} };
     const remember = (t, data) => { const m = NAMES[t]; if (!m || !data) return; (Array.isArray(data) ? data : [data]).forEach(r => { if (r && r.id) m[r.id] = Object.assign(m[r.id] || {}, r); }); };
     const idOf = b => { try { const v = b && b.url && b.url.searchParams && b.url.searchParams.get('id'); return v ? v.replace(/^eq\./, '') : null; } catch (e) { return null; } };
     const mm = s => s >= 3600 ? `${Math.floor(s / 3600)}시간 ${Math.round(s % 3600 / 60)}분` : `${Math.max(1, Math.round(s / 60))}분`;
@@ -246,6 +291,18 @@
       }
       if (t === 'tools_profile') return `학교 · 반 설정 · ${one.school_name || ''}${one.grade ? ` ${one.grade}학년` : ''}${one.class_nm ? ` ${one.class_nm}반` : ''}`;
       if (t === 'tools_ddays') { if (op === 'insert') return `D-day 추가 · ${one.title || ''} (${one.day || ''})`; if (op === 'delete') return `D-day 삭제 · ${old.title || ''}`; }
+      if (t === 'tools_assignments') {
+        const nm = one.title || old.title || '';
+        if (op === 'insert') return `과제 추가 · ${one.kind ? one.kind + ' ' : ''}${one.subject ? `[${one.subject}] ` : ''}${nm}${one.due ? ` (${one.due} 마감)` : ''}`;
+        if (op === 'update') { if (keys.length <= 3 && 'files' in one && !('title' in one)) return `과제 사진 ${(one.files || []).length}장 · ${old.title || ''}`; if ('item_id' in one) return `과제 사진으로 문제지 학습 만들기 · ${old.title || ''}`; if ('done' in one && keys.length <= 3) return `${one.done ? '과제 제출' : '과제 제출 취소'} · ${nm}`; return `과제 수정 · ${nm}${one.score != null ? ` · ${one.score}점` : ''}`; }
+        if (op === 'delete') return `과제 삭제 · ${old.title || ''}`;
+      }
+      if (t === 'tools_grades') {
+        const rows = arr ? v : [one], nm = one.name || old.name || '', yt = (one.year || old.year) ? `${one.year || old.year}-${one.term || old.term} ` : '';
+        if (op === 'insert') return n > 1 ? `성적 과목 ${n}개 넣기 · ${rows.map(x => x.name).slice(0, 4).join(', ')}${n > 4 ? ' 외' : ''}` : `성적 과목 추가 · ${yt}${nm}`;
+        if (op === 'update') return `성적 입력 · ${yt}${nm}${one.raw != null ? ` · ${one.raw}점` : ''}${one.grade ? ` · ${one.grade}등급` : ''}${one.ach ? ` · ${one.ach}` : ''}`;
+        if (op === 'delete') return `성적 과목 삭제 · ${nm}`;
+      }
       return `${t} ${op}`;
     }
     const hook = (b, fn) => { if (!b || typeof b.then !== 'function') return b; const th = b.then.bind(b); b.then = (res, rej) => th(r => { try { fn(r); } catch (e) {} return res ? res(r) : r; }, rej); return b; };
@@ -274,7 +331,7 @@
       };
       return c;
     }
-    function setClient(c) { client = wrap(c); if (user) schedule(1500); return client; }
+    function setClient(c) { client = wrap(c); if (user) schedule(1500); try { loadNotices(client); } catch (e) {} return client; }
     function setUser(u) {
       if (!u || !u.id) { user = null; pre = []; return; }
       const first = !user || user.id !== u.id; user = { id: u.id, name: u.name || '', email: u.email || '' };

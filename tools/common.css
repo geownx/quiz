@@ -43,7 +43,7 @@ h1,h2{font-size:22px;font-weight:800;letter-spacing:-.5px;margin:6px 0 16px;line
 .btn.sm{padding:6px 10px;font-size:13px;border-radius:10px}
 .btn.ghost{border-color:transparent;background:transparent}
 .btn:disabled{opacity:.45;cursor:not-allowed}
-input[type=text],input[type=number],select{width:100%;border:1px solid var(--line);background:var(--bg);border-radius:12px;padding:11px 12px;font-size:15px;outline:none;min-width:0}
+input[type=text],input[type=number],input[type=date],input[type=datetime-local],select,textarea{width:100%;border:1px solid var(--line);background:var(--bg);border-radius:12px;padding:11px 12px;font-size:15px;outline:none;min-width:0}
 input:focus,select:focus{border-color:var(--acc)}
 .row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .spacer{flex:1}
@@ -129,3 +129,9 @@ footer.site b{color:var(--ink)}
 .ssw a{flex:1;text-align:center;text-decoration:none;color:var(--mute);font-weight:700;font-size:14px;padding:9px 4px;border-radius:9px}
 .ssw a.on{background:var(--card);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.08)}
 @media(min-width:700px){.ssw{max-width:420px}}
+
+/* 글자 줄바꿈: 낱말 중간에서 꺾이지 않게 (한국어는 띄어쓰기 단위로) */
+body{word-break:keep-all;overflow-wrap:break-word}
+
+input[type=date],input[type=datetime-local]{-webkit-appearance:none;appearance:none;min-height:44px;color:var(--ink);font-family:inherit}
+textarea{font-family:inherit;resize:vertical;line-height:1.5}

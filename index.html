@@ -2,6 +2,10 @@
 <html lang="ko">
 <head>
 <meta charset="utf-8">
+<script src="/tools/theme.js?v=2026112607"></script>
+<!-- ▼ 검색엔진 확인 태그: 구글 · 네이버에서 받은 <meta ...> 줄을 바로 아래에 붙여 넣으세요 ▼ -->
+
+<!-- ▲ 검색엔진 확인 태그 끝 ▲ -->
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#f6f7fb">
 <meta name="description" content="교과서·필기 사진이나 강의 PDF를 올리면 문제지 PDF, 사이트에서 풀기, 플래시카드, 요약 노트, 마인드맵까지 만들어 드려요.">
@@ -11,13 +15,13 @@
 <meta property="og:title" content="문제지메이커 · 공부한 자료를 올리면 시험지가 나와요">
 <meta property="og:description" content="사진·PDF를 올리면 문제지, 풀기·채점, 오답 노트, 플래시카드, 요약 노트, 마인드맵까지.">
 <meta property="og:url" content="https://quizmaker.pro/">
-<meta property="og:image" content="https://quizmaker.pro/og.png?v=2">
+<meta property="og:image" content="https://quizmaker.pro/og.png?v=2026112607">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="문제지메이커 — 공부한 자료를 올리면 시험지가 나와요">
 <meta property="og:locale" content="ko_KR">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://quizmaker.pro/og.png?v=2">
+<meta name="twitter:image" content="https://quizmaker.pro/og.png?v=2026112607">
 <meta name="apple-mobile-web-app-title" content="문제지메이커">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
@@ -31,7 +35,7 @@
 <script defer src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.13/dist/html-to-image.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<link rel="stylesheet" href="/tools/nav.css">
+<link rel="stylesheet" href="/tools/nav.css?v=2026112607">
 <style>
 :root{
   --ink:#1f2a44; --ink2:#46506a; --mute:#7a8296; --line:#e3e1db; --bg:#f6f4ef; --card:#fff; --soft:#f1efea; --soft2:#ebe8e1; --sel:#eef0f5; --okbg:#eef6f1; --line2:#cfcac0;
@@ -792,7 +796,7 @@ details.fold>summary small{font-weight:500;color:var(--mute);font-size:12.5px}
 .prices div b{float:right;color:var(--acc)}
 /* 관리자 */
 .prtbl{width:100%;border-collapse:collapse;font-size:13px}
-.prtbl th,.prtbl td{padding:6px;border-bottom:1px solid var(--line);text-align:center}
+.prtbl th,.prtbl td{padding:6px;border-bottom:1px solid var(--line);text-align:center;white-space:nowrap}
 .prtbl input{width:64px;padding:6px;text-align:center}
 .prtbl th:first-child,.prtbl td:first-child{text-align:left;font-weight:700}
 .searchrow{display:flex;gap:8px;margin-bottom:12px}.searchrow .btn{flex:0 0 auto;white-space:nowrap}.searchrow input{min-width:0}
@@ -903,11 +907,11 @@ details.adv .sec-t:first-of-type{margin-top:4px}
 /* ===== 로그인 전 첫 화면 (새 홈과 같은 모양) ===== */
 .ld{max-width:1180px;margin:0 auto;padding:18px 16px 30px}
 .ld-hero{display:grid;gap:14px}
-.ld-mk{border-radius:22px;padding:24px 20px;color:#fff;background:linear-gradient(135deg,#5b6cff 0%,#7b5bff 60%,#9a6bff 100%);position:relative;overflow:hidden}
+.ld-mk{border-radius:22px;padding:24px 20px;color:#fff;background:linear-gradient(135deg,var(--g1,#5b6cff) 0%,var(--g2,#9a6bff) 100%);position:relative;overflow:hidden}
 .ld-mk::after{content:"";position:absolute;right:-60px;top:-60px;width:220px;height:220px;border-radius:50%;background:rgba(255,255,255,.1)}
 .ld-tag{display:inline-block;align-self:flex-start;font-size:12px;font-weight:800;background:rgba(255,255,255,.18);border-radius:999px;padding:5px 11px}
 .ld-mk h1{color:#fff;font-size:30px;line-height:1.25;letter-spacing:-1px;margin:14px 0 10px;word-break:keep-all}
-.ld-mk h1 em{font-style:normal;background:#fff;color:#4b54d8;border-radius:10px;padding:0 8px}
+.ld-mk h1 em{font-style:normal;background:#fff;color:var(--deep,#4b54d8);border-radius:10px;padding:0 8px}
 .ld-mk p{margin:0;font-size:14.5px;line-height:1.65;opacity:.92;word-break:keep-all;max-width:560px;position:relative;z-index:1}
 .ld-stats{display:flex;gap:8px;margin:18px 0 0;position:relative;z-index:1}
 .ld-stats div{flex:1;background:rgba(255,255,255,.14);border-radius:12px;padding:10px 12px}
@@ -928,10 +932,10 @@ details.adv .sec-t:first-of-type{margin-top:4px}
 .ld-card p{margin:4px 0 0;font-size:13.5px;color:var(--ink2);line-height:1.55;word-break:keep-all}
 .ld-types{display:flex;flex-wrap:wrap;gap:8px}
 .ld-types span{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:8px 14px;font-size:14px;font-weight:600}
-.ld-cta{margin-top:34px;border-radius:22px;padding:22px 20px;color:#fff;background:linear-gradient(135deg,#5b6cff,#8462ff);display:flex;flex-direction:column;gap:16px}
+.ld-cta{margin-top:34px;border-radius:22px;padding:22px 20px;color:#fff;background:linear-gradient(135deg,var(--g1,#5b6cff),var(--g2,#8462ff));display:flex;flex-direction:column;gap:16px}
 .ld-cta h4{margin:0 0 6px;font-size:20px;color:#fff}
 .ld-cta p{margin:0;font-size:14px;opacity:.9}
-.ld-cta .btn{background:#fff;color:#4b54d8;border:0;font-weight:800;padding:13px 22px;border-radius:13px;align-self:flex-start}
+.ld-cta .btn{background:#fff;color:var(--deep,#4b54d8);border:0;font-weight:800;padding:13px 22px;border-radius:13px;align-self:flex-start}
 @media(min-width:700px){
   .ld{padding:26px 28px 40px}
   .ld-mk{padding:32px 30px}.ld-mk h1{font-size:38px}
@@ -970,13 +974,13 @@ details.adv .sec-t:first-of-type{margin-top:4px}
 .lg-day h5{margin:16px 0 6px;font-size:13px;color:var(--mute);position:sticky;top:0;background:var(--bg);padding:4px 0;z-index:1}
 .lgr{display:grid;grid-template-columns:62px 78px minmax(0,1fr);gap:10px;align-items:start;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:5px;cursor:pointer}
 .lgr:hover{border-color:var(--acc)}
-.lgr time{font-size:12.5px;color:var(--mute);font-variant-numeric:tabular-nums;padding-top:2px}
+.lgr time{font-size:12.5px;color:var(--mute);font-variant-numeric:tabular-nums;padding-top:2px;white-space:nowrap}
 .lgp{font-size:11.5px;font-weight:800;border-radius:7px;padding:3px 7px;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;background:var(--soft);color:var(--ink2)}
 .lgp.p-login{background:#e8f1ff;color:#2f6fdc}.lgp.p-maker{background:var(--acc2);color:var(--acc)}.lgp.p-checklist{background:#e6f7ee;color:#1d8a52}
 .lgp.p-timer{background:#fff1e3;color:#c46a12}.lgp.p-school{background:#f3ecff;color:#7a4bd6}.lgp.p-home{background:#e8f6f8;color:#16808f}
 .lgp.p-app{background:#fdeef6;color:#c23b7f}.lgp.p-admin{background:#eceef3;color:#4a5068}
 body.dark .lgp{filter:brightness(.85) saturate(1.2)}
-.lgm b{display:block;font-size:14px;font-weight:600;line-height:1.45;word-break:break-all}
+.lgm b{display:block;font-size:14px;font-weight:600;line-height:1.45;word-break:keep-all;overflow-wrap:anywhere}
 .lgm small{display:block;font-size:12px;color:var(--mute);margin-top:2px}.lgm small a{color:var(--acc);font-weight:700;cursor:pointer}
 .lgk{font-style:normal;font-size:11px;font-weight:800;color:var(--mute);border:1px solid var(--line);border-radius:6px;padding:0 5px;margin-right:6px;vertical-align:1px}
 .lgr.k-click .lgm b{font-weight:500;color:var(--ink2)}
@@ -986,7 +990,7 @@ body.dark .lgp{filter:brightness(.85) saturate(1.2)}
 .lgd pre{margin:4px 0 0;background:var(--soft);border-radius:10px;padding:10px;font-size:12px;overflow:auto;max-height:280px;white-space:pre-wrap;word-break:break-all}
 .lg-more{width:100%;margin-top:10px}.lg-end{text-align:center;color:var(--mute);font-size:12.5px;margin:14px 0}
 @media(max-width:699px){
-  .lgr{grid-template-columns:54px minmax(0,1fr);gap:4px 8px}
+  .lgr{grid-template-columns:60px minmax(0,1fr);gap:4px 8px}
   .lgr .lgp{grid-column:2;justify-self:start}.lgr .lgm{grid-column:1/-1}
   .lg-meta{grid-template-columns:repeat(2,minmax(0,1fr))}
   .lg-who{grid-template-columns:40px minmax(0,1fr) auto;padding:14px}.lg-who .un span{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -998,7 +1002,7 @@ body.dark .lgp{filter:brightness(.85) saturate(1.2)}
 .lgt{display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:5px;flex-wrap:wrap}
 .lgt>i{width:20px;height:20px;border-radius:6px;border:2px solid var(--line2);display:grid;place-items:center;font-style:normal;font-size:12px;font-weight:900;color:#fff;flex:0 0 auto}
 .lgt.on>i{background:var(--ok);border-color:var(--ok)}.lgt.on b{color:var(--mute);text-decoration:line-through}
-.lgt b{font-size:14.5px;font-weight:600;flex:1 1 140px;min-width:0;word-break:break-all}
+.lgt b{font-size:14.5px;font-weight:600;flex:1 1 140px;min-width:0;word-break:keep-all;overflow-wrap:anywhere}
 .lgt small{font-size:12.5px;color:var(--mute);white-space:nowrap}
 .lgtm{font-size:12.5px;color:var(--mute);font-variant-numeric:tabular-nums}
 .lgdd{font-size:12px;font-weight:800;color:var(--acc);background:var(--acc2);border-radius:7px;padding:2px 8px}
@@ -1009,6 +1013,21 @@ body.dark .lgp{filter:brightness(.85) saturate(1.2)}
 .lgb span{font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.lgb b{text-align:right;font-size:13px}
 .lgb i{height:10px;border-radius:99px;background:var(--soft);overflow:hidden}.lgb em{display:block;height:100%;border-radius:99px}
 .lg-sch{padding:16px;display:grid;gap:4px;margin-bottom:6px}.lg-sch b{font-size:17px}.lg-sch span{color:var(--ink2);font-size:14px}
+.adv{display:inline-block;font-size:11.5px;font-weight:700;color:var(--mute);background:var(--soft);border-radius:999px;padding:2px 8px;margin-left:4px}
+
+/* ===== 글자 줄바꿈: 낱말 중간에서 꺾이지 않게 (한국어는 띄어쓰기 단위로) ===== */
+body{word-break:keep-all;overflow-wrap:break-word}
+@media(max-width:420px){
+  .ld-stats{flex-direction:column;gap:6px}
+  .ld-stats div{display:flex;align-items:baseline;gap:10px;padding:9px 12px}
+  .ld-stats b{font-size:16px;flex:0 0 auto}
+}
+.ntop{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px}.ntop .sub{font-size:13px;margin:0;flex:1 1 260px}
+.nlist{display:grid;gap:10px}.nrow{padding:14px 16px}.nrow p{margin:6px 0;color:var(--ink2);font-size:14px}.nrow small{color:var(--mute);font-size:12px}
+.nh{display:flex;align-items:center;gap:6px;flex-wrap:wrap}.nh b{font-size:15px}
+.nst{font-size:11.5px;font-weight:800;border-radius:7px;padding:2px 8px;background:var(--soft);color:var(--mute)}.nst.on{background:#e3f6ec;color:#1d8a52}.nst.wait{background:#fff4dc;color:#b97a00}.nst.imp{background:#fde8ec;color:#c4243a}
+.nact{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+.npv{border:1px dashed var(--line2);border-radius:12px;overflow:hidden}.npv .qnb{border:0}
 /* 약한 파트 → 할 일 */
 .weak{border:1px solid var(--acc);background:var(--acc2);border-radius:16px;padding:14px;margin-top:12px}
 .weak b{display:block;font-size:15px}
@@ -1024,7 +1043,7 @@ body.dark .lgp{filter:brightness(.85) saturate(1.2)}
 <main id="app"></main>
 <footer class="site" id="foot">
   <div class="in">
-    <div class="logo sm"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"> <rect width="64" height="64" rx="16" fill="#5B6CFF"/> <g transform="rotate(-8 30 34)"> <rect x="15" y="13" width="28" height="36" rx="4" fill="#fff" opacity=".45"/> </g> <path d="M21 12h17l8 8v29a3 3 0 0 1-3 3H21a3 3 0 0 1-3-3V15a3 3 0 0 1 3-3z" fill="#fff"/> <path d="M38 12v6a2 2 0 0 0 2 2h6z" fill="#C9CFFF"/> <rect x="23" y="24" width="15" height="3" rx="1.5" fill="#1F2A44"/> <rect x="23" y="31" width="18" height="2.6" rx="1.3" fill="#1F2A44" opacity=".28"/> <rect x="23" y="37" width="12" height="2.6" rx="1.3" fill="#1F2A44" opacity=".28"/> <circle cx="44.5" cy="45.5" r="10.5" fill="#1F2A44" stroke="#5B6CFF" stroke-width="3"/> <path d="M39.6 45.6l3.3 3.3 6.4-6.6" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/> </svg><span>문제지<b>메이커</b></span></div>
+    <div class="logo sm"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"> <rect width="64" height="64" rx="16" style="fill:var(--logo,#5B6CFF)"/> <g transform="rotate(-8 30 34)"> <rect x="15" y="13" width="28" height="36" rx="4" fill="#fff" opacity=".45"/> </g> <path d="M21 12h17l8 8v29a3 3 0 0 1-3 3H21a3 3 0 0 1-3-3V15a3 3 0 0 1 3-3z" fill="#fff"/> <path d="M38 12v6a2 2 0 0 0 2 2h6z" style="fill:var(--logo2,#C9CFFF)"/> <rect x="23" y="24" width="15" height="3" rx="1.5" fill="#1F2A44"/> <rect x="23" y="31" width="18" height="2.6" rx="1.3" fill="#1F2A44" opacity=".28"/> <rect x="23" y="37" width="12" height="2.6" rx="1.3" fill="#1F2A44" opacity=".28"/> <circle cx="44.5" cy="45.5" r="10.5" fill="#1F2A44" stroke="#5B6CFF" stroke-width="3"/> <path d="M39.6 45.6l3.3 3.3 6.4-6.6" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/> </svg><span>문제지<b>메이커</b></span></div>
     <p id="footTxt">사진이나 PDF를 올리면 문제지, 풀기·채점, 플래시카드, 요약 노트, 마인드맵을 만들어 드려요.<span id="footAsk"></span></p>
     <div class="credit"><span>© 2026 문제지메이커 · 제작자 <b>geownx</b></span></div>
   </div>
@@ -1032,7 +1051,8 @@ body.dark .lgp{filter:brightness(.85) saturate(1.2)}
 <div class="navbar" id="navbar" style="display:none"><div class="in" id="navin"></div></div>
 <div id="pageRender"></div>
 <div id="printRoot"></div>
-<script src="/tools/nav.js"></script>
+<script src="/tools/nav.js?v=2026112607"></script>
+<script src="/tools/badges.js?v=2026112607"></script>
 <script>
 'use strict';
 /* ★★★★★ 설치할 때 이 두 줄만 바꾸세요 (설치 안내서 참고) ★★★★★ */
@@ -1292,7 +1312,7 @@ function route() {
     case 'review': return viewReview(a);
     case 'me': return viewAccount();
     case 'admin': return isAdmin() ? viewAdmin(a, b) : go('#/lib');
-    case 'lib': return viewLibrary(a);
+    case 'lib': return viewLibrary(a, b);
     default: if (!r) { location.replace('/tools/'); return; } return go('#/lib');
   }
 }
@@ -1940,7 +1960,7 @@ function viewWaiting() {
 
 /* =============== 학습 목록 =============== */
 const UP = { files: [] };
-async function viewLibrary(how) {
+async function viewLibrary(how, arg) {
   APP().innerHTML = `<div class="wrap">
     ${pageHead(`<span class="k">MY LIBRARY</span><h2>내 학습</h2>`, '과목·주제 하나를 한 칸에 담아요. 자료는 나중에 더 추가할 수 있어요.', null,
       isAdmin() ? '' : `<button class="coinpill ${hasSub() ? 'sub' : ''}" id="lCoin"><i>C</i>${hasSub() ? '정액제 이용 중' : nfmt(ME.coins) + '코인'}</button>`)}
@@ -1950,6 +1970,7 @@ async function viewLibrary(how) {
     <div class="lib" id="lib"><div class="note">불러오는 중…</div></div></div>`;
   const lc = $('#lCoin'); if (lc) lc.onclick = () => go('#/me');
   renderUpPanel($('#upPanel'));
+  if (how === 'hw' && arg) setTimeout(() => loadHwFiles(arg), 200);
   if (how === 'cam' || how === 'file') setTimeout(() => {
     const P = $('#upPanel'); if (!P) return; P.scrollIntoView({ behavior: 'smooth', block: 'center' }); P.classList.add('pulse');
     const b = $(how === 'cam' ? '#btnCam' : '#btnPick', P); if (b) { b.focus(); try { b.click(); } catch (e) {} }
@@ -1998,6 +2019,28 @@ function renderUpPanel(P, item) {
   d.ondragleave = () => d.classList.remove('over');
   d.ondrop = e => { e.preventDefault(); d.classList.remove('over'); addFiles([...e.dataTransfer.files], P); };
   $('#upGo', P).onclick = () => submitUpload(P);
+}
+
+/* 학교생활 › 과제의 안내문 · 자료 사진을 업로드 칸에 넣어요 (#/lib/hw/<과제 id>) */
+async function loadHwFiles(id) {
+  const P = $('#upPanel'); if (!P) return;
+  const c = authClient(); if (!c) return toast('이 화면에서는 과제 사진을 불러올 수 없어요');
+  P.scrollIntoView({ behavior: 'smooth', block: 'center' }); P.classList.add('pulse');
+  try {
+    const { data: a, error } = await c.from('tools_assignments').select('*').eq('id', id).single();
+    if (error || !a) throw new Error('과제를 찾지 못했어요');
+    const t = $('#upTitle', P); if (t && !t.value) t.value = `${a.subject ? a.subject + ' ' : ''}${a.kind} · ${a.title}`.slice(0, 60);
+    UP.hw = a.id;
+    toast('과제 사진을 불러오는 중…');
+    const files = [];
+    for (const f of a.files || []) {
+      const { data: blob, error: e2 } = await c.storage.from('tools-files').download(f.path);
+      if (!e2 && blob) files.push(new File([blob], f.name || 'photo.jpg', { type: f.type || blob.type }));
+    }
+    if (!files.length) return toast('불러올 사진이 없어요');
+    await addFiles(files, P);
+    toast(`과제 사진 ${files.length}장을 넣었어요. 확인하고 [올리기]를 누르면 문제지를 만들 학습이 생겨요`, 4200);
+  } catch (e) { handleErr(e); }
 }
 const MAX_FILE_MB = 14, MAX_TOTAL_MB = 14;
 async function addFiles(list, P) {
@@ -2066,7 +2109,12 @@ async function submitUpload(P) {
     const sum = have + prepared.reduce((a, p) => a + p.bytes.length, 0);
     if (sum > MAX_TOTAL_MB * 1048576) throw new Error(`한 학습의 자료는 합쳐서 ${MAX_TOTAL_MB}MB까지예요 (지금 ${kb(sum)}). PDF 쪽 범위를 줄이거나 다른 학습으로 나눠 주세요.`);
     let itemId = UP.item && UP.item.id;
-    if (!itemId) itemId = (await api('itemCreate', { title: ($('#upTitle', P) || {}).value || '', memo: ($('#upMemo', P) || {}).value || '' })).id;
+    if (!itemId) {
+      const ttl = ($('#upTitle', P) || {}).value || '';
+      itemId = (await api('itemCreate', { title: ttl, memo: ($('#upMemo', P) || {}).value || '' })).id;
+      // 과제 사진으로 만든 학습이면 과제에 연결해 둬요 (학교생활 › 과제에서 바로 가기)
+      if (UP.hw && authClient()) { const hw = UP.hw; UP.hw = null; authClient().from('tools_assignments').update({ item_id: itemId, item_title: ttl || null }).eq('id', hw).then(() => {}, () => {}); }
+    }
     await uploadTo(itemId, prepared, setLoadingDetail);
     setLoadingDetail('분석을 시작하는 중…');
     await api('analyze', { itemId });
@@ -3162,6 +3210,8 @@ async function viewAccount() {
   const p = (PUBCFG && PUBCFG.prices) || {}, sub = hasSub(), email = ME.provider === 'email';
   APP().innerHTML = `<div class="wrap" style="max-width:720px">
     ${pageHead(`<span class="k">MY</span><h2>내 계정</h2>`, `${esc(ME.email || '')}${ME.provider && ME.provider !== 'email' ? ` · ${ME.provider === 'google' ? '구글' : ME.provider === 'kakao' ? '카카오' : esc(ME.provider)} 로그인` : ''}`, ['#/lib', '학습 목록'])}
+    <div class="sec-t" style="margin-top:6px">레벨 · 배지</div><div id="lvBox"><div class="note">불러오는 중…</div></div>
+    <div class="sec-t">코인</div>
     ${isAdmin() ? '<div class="note">관리자 계정은 코인 없이 모두 쓸 수 있어요.</div>' : `
     <div class="coinbig"><div><span>남은 코인</span><b>${nfmt(ME.coins)}</b></div>
       <div class="rt">사이트 풀기 10문제 <b>${p.solve ? p.solve['10'] : 3}코인</b><br>PDF 10문제 <b>${p.pdf ? p.pdf['10'] : 5}코인</b></div></div>
@@ -3191,6 +3241,9 @@ async function viewAccount() {
   </div>`;
   bindBack(APP());
   $('#acOut').onclick = logout;
+  if (window.QTBADGE && authClient()) QTBADGE.load(authClient()).then(D => { const b = $('#lvBox'); if (!b) return; QTBADGE.render(b, D); QTBADGE.check(authClient(), MY_UID, D); })
+    .catch(e => { const b = $('#lvBox'); if (b) b.innerHTML = /qm_my_stats|PGRST202|Could not find/.test((e && e.message) || '') ? '<div class="note">레벨 · 배지는 Supabase에서 supabase_stage3.sql을 실행하면 보여요.</div>' : `<div class="note">배지를 불러오지 못했어요: ${esc((e && e.message) || '')}</div>`; });
+  else { const b = $('#lvBox'); if (b) b.innerHTML = '<div class="note">이 화면에서는 배지를 불러올 수 없어요.</div>'; }
   $$('[data-seg=solve_mode] button').forEach(b => b.onclick = async () => {
     $$('[data-seg=solve_mode] button').forEach(x => x.classList.toggle('on', x === b));
     try { ME = Object.assign(ME, await api('setSolveMode', { mode: b.dataset.v })); toast('채점 방식을 바꿨어요'); } catch (e) { handleErr(e); }
@@ -3209,15 +3262,74 @@ function viewAdmin(tab, sub) {
   if (tab) AD.tab = tab;
   AD.sub = AD.tab === 'logs' ? (sub || null) : null;
   APP().innerHTML = `<div class="wrap">
-    <div class="adm-head"><div><span class="k">ADMIN</span><h2>관리자</h2><p class="sub">통계, 회원 · 코인 · 정액제, 학습 기록, 활동 기록, 운영 설정을 관리해요.</p></div></div>
-    <div class="seg tabs" id="adTabs">${[['stats', '통계'], ['users', `회원 ${ME.pending ? `<i class="cnt">${ME.pending}</i>` : ''}`], ['reports', `오류 신고 ${ME.reports ? `<i class="cnt">${ME.reports}</i>` : ''}`], ['items', '학습 기록'], ['logs', '활동 기록'], ['settings', '설정']].map(([k, l]) => `<button data-t="${k}" class="${AD.tab === k ? 'on' : ''}">${l}</button>`).join('')}</div>
+    <div class="adm-head"><div><span class="k">ADMIN</span><h2>관리자</h2><p class="sub">통계, 회원 · 코인 · 정액제, 학습 기록, 활동 기록, 공지, 운영 설정을 관리해요. <span class="adv">화면 버전 11.26-7</span></p></div></div>
+    <div class="seg tabs" id="adTabs">${[['stats', '통계'], ['users', `회원 ${ME.pending ? `<i class="cnt">${ME.pending}</i>` : ''}`], ['reports', `오류 신고 ${ME.reports ? `<i class="cnt">${ME.reports}</i>` : ''}`], ['items', '학습 기록'], ['logs', '활동 기록'], ['notices', '공지'], ['settings', '설정']].map(([k, l]) => `<button data-t="${k}" class="${AD.tab === k ? 'on' : ''}">${l}</button>`).join('')}</div>
     <div id="adBody" style="margin-top:16px"><div class="note">불러오는 중…</div></div></div>`;
   $$('#adTabs button').forEach(b => b.onclick = () => go('#/admin/' + b.dataset.t));
   { const tb = $('#adTabs'), on = $('#adTabs .on'); if (tb && on) tb.scrollLeft = on.offsetLeft - 24; }
   if (AD.tab === 'logs') return adminLogs(AD.sub);
+  if (AD.tab === 'notices') return adminNotices();
   ({ stats: adminStats, users: adminUsers, reports: adminReports, items: adminItems, settings: adminSettings }[AD.tab] || adminStats)();
 }
 
+
+/* ===== 관리자 · 공지 배너 (모든 화면 위쪽에 떠요 · 로그인 전 첫 화면 포함) ===== */
+const toLocalInput = iso => { if (!iso) return ''; const d = new Date(iso); d.setMinutes(d.getMinutes() - d.getTimezoneOffset()); return d.toISOString().slice(0, 16); };
+async function adminNotices() {
+  const my = ++AD.seq, c = authClient(), box0 = adBox(my); if (!box0) return;
+  if (!c) { box0.innerHTML = '<p class="note">이 화면에서는 공지를 불러올 수 없어요.</p>'; return; }
+  const { data, error } = await c.from('qm_notices').select('*').order('created_at', { ascending: false }).limit(100);
+  const box = adBox(my); if (!box) return;
+  if (error) { box.innerHTML = /qm_notices|PGRST205|schema cache|does not exist/.test((error.code || '') + error.message) ? '<div class="card lg-setup"><b>공지 테이블이 아직 없어요</b><p>Supabase SQL Editor에서 <code>supabase_stage3.sql</code>을 실행해 주세요.</p></div>' : lgErrBox(error); return; }
+  const now = Date.now(), st = n => !n.active ? ['내림', 'off'] : Date.parse(n.starts_at) > now ? ['예약', 'wait'] : n.ends_at && Date.parse(n.ends_at) <= now ? ['끝남', 'off'] : ['게시 중', 'on'];
+  box.innerHTML = `<div class="ntop"><button class="btn acc" id="nNew">＋ 새 공지</button><span class="sub">회원 · 방문자 모두의 화면 위쪽에 떠요. 일반 공지는 회원이 ✕로 닫을 수 있고, 중요 공지는 기간 동안 계속 보여요.</span></div>
+    <div class="nlist">${(data || []).map(n => { const [l, k] = st(n); return `<div class="card nrow" data-id="${n.id}">
+      <div class="nh"><span class="nst ${k}">${l}</span>${n.level === 'important' ? '<span class="nst imp">중요</span>' : ''}<b>${esc(n.title)}</b></div>
+      ${n.body ? `<p>${esc(n.body)}</p>` : ''}<small>${fmtDT(n.starts_at)} ~ ${n.ends_at ? fmtDT(n.ends_at) : '내릴 때까지'}${n.link ? ` · 링크: ${esc(n.link_label || '자세히')} → ${esc(n.link)}` : ''}</small>
+      <div class="nact"><button class="btn sm" data-a="edit">수정</button><button class="btn sm" data-a="toggle">${n.active ? '내리기' : '다시 올리기'}</button><button class="btn sm ghost" data-a="del" style="color:var(--bad)">삭제</button></div></div>`; }).join('') || '<p class="note">아직 공지가 없어요.</p>'}</div>`;
+  $('#nNew', box).onclick = () => noticeForm(null);
+  $$('.nrow', box).forEach(el => {
+    const n = data.find(x => x.id === el.dataset.id);
+    $$('[data-a]', el).forEach(b => b.onclick = async () => {
+      try {
+        if (b.dataset.a === 'edit') return noticeForm(n);
+        if (b.dataset.a === 'toggle') { const { error: e } = await c.from('qm_notices').update({ active: !n.active }).eq('id', n.id); if (e) throw e; toast(n.active ? '공지를 내렸어요' : '공지를 다시 올렸어요'); }
+        if (b.dataset.a === 'del') { if (!confirm('이 공지를 지울까요?')) return; const { error: e } = await c.from('qm_notices').delete().eq('id', n.id); if (e) throw e; toast('지웠어요'); }
+        adminNotices();
+      } catch (e) { toast(e.message || String(e)); }
+    });
+  });
+}
+function noticeForm(n) {
+  const v = n || { title: '', body: '', level: 'info', link: '', link_label: '', starts_at: new Date().toISOString(), ends_at: null };
+  const m = document.createElement('div'); m.className = 'modal';
+  m.innerHTML = `<div class="box"><h3>${n ? '공지 수정' : '새 공지'}</h3>
+    <label class="lb">제목 <small>(80자)</small></label><input type="text" id="nT" maxlength="80" value="${esc(v.title)}" placeholder="예: 오늘 밤 11시~12시 점검해요">
+    <label class="lb">내용 <small>(선택 · 500자)</small></label><textarea id="nB" rows="3" maxlength="500" placeholder="한두 줄로 짧게 쓰면 폰에서도 잘 보여요">${esc(v.body || '')}</textarea>
+    <label class="lb">중요도</label><div class="seg" id="nL"><button data-v="info" class="${v.level === 'info' ? 'on' : ''}">📢 일반 (닫기 가능)</button><button data-v="important" class="${v.level === 'important' ? 'on' : ''}">⚠️ 중요 (계속 표시)</button></div>
+    <div class="row" style="gap:10px;flex-wrap:wrap"><div style="flex:2 1 200px"><label class="lb">링크 <small>(선택)</small></label><input type="text" id="nU" value="${esc(v.link || '')}" placeholder="https://… 또는 /tools/"></div><div style="flex:1 1 120px"><label class="lb">버튼 글자</label><input type="text" id="nUL" maxlength="20" value="${esc(v.link_label || '')}" placeholder="자세히"></div></div>
+    <div class="row" style="gap:10px;flex-wrap:wrap"><div style="flex:1 1 180px"><label class="lb">시작</label><input type="datetime-local" id="nS" value="${toLocalInput(v.starts_at)}"></div><div style="flex:1 1 180px"><label class="lb">끝 <small>(비우면 내릴 때까지)</small></label><input type="datetime-local" id="nE" value="${toLocalInput(v.ends_at)}"></div></div>
+    <label class="lb">미리보기</label><div id="nPv" class="npv"></div>
+    <div class="row" style="justify-content:flex-end;gap:8px;margin-top:16px"><button class="btn" data-close>취소</button><button class="btn acc" id="nGo">${n ? '저장' : '올리기'}</button></div></div>`;
+  m.onclick = e => { if (e.target === m || e.target.closest('[data-close]')) m.remove(); };
+  document.body.append(m);
+  let level = v.level;
+  const pv = () => { $('#nPv', m).innerHTML = `<div class="qnb ${level === 'important' ? 'imp' : ''}"><div class="in"><span class="qnb-i">${level === 'important' ? '⚠️' : '📢'}</span><div class="qnb-t"><b>${esc($('#nT', m).value || '제목')}</b>${$('#nB', m).value ? `<span>${esc($('#nB', m).value)}</span>` : ''}</div>${$('#nU', m).value ? `<span class="qnb-a">${esc($('#nUL', m).value || '자세히')}</span>` : ''}${level === 'important' ? '' : '<span class="qnb-x">✕</span>'}</div></div>`; };
+  ['#nT', '#nB', '#nU', '#nUL'].forEach(id => $(id, m).oninput = pv);
+  $$('#nL button', m).forEach(b => b.onclick = () => { level = b.dataset.v; $$('#nL button', m).forEach(x => x.classList.toggle('on', x === b)); pv(); });
+  pv();
+  $('#nGo', m).onclick = async () => {
+    const title = $('#nT', m).value.trim(); if (!title) return toast('제목을 적어 주세요');
+    const link = $('#nU', m).value.trim(); if (link && !/^(https?:\/\/|\/)/.test(link)) return toast('링크는 https:// 또는 / 로 시작해야 해요');
+    const s = $('#nS', m).value, e = $('#nE', m).value;
+    const row = { title, body: $('#nB', m).value.trim() || null, level, link: link || null, link_label: $('#nUL', m).value.trim() || null, starts_at: s ? new Date(s).toISOString() : new Date().toISOString(), ends_at: e ? new Date(e).toISOString() : null, active: true };
+    if (row.ends_at && row.ends_at <= row.starts_at) return toast('끝나는 시간이 시작보다 뒤여야 해요');
+    try {
+      const c = authClient(); const { error } = n ? await c.from('qm_notices').update(row).eq('id', n.id) : await c.from('qm_notices').insert(row);
+      if (error) throw error; m.remove(); toast(n ? '공지를 고쳤어요' : '공지를 올렸어요. 다른 화면은 새로고침하면 보여요'); adminNotices();
+    } catch (err) { toast(err.message || String(err)); }
+  };
+}
 /* ===== 관리자 · 활동 기록 (회원이 한 일을 파트별로) ===== */
 const LG = { uid: null, part: 'all', q: '', date: '', rows: [], more: false, sum: {}, dev: [], open: new Set() };
 const LG_PARTS = () => (window.QTLOG ? QTLOG.PARTS : []);
@@ -3263,7 +3375,6 @@ async function adminLogs(uid) {
     <p class="lg-hint">${LG.uid ? '숫자는 이 회원의 전체 기록 수' : '숫자는 오늘 기록 수 · 이름을 누르면 그 회원이 한 것을 다 볼 수 있어요'}</p>
     <div class="lg-tools">
       ${LG.uid ? '' : `<input type="text" id="lgQ" placeholder="이름 · 이메일 검색" value="${esc(LG.q)}">`}
-      <input type="date" id="lgD" value="${esc(LG.date)}" title="이 날짜까지의 기록">
       <button class="btn sm" id="lgGo">새로고침</button>
     </div>
     <div id="lgList"><div class="note">불러오는 중…</div></div>` : '<div id="lgBody"><div class="note">불러오는 중…</div></div>'}
@@ -3274,7 +3385,6 @@ async function adminLogs(uid) {
   if (!logView) return lgView(my);
   $$('.lg-parts button', box).forEach(b => b.onclick = () => { LG.part = b.dataset.p; $$('.lg-parts button', box).forEach(x => x.classList.toggle('on', x === b)); lgLoad(my); });
   const qi = $('#lgQ', box); if (qi) qi.onkeydown = e => { if (e.key === 'Enter') { LG.q = qi.value.trim(); lgLoad(my); } };
-  $('#lgD', box).onchange = e => { LG.date = e.target.value; lgLoad(my); };
   $('#lgGo', box).onclick = () => { if (qi) LG.q = qi.value.trim(); adminLogs(LG.uid); };
   lgLoad(my);
 }
@@ -3282,6 +3392,16 @@ async function adminLogs(uid) {
 const lgHM = s => { s = Math.round(s || 0); const h = Math.floor(s / 3600), m = Math.round(s % 3600 / 60); return h ? `${h}시간${m ? ` ${m}분` : ''}` : `${Math.max(s ? 1 : 0, m)}분`; };
 const lgDayK = k => LG_DAY(new Date(k + 'T00:00:00'));
 const lgHHMM = iso => { const d = new Date(iso); return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`; };
+
+/* 관리자 화면용 성적 한 줄 요약 (원점수 · 성취도 · 등급) */
+function QT_GR(g) {
+  const parts = Array.isArray(g.parts) ? g.parts : []; let got = 0, w = 0, wa = 0;
+  parts.forEach(p => { const pw = +p.w || 0; wa += pw; if (p.s !== '' && p.s != null && +p.m) { got += (+p.s / +p.m) * pw; w += pw; } });
+  const raw = w && w >= wa - .01 ? Math.round(got * (wa > 100 ? 100 / wa : 1) * 10) / 10 : g.raw != null ? +g.raw : null;
+  const ach = g.ach || (raw == null ? null : g.kind === 'abc' ? (raw >= 80 ? 'A' : raw >= 60 ? 'B' : 'C') : g.kind === 'p' ? 'P' : raw >= 90 ? 'A' : raw >= 80 ? 'B' : raw >= 70 ? 'C' : raw >= 60 ? 'D' : raw >= 40 ? 'E' : 'I');
+  let gr = g.grade; if (!gr && g.kind === 'rank' && g.rank && g.students) { const m = +g.rank + ((+g.ties || 1) - 1) / 2, i = [10, 34, 66, 90].map(c => Math.round(+g.students * c / 100)).findIndex(c => m <= c); gr = i < 0 ? 5 : i + 1; }
+  return [raw != null ? raw + '점' : '', ach || '', g.kind === 'rank' && gr ? gr + '등급' : '', g.credits ? +g.credits + '학점' : ''].filter(Boolean).join(' · ') || '입력 전';
+}
 async function lgView(my) {
   const B = () => my === AD.seq && $('#lgBody');
   try {
@@ -3326,7 +3446,9 @@ async function lgView(my) {
       const p = T.profile, dd = T.ddays || [], t0 = new Date(); t0.setHours(0, 0, 0, 0);
       const dn = k => { const n = Math.round((new Date(k + 'T00:00:00') - t0) / 864e5); return n === 0 ? 'D-DAY' : n > 0 ? `D-${n}` : `D+${-n}`; };
       box.innerHTML = `<div class="card lg-sch">${p && p.school_name ? `<b>${esc(p.school_name)}</b><span>${p.grade ? p.grade + '학년 ' : ''}${p.class_nm ? esc(p.class_nm) + '반' : ''}${p.allergies && p.allergies.length ? ` · 알레르기 표시 ${p.allergies.length}개` : ''}</span>` : '<span>학교를 아직 안 골랐어요.</span>'}</div>
-        <div class="lg-day"><h5>D-day <small>${dd.length}개</small></h5>${dd.length ? dd.map(x => `<div class="lgt"><span class="lgdd">${dn(x.day)}</span><b>${esc(x.title)}</b><small>${esc(x.day)}</small></div>`).join('') : '<p class="note">등록한 D-day가 없어요.</p>'}</div>`;
+        <div class="lg-day"><h5>D-day <small>${dd.length}개</small></h5>${dd.length ? dd.map(x => `<div class="lgt"><span class="lgdd">${dn(x.day)}</span><b>${esc(x.title)}</b><small>${esc(x.day)}</small></div>`).join('') : '<p class="note">등록한 D-day가 없어요.</p>'}</div>
+        ${T.assignments ? `<div class="lg-day"><h5>과제 <small>${T.assignments.filter(a => a.done).length}/${T.assignments.length} 제출</small></h5>${T.assignments.length ? T.assignments.map(a => `<div class="lgt ${a.done ? 'on' : ''}"><i>${a.done ? '✓' : ''}</i>${chip(a.subject_id) || (a.subject ? `<span class="lgs" style="--c:#8a8fa3">${esc(a.subject)}</span>` : '')}<b>${esc(a.kind)} · ${esc(a.title)}</b><small>${a.due ? esc(a.due) : ''}${a.score != null ? ` · ${+a.score}${a.points ? '/' + +a.points : ''}점` : ''}${a.nfiles ? ` · 📎${a.nfiles}` : ''}</small></div>`).join('') : '<p class="note">등록한 과제가 없어요.</p>'}</div>` : ''}
+        ${T.grades ? `<div class="lg-day"><h5>성적 <small>${T.grades.length}과목</small></h5>${T.grades.length ? T.grades.map(g => { const C = QT_GR(g); return `<div class="lgt"><span class="lgdd">${g.year}-${g.term}</span><b>${esc(g.name)}</b><small>${C}</small></div>`; }).join('') : '<p class="note">입력한 성적이 없어요.</p>'}</div>` : ''}`;
     }
     const ol = $('#lgOlder', box); if (ol) ol.onclick = () => { LG.days = LG.days < 90 ? 90 : 365; ol.disabled = true; ol.textContent = '불러오는 중…'; lgView(my); };
   } catch (e) { if (B()) B().innerHTML = /qm_admin_tools|PGRST202|42883|Could not find the function/i.test((e.code || '') + (e.message || '')) ? `<div class="card lg-setup"><b>한 가지 SQL이 더 필요해요</b><p>Supabase SQL Editor에서 <code>supabase_admin_view.sql</code>을 실행해 주세요. 바꿀 곳 없이 그대로 실행하면 돼요.</p></div>` : lgErrBox(e); }
@@ -3582,9 +3704,10 @@ window.addEventListener('resize', () => { if (ROUTE[0] === 'pdf' && O && O.pages
 
 /* 앱 설치: 서비스 워커 + 계정에 '이 종류 기기에서 앱으로 열었음' 기록 (설치 안내는 nav.js) */
 if ('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('/sw.js', { scope: '/' }).catch(() => {});
+let MY_UID = null, BADGE_ONCE = false;
 async function logUser() {
   if (!window.QTLOG || FAKE || !ME || !authClient()) return;
-  try { const { data } = await authClient().auth.getSession(); const u = data && data.session && data.session.user; if (u) QTLOG.setUser({ id: u.id, name: ME.name, email: ME.email || u.email }); } catch (e) {}
+  try { const { data } = await authClient().auth.getSession(); const u = data && data.session && data.session.user; if (u) { QTLOG.setUser({ id: u.id, name: ME.name, email: ME.email || u.email }); MY_UID = u.id; if (window.QTBADGE && !BADGE_ONCE) { BADGE_ONCE = true; setTimeout(() => QTBADGE.check(authClient(), u.id), 3000); } } } catch (e) {}
 }
 let APP_ACC = false;
 function linkAppAccount() {

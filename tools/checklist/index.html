@@ -2,6 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="utf-8">
+<script src="/tools/theme.js?v=2026112607"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>공부 체크리스트 · 문제지메이커</title>
 <meta name="description" content="오늘 할 공부를 과목별로 체크하고 연속 달성 기록을 쌓아요. 문제지메이커 계정에 저장돼요.">
@@ -11,7 +12,7 @@
 <meta property="og:title" content="공부 체크리스트 · 문제지메이커">
 <meta property="og:description" content="오늘 할 공부를 과목별로 체크하고 연속 달성 기록을 쌓아요.">
 <meta property="og:url" content="https://quizmaker.pro/tools/checklist/">
-<meta property="og:image" content="https://quizmaker.pro/og.png?v=2">
+<meta property="og:image" content="https://quizmaker.pro/og.png?v=2026112607">
 <link rel="manifest" href="/tools/manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="192x192" href="/tools/icons/icon-192.png">
 <link rel="apple-touch-icon" href="/tools/icons/apple-touch-icon.png">
@@ -20,8 +21,8 @@
 <meta name="apple-mobile-web-app-title" content="공부도구">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
-<link rel="stylesheet" href="/tools/common.css">
-<link rel="stylesheet" href="/tools/nav.css">
+<link rel="stylesheet" href="/tools/common.css?v=2026112607">
+<link rel="stylesheet" href="/tools/nav.css?v=2026112607">
 <style>
 .dnav{display:flex;align-items:center;justify-content:space-between;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:8px 10px;margin-bottom:12px}
 .dnav>button{background:none;border:0;font-size:22px;width:40px;height:40px;border-radius:10px;cursor:pointer;color:var(--ink)}
@@ -128,11 +129,12 @@ body.dark .tag{filter:brightness(1.35)}
 <body>
 <main id="app"></main>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="/tools/nav.js"></script>
-<script src="/tools/common.js"></script>
-<script src="/tools/checklist/data.js"></script>
-<script src="/tools/quotes.js"></script>
-<script src="/tools/timer/timer.js"></script>
+<script src="/tools/nav.js?v=2026112607"></script>
+<script src="/tools/badges.js?v=2026112607"></script>
+<script src="/tools/common.js?v=2026112607"></script>
+<script src="/tools/checklist/data.js?v=2026112607"></script>
+<script src="/tools/quotes.js?v=2026112607"></script>
+<script src="/tools/timer/timer.js?v=2026112607"></script>
 <script>
 'use strict';
 const { $, $$, esc, toast, modal, CL, LS, TM } = QT;

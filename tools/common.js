@@ -117,6 +117,7 @@
       if (e.code === 'QM_AUTH') { renderHeader(page); gate(root, '🔐', '다시 로그인해 주세요', '로그인이 만료됐어요.', '문제지메이커로 로그인하기', goLogin); return null; }
       // 인터넷이 끊겼을 때는 마지막으로 확인한 정보로 계속 써요
     }
+    if (window.QTBADGE) setTimeout(() => QTBADGE.check(sb(), s.user.id), 2500); // 새 배지 축하
     if (window.QTLOG) { QTLOG.setUser({ id: s.user.id, name: me.name, email: me.email || s.user.email }); QTLOG.view({ hub: '공부도구 홈', checklist: '체크리스트', timer: '타이머', school: '학교생활' }[page] || page, location.search ? { q: location.search.slice(0, 80) } : null); }
     renderHeader(page, { name: me.name, email: me.email || s.user.email });
     if (me.status === 'pending' || me.status === 'blocked') {

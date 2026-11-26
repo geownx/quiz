@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://quizmaker.pro/</loc>
-    <lastmod>2026-11-17</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>1.0</priority>
-  </url>
+  <url><loc>https://quizmaker.pro/</loc><lastmod>2026-11-26</lastmod></url>
+  <url><loc>https://quizmaker.pro/tools/</loc><lastmod>2026-11-26</lastmod></url>
+  <url><loc>https://quizmaker.pro/tools/checklist/</loc><lastmod>2026-11-26</lastmod></url>
+  <url><loc>https://quizmaker.pro/tools/timer/</loc><lastmod>2026-11-26</lastmod></url>
+  <url><loc>https://quizmaker.pro/tools/school/</loc><lastmod>2026-11-26</lastmod></url>
 </urlset>
